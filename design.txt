@@ -1,0 +1,82 @@
+https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+
+List:
+- Orange
+- Strawberry
+
+# abbreveated forms
+['Apple', 'Orange', 'Strawberry', 'Mango']
+martin: {name: Martin D'vloper, job: Developer, skill: Elite}
+
+object:
+# An employee record
+martin:
+  name: Martin D'vloper
+  job: Developer
+
+List could contain objects
+- martin:
+    name: Martin D'vloper
+    job: Developer
+    skills:
+      - python
+      - perl
+
+Multiline strings:
+
+include_newlines: |
+            exactly as you see
+            will appear these three
+            lines of poetry
+
+fold_newlines: >
+            this is really a
+            single line of text
+            despite appearances
+
+
+support environment files to substitute placeholders!
+
+
+installation require:
+  - file to add properties from (or copy it as is on first install)
+  - file with remove properties
+  - environment files (to replace variables)
+
+
+keep in mind commented blocks/properties of optional properties
+
+
+
+
+
+
+
+all top comments are copied as is (on each level!)
+    # something
+
+    # something else
+
+existing property(object)-related comments not changed
+    # prop comment
+    # multiline
+    prop:
+
+new comments are added only with the new properties
+    # newcomment (cold contain missed lines!)_
+    newprop:
+
+between properties comments with empty lines are considered as single comment
+    #line1
+
+    #line2
+    propWithEmptyLines:
+
+
+
+1. comments copied separately
+2. variables processed without structure knowledge (but detect \n in value and put | ??)
+3. added values detected manually
+
+look https://github.com/OndraZizka/yaml-merge
+check https://github.com/ClearPointNZ/connect-java/tree/master/maven-plugins/merge-yaml-plugin as slightly improved version

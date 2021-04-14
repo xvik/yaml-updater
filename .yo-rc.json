@@ -1,0 +1,21 @@
+{
+  "generator-lib-java": {
+    "multiModule": false,
+    "githubUser": "xvik",
+    "authorName": "Vyacheslav Rusakov",
+    "authorEmail": "vyarus@gmail.com",
+    "libName": "yaml-config-updater",
+    "libGroup": "ru.vyarus",
+    "libPackage": "ru.vyarus.yaml.config.updater",
+    "libVersion": "1.0.0",
+    "libDesc": "Merges current yaml config with a new version to add missed properties",
+    "targetJava": "1.8",
+    "libTags": "yaml, merge",
+    "bintrayUser": "vyarus",
+    "bintrayRepo": "xvik",
+    "bintraySignFiles": true,
+    "mavenCentralSync": true,
+    "enableQualityChecks": true,
+    "usedGeneratorVersion": "2.8.0"
+  }
+}
