@@ -80,3 +80,11 @@ between properties comments with empty lines are considered as single comment
 
 look https://github.com/OndraZizka/yaml-merge
 check https://github.com/ClearPointNZ/connect-java/tree/master/maven-plugins/merge-yaml-plugin as slightly improved version
+
+
+NO delete file, instead use properties: a.b.c
+deletes are applied to original file! so it would be possible to update property value by deleting property
+(new value would be copied)
+commented properties are also counted!
+
+start with comments parser!
