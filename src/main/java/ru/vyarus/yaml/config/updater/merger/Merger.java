@@ -9,15 +9,48 @@ import java.io.File;
 public class Merger {
 
     private final MergerConfig config;
+    private File backup;
+    private File update;
 
     public Merger(MergerConfig config) {
         this.config = config;
     }
 
     public void execute() {
-        File source = config.getSource();
-        if (config.getEnv() != null) {
-            
+        try {
+            backup();
+            prepareNewConfig();
+            merge();
+            validateResult();
+        } catch (Exception ex) {
+            rollback();
+            throw new IllegalStateException("Failed to update: original configuration remains", ex);
+        } finally {
+            cleanup();
         }
+    }
+
+    private void backup() {
+
+    }
+
+    private void prepareNewConfig() {
+
+    }
+
+    private void merge() {
+
+    }
+
+    private void validateResult() {
+
+    }
+
+    private void cleanup() {
+
+    }
+
+    private void rollback() {
+
     }
 }
