@@ -8,22 +8,13 @@ import java.util.List;
  */
 public class YamlTree {
 
-    private List<YamlNode> nodes;
-    private String trailingComment;
+    private final List<YamlNode> nodes;
 
-    public List<YamlNode> getNodes() {
-        return nodes;
-    }
-
-    public void setNodes(List<YamlNode> nodes) {
+    public YamlTree(final List<YamlNode> nodes) {
         this.nodes = nodes;
     }
 
-    public String getTrailingComment() {
-        return trailingComment;
-    }
-
-    public void setTrailingComment(String trailingComment) {
-        this.trailingComment = trailingComment;
+    public List<YamlNode> getNodes() {
+        return nodes;
     }
 }

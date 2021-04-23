@@ -2,8 +2,14 @@
 
 # something 2
 prop1: 1
+  prop1.1: 1.1
+
+  prop1.2: 1.2
 
 prop2: 2
+
+  # sub comment
+  prop2.1: 2.1
 
 # complex comment
 
@@ -11,5 +17,6 @@ prop2: 2
 prop3: 3
 
 # prop4: 4
+#  prop4.1: 4.1
 
 # trailing comment

@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.config.updater.comments.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,20 +8,24 @@ import java.util.List;
  * @since 22.04.2021
  */
 public class YamlNode {
-    private String padding;
+    private final String padding;
+    // node might be comment only!
     private String name;
+    private List<String> value;
     // node comment is everything above before previous node
-    private String comment;
+    // using list to avoid dealing with line separators
+    private List<String> comments = new ArrayList<>();
     // property commented
     private boolean commented;
-    private List<YamlNode> children;
+    // last node might be comment only!
+    private List<YamlNode> children = new ArrayList<>();
+
+    public YamlNode(String padding) {
+        this.padding = padding;
+    }
 
     public String getPadding() {
         return padding;
-    }
-
-    public void setPadding(String padding) {
-        this.padding = padding;
     }
 
     public String getName() {
@@ -31,12 +36,20 @@ public class YamlNode {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public List<String> getValue() {
+        return value;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setValue(List<String> value) {
+        this.value = value;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
     }
 
     public boolean isCommented() {
@@ -53,5 +66,9 @@ public class YamlNode {
 
     public void setChildren(List<YamlNode> children) {
         this.children = children;
+    }
+
+    public boolean isCommentOnly() {
+        return name != null;
     }
 }
