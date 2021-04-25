@@ -8,23 +8,36 @@ import java.util.List;
  * @since 22.04.2021
  */
 public class YamlNode {
-    private final String padding;
+    private final YamlNode root;
+    private final int padding;
     // node might be comment only!
     private String name;
+    // important: value might contain comment (right comment)!
+    // so even for object declaration value may exist (containing just comment)
     private List<String> value;
     // node comment is everything above before previous node
     // using list to avoid dealing with line separators
-    private List<String> comments = new ArrayList<>();
+    private List<String> topComment = new ArrayList<>();
     // property commented
     private boolean commented;
     // last node might be comment only!
     private List<YamlNode> children = new ArrayList<>();
+    // list value nodes are also separate objects because list node might be a sub-object
+    boolean listValue;
 
-    public YamlNode(String padding) {
+    public YamlNode(final YamlNode root, final int padding) {
+        this.root = root;
         this.padding = padding;
+        if (root != null) {
+            root.getChildren().add(this);
+        }
     }
 
-    public String getPadding() {
+    public YamlNode getRoot() {
+        return root;
+    }
+
+    public int getPadding() {
         return padding;
     }
 
@@ -44,12 +57,12 @@ public class YamlNode {
         this.value = value;
     }
 
-    public List<String> getComments() {
-        return comments;
+    public List<String> getTopComment() {
+        return topComment;
     }
 
-    public void setComments(List<String> comments) {
-        this.comments = comments;
+    public void setTopComment(List<String> topComment) {
+        this.topComment = topComment;
     }
 
     public boolean isCommented() {
@@ -68,7 +81,22 @@ public class YamlNode {
         this.children = children;
     }
 
+
+    public boolean isListValue() {
+        return listValue;
+    }
+
+    public void setListValue(boolean listValue) {
+        this.listValue = listValue;
+    }
+
     public boolean isCommentOnly() {
-        return name != null;
+        return name == null;
+    }
+
+    @Override
+    public String toString() {
+        return isCommentOnly() ? topComment.get(0) :
+                (isListValue() ? " - " + value : (name + ": " + value.get(0)));
     }
 }

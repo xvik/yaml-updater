@@ -33,7 +33,7 @@ fold_newlines: >
             this is really a
             single line of text
             despite appearances
-
+(may end with +- also (keep/not whitespace after): |+, >-)
 
 support environment files to substitute placeholders!
 
@@ -88,3 +88,5 @@ deletes are applied to original file! so it would be possible to update property
 commented properties are also counted!
 
 start with comments parser!
+
+ability to specify reference yaml structure with all known properties to detect commented

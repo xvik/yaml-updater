@@ -12,6 +12,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,40 +21,76 @@ import java.util.List;
  */
 public class CommentsReader {
 
-    public YamlTree read(final File yaml) {
+    public static YamlTree read(final File yaml) {
         try {
             final List<String> lines = Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8);
-            final List<YamlNode> nodes = readNodes(new CountingIterator<>(lines.iterator()), "");
-            return new YamlTree(nodes);
+            final Context context = new Context();
+            readNodes(new CountingIterator<>(lines.iterator()), context);
+            return new YamlTree(context.rootNodes);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read file: " + yaml.getAbsolutePath());
         }
     }
 
-    private List<YamlNode> readNodes(final CountingIterator<String> lines, final String prefix) {
-        final List<YamlNode> res = new ArrayList<>();
+    private static void readNodes(final CountingIterator<String> lines, final Context context) {
         while (lines.hasNext()) {
             final String line = lines.next();
             try {
-                processLine(res, line, prefix);
+                processLine(line, context);
             } catch (Exception ex) {
                 throw new IllegalStateException("Error parsing line " + lines.getPosition(), ex);
             }
         }
-        return res;
+        context.finish();
     }
 
-    private void processLine(final List<YamlNode> parsed, final String line, final String prefix) {
+    private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
-
+            while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE) ;
+            if (chars.getIndex() == chars.getEndIndex()) {
+                // whitespace only: consider this as comment for simplicity to preserve overall structure
+                context.comment(line);
+            } else {
+                int whitespace = chars.getIndex();
+                switch (chars.current()) {
+                    case '#':
+                        // commented line
+                        context.comment(line);
+                        // todo detect commented property?
+                        break;
+                    case '-':
+                        // list value (trim to remove whitespace after dash)
+                        context.listValue(whitespace, line.substring(chars.getIndex() + 1).trim());
+                        break;
+                    default:
+                        // property
+                        parseProperty(context, whitespace, chars, line);
+                }
+            }
         } catch (Exception ex) {
             throw new IllegalStateException("Error parsing line on position " + (chars.getIndex() + 1) + ": "
                     + visualizeError(line, chars), ex);
         }
     }
 
-    private String visualizeError(final String line, final CharacterIterator chars) {
+    private static void parseProperty(final Context context,
+                                      final int padding,
+                                      final CharacterIterator chars,
+                                      final String line) {
+        // todo multiline value support (next lines, use boolean in context)
+        // extracting property name
+        while (chars.current() != ':' && chars.next() != CharacterIterator.DONE) ;
+        if (chars.current() != ':') {
+            throw new IllegalStateException("Property terminator ':' not found");
+        }
+        String name = line.substring(padding, chars.getIndex());
+        String value = chars.getIndex() == chars.getEndIndex() ? null : line.substring(chars.getIndex()+1);
+        // todo multiline value detection (by ending)
+        context.property(padding, name, value);
+    }
+
+    private static String visualizeError(final String line, final CharacterIterator chars) {
         String demo = "\n\t" + line + "\n\t";
         final int index = chars.getIndex();
         if (index > 1) {
@@ -63,5 +100,65 @@ public class CommentsReader {
         }
         demo += '^';
         return demo;
+    }
+
+    private static class Context {
+        // storing only root nodes, sub nodes only required in context
+        List<YamlNode> rootNodes = new ArrayList<>();
+        YamlNode current;
+        // comments aggregator
+        List<String> comments = new ArrayList<>();
+        List<String> value;
+
+        public void comment(final String line) {
+            comments.add(line);
+        }
+
+        public void listValue(final int padding, final String value) {
+            // if current on same level then it was previous value and need to reference root
+            YamlNode node = new YamlNode(current.getPadding() == padding ? current.getRoot() : current, padding);
+            node.setListValue(true);
+            // doesn't care here what is this (could be value or object)
+            node.setValue(Collections.singletonList(value));
+            flushComments(node);
+            // node becomes current because list value could be an object
+            current = node;
+        }
+
+        public void property(final int padding, final String name, final String value) {
+            YamlNode root = null;
+            // not true only for getting back from subtree to root level
+            if (padding > 0 && current != null) {
+                root = current;
+                while (root != null && root.getPadding() >= padding) {
+                    root = root.getRoot();
+                }
+            }
+            YamlNode node = new YamlNode(root, padding);
+            node.setName(name);
+            // null in case of trailing comment node (name would also be null)
+            if (value != null) {
+                node.setValue(Collections.singletonList(value));
+            }
+            flushComments(node);
+            current = node;
+            if (root == null) {
+                rootNodes.add(node);
+            }
+        }
+
+        public void finish() {
+            // save trailing comments as separate node
+            if (!comments.isEmpty()) {
+                property(0, null, null);
+            }
+        }
+
+        private void flushComments(final YamlNode node) {
+            if (!comments.isEmpty()) {
+                node.getTopComment().addAll(comments);
+                comments.clear();
+            }
+        }
     }
 }
