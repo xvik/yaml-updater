@@ -23,13 +23,24 @@ public class CommentsReader {
 
     public static YamlTree read(final File yaml) {
         try {
-            final List<String> lines = Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8);
-            final Context context = new Context();
-            readNodes(new CountingIterator<>(lines.iterator()), context);
-            return new YamlTree(context.rootNodes);
-        } catch (IOException e) {
+            return readLines(Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8));
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to read file: " + yaml.getAbsolutePath());
         }
+    }
+
+    public static YamlTree read(final String yaml) {
+        try {
+            return readLines(Arrays.asList(yaml.split("\\r?\\n")));
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to read yaml string", e);
+        }
+    }
+
+    private static YamlTree readLines(List<String> lines) {
+        final Context context = new Context();
+        readNodes(new CountingIterator<>(lines.iterator()), context);
+        return new YamlTree(context.rootNodes);
     }
 
     private static void readNodes(final CountingIterator<String> lines, final Context context) {
@@ -55,7 +66,7 @@ public class CommentsReader {
                 int whitespace = chars.getIndex();
                 switch (chars.current()) {
                     case '#':
-                        // commented line
+                        // commented line (stored as is)
                         context.comment(line);
                         // todo detect commented property?
                         break;
@@ -85,7 +96,7 @@ public class CommentsReader {
             throw new IllegalStateException("Property terminator ':' not found");
         }
         String name = line.substring(padding, chars.getIndex());
-        String value = chars.getIndex() == chars.getEndIndex() ? null : line.substring(chars.getIndex()+1);
+        String value = chars.getIndex() == chars.getEndIndex() ? null : line.substring(chars.getIndex() + 1);
         // todo multiline value detection (by ending)
         context.property(padding, name, value);
     }

@@ -79,5 +79,5 @@ task showDependenciesTree(dependsOn: 'htmlDependencyReport', group: 'help', desc
 buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
-    publishOnFailure()
+//    publishOnFailure()
 }
