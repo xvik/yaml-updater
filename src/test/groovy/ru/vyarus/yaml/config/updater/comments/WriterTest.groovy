@@ -9,10 +9,11 @@ import spock.lang.Specification
  */
 class WriterTest extends Specification {
 
-    def "Check dummy read-write"() {
+    def "Check read-write"() {
 
         setup: "original file"
-        String original = new File(getClass().getResource('/comments/sample.yml').toURI()).text
+        println "processing $file"
+        String original = new File(getClass().getResource("/comments/$file").toURI()).text
 
         when: "reading and writing"
         YamlTree tree = CommentsReader.read(original)
@@ -20,5 +21,11 @@ class WriterTest extends Specification {
 
         then: "not changed"
         original == result
+
+        where:
+        file            | _
+        'sample.yml'    | _
+        'multiline.yml' | _
+        'lists.yml'     | _
     }
 }

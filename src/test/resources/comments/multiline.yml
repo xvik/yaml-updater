@@ -1,0 +1,40 @@
+include_newlines: |
+  exactly as you see
+  will appear these three
+  lines of poetry
+
+
+middle_newlines: |
+  exactly as you see
+  will appear these three
+
+  lines of poetry
+
+
+# comment
+fold_newlines: >
+  this is really a
+  single line of text
+  despite appearances
+
+ignore_ind: >-
+  this is really a
+  single line of text
+  despite appearances
+
+append_ind: >+
+  this is really a
+  single line of text
+  despite appearances
+
+custom_indent: >2
+    this is really a
+  single line of text
+  despite appearances
+
+
+# comment
+custom_indent2: >-2
+    this is really a
+  single line of text
+  despite appearances

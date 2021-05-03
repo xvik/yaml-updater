@@ -22,7 +22,7 @@ List could contain objects
       - python
       - perl
 
-Multiline strings:
+Multiline strings: https://yaml-multiline.info/
 
 include_newlines: |
             exactly as you see
@@ -34,6 +34,8 @@ fold_newlines: >
             single line of text
             despite appearances
 (may end with +- also (keep/not whitespace after): |+, >-)
+
+also number may be used to specify indentation (otherwise first line would define it)
 
 support environment files to substitute placeholders!
 

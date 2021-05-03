@@ -1,0 +1,33 @@
+simple_list:
+  - one
+
+  # comment
+  - two
+  # comment
+  - three
+
+object:
+  - one: 1
+    two: 2
+    # shifted comment
+  - one: 1.1
+    two: 2.2
+
+
+object2:
+  -
+    one: 1
+    two: 2
+    # shifted comment
+  -
+    one: 1.1
+    two: 2.2
+
+
+map_of_maps:
+  one:
+    a1: 1
+    a2: 2
+  two:
+    b1: 1
+    b2: 2

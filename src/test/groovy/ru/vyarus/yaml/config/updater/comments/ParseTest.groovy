@@ -13,6 +13,25 @@ class ParseTest extends Specification {
 
         when: "parsing file"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/sample.yml').toURI()))
+        println tree
+
+        then: "parsed"
+        tree.nodes.size() == 4
+    }
+
+    def "Check multiline values"() {
+        when: "parsing file"
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/multiline.yml').toURI()))
+        println tree
+
+        then: "parsed"
+        tree.nodes.size() == 7
+    }
+
+    def "Check list values"() {
+        when: "parsing file"
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/lists.yml').toURI()))
+        println tree
 
         then: "parsed"
         tree.nodes.size() == 4
