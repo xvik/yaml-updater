@@ -91,7 +91,7 @@ public class YamlNode {
     }
 
     public boolean isCommentOnly() {
-        return name == null;
+        return name == null && getValue().isEmpty();
     }
 
     @Override
