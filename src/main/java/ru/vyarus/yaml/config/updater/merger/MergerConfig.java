@@ -94,6 +94,16 @@ public class MergerConfig {
         }
 
         public MergerConfig build() {
+            if (config.getCurrent() == null) {
+                throw new IllegalStateException("Current config file not specified");
+            }
+            if (config.getUpdate() == null) {
+                throw new IllegalStateException("New config file not specified");
+            }
+            if (!config.getUpdate().exists()) {
+                throw new IllegalStateException("New config file does not exists: "
+                        + config.getUpdate().getAbsolutePath());
+            }
             return config;
         }
     }

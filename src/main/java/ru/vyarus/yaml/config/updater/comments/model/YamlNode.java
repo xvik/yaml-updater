@@ -61,10 +61,6 @@ public class YamlNode {
         return topComment;
     }
 
-    public void setTopComment(List<String> topComment) {
-        this.topComment = topComment;
-    }
-
     public boolean isCommented() {
         return commented;
     }
@@ -76,11 +72,6 @@ public class YamlNode {
     public List<YamlNode> getChildren() {
         return children;
     }
-
-    public void setChildren(List<YamlNode> children) {
-        this.children = children;
-    }
-
 
     public boolean isListValue() {
         return listValue;
