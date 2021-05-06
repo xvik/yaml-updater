@@ -71,8 +71,10 @@ public class CommentsReader {
                         // todo detect commented property?
                         break;
                     case '-':
-                        // list value (trim to remove whitespace after dash)
-                        context.listValue(whitespace, line.substring(chars.getIndex() + 1).trim());
+                        // list value: lists parsed by line, so in case of objects under list tick (dash),
+                        // the property with tick would be a list value and later properties would be its children
+                        // (theoretically incorrect structure, but completely normal (simple!) for current task)
+                        context.listValue(whitespace, line.substring(chars.getIndex() + 1));
                         break;
                     default:
                         // property

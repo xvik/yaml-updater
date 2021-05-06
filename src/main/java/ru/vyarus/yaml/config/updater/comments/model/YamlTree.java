@@ -63,7 +63,7 @@ public class YamlTree {
         if (!node.getValue().isEmpty()) {
             if (node.getValue().size() == 1) {
                 // for batter navigation show simple values
-                out.append(node.getValue().get(0));
+                out.append(node.getValue().get(0).trim());
             } else {
                 out.append("value ").append(node.getValue().size()).append(" lines");
             }
