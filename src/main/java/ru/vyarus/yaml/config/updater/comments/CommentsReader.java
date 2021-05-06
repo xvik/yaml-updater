@@ -5,7 +5,6 @@ import ru.vyarus.yaml.config.updater.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.comments.util.CountingIterator;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.CharacterIterator;
@@ -25,7 +24,7 @@ public class CommentsReader {
         try {
             return readLines(Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8));
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to read file: " + yaml.getAbsolutePath());
+            throw new IllegalStateException("Failed to read file: " + yaml.getAbsolutePath(), e);
         }
     }
 

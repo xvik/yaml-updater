@@ -1,3 +1,12 @@
+simple: value with
+  multiple lines (flow)
+
+quoted: 'value with
+  multiple lines'
+
+quoted2: "value with
+  multiple lines"
+
 include_newlines: |
   exactly as you see
   will appear these three
@@ -12,9 +21,10 @@ middle_newlines: |
 
 
 # comment
-fold_newlines: >
+fold_newlines: > # and comment here
   this is really a
   single line of text
+
   despite appearances
 
 ignore_ind: >-
@@ -38,3 +48,8 @@ custom_indent2: >-2
     this is really a
   single line of text
   despite appearances
+
+object:
+  sub: |2
+      first line
+    second line
