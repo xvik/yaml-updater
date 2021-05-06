@@ -49,7 +49,17 @@ public class StructureReader {
                 }
             }
         } else if (node instanceof SequenceNode) {
-            // todo
+            // list value
+            for (Node seq : ((SequenceNode) node).getValue()) {
+                if (node instanceof ScalarNode) {
+                    // simple value
+                    // todo think how to identify lists
+                } else {
+                    // sub object
+                    // todo INCORRECT: think how to identify objects as list values
+                    processNode(seq, context);
+                }
+            }
         } else {
             throw new IllegalStateException("Unsupported node type: " + node);
         }

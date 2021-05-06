@@ -49,7 +49,12 @@ public class YamlStructTree {
             out.append(node.getName()).append(": ");
         }
         if (node.getValue() != null) {
-            out.append(node.getValue());
+            // identify multiline values (and avoid visual ambiguity)
+            String val = node.getValue().replace("\n", "\\n");
+            if (val.length() > 80) {
+                val = val.substring(0, 80) + "...";
+            }
+            out.append(val);
         }
         out.append("\n");
 

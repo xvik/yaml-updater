@@ -19,4 +19,24 @@ class StructParseTest extends Specification {
         then: "ok"
         tree.nodes.size() == 3
     }
+
+    def "Check lists parse"() {
+
+        when: "parsing"
+        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/comments/lists.yml').toURI()))
+        println tree
+
+        then: "ok"
+        tree.nodes.size() == 4
+    }
+
+    def "Check multiline parse"() {
+
+        when: "parsing"
+        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/comments/multiline.yml').toURI()))
+        println tree
+
+        then: "ok"
+        tree.nodes.size() == 7
+    }
 }
