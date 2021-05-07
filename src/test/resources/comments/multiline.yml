@@ -53,3 +53,12 @@ object:
   sub: |2
       first line
     second line
+
+list:
+  - something
+    more then one line
+  - obj: with multiline
+      value
+  - ob2: |
+      multiline
+      marker
