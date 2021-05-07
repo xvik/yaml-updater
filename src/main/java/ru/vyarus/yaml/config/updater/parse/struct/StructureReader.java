@@ -1,14 +1,13 @@
-package ru.vyarus.yaml.config.updater.struct;
+package ru.vyarus.yaml.config.updater.parse.struct;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.*;
-import ru.vyarus.yaml.config.updater.struct.model.YamlStruct;
-import ru.vyarus.yaml.config.updater.struct.model.YamlStructTree;
+import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
+import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -98,7 +97,7 @@ public class StructureReader {
                 // reset list marker (in case of list object all subsequent properties must be children of the first one)
                 listPad = 0;
             }
-            node.setName(name);
+            node.setKey(name);
             if (value != null) {
                 node.setValue(value);
             }

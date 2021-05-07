@@ -1,7 +1,7 @@
-package ru.vyarus.yaml.config.updater.struct
+package ru.vyarus.yaml.config.updater.parse.struct
 
-import org.yaml.snakeyaml.Yaml
-import ru.vyarus.yaml.config.updater.struct.model.YamlStructTree
+
+import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree
 import spock.lang.Specification
 
 /**
@@ -13,7 +13,7 @@ class StructParseTest extends Specification {
     def "Check simple parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/comments/sample.yml').toURI()))
+        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
         println tree
         
         then: "ok"
@@ -23,7 +23,7 @@ class StructParseTest extends Specification {
     def "Check lists parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/comments/lists.yml').toURI()))
+        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
         println tree
 
         then: "ok"
@@ -33,7 +33,7 @@ class StructParseTest extends Specification {
     def "Check multiline parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/comments/multiline.yml').toURI()))
+        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
         println tree
 
         then: "ok"

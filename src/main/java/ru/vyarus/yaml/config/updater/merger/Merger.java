@@ -2,11 +2,9 @@ package ru.vyarus.yaml.config.updater.merger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
-import ru.vyarus.yaml.config.updater.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

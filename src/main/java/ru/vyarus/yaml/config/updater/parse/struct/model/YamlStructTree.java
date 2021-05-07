@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.struct.model;
+package ru.vyarus.yaml.config.updater.parse.struct.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,8 +45,8 @@ public class YamlStructTree {
         if (node.isListValue()) {
             out.append("- ");
         }
-        if (node.getName() != null) {
-            out.append(node.getName()).append(": ");
+        if (node.getKey() != null) {
+            out.append(node.getKey()).append(": ");
         }
         if (node.getValue() != null) {
             // identify multiline values (and avoid visual ambiguity)

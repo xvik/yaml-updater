@@ -1,6 +1,6 @@
-package ru.vyarus.yaml.config.updater.comments
+package ru.vyarus.yaml.config.updater.parse.comments
 
-import ru.vyarus.yaml.config.updater.comments.model.YamlTree
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree
 import spock.lang.Specification
 
 /**
@@ -12,7 +12,7 @@ class ParseTest extends Specification {
     def "Check simple case"() {
 
         when: "parsing file"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/sample.yml').toURI()))
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
         println tree
 
         then: "parsed"
@@ -21,7 +21,7 @@ class ParseTest extends Specification {
 
     def "Check multiline values"() {
         when: "parsing file"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/multiline.yml').toURI()))
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
         println tree
 
         then: "parsed"
@@ -30,7 +30,7 @@ class ParseTest extends Specification {
 
     def "Check list values"() {
         when: "parsing file"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/comments/lists.yml').toURI()))
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
         println tree
 
         then: "parsed"

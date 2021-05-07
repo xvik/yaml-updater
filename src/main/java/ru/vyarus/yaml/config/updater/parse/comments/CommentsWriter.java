@@ -1,9 +1,8 @@
-package ru.vyarus.yaml.config.updater.comments;
+package ru.vyarus.yaml.config.updater.parse.comments;
 
-import ru.vyarus.yaml.config.updater.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +60,7 @@ public class CommentsWriter {
             if (node.isListValue()) {
                 res += "- ";
             }
-            res += node.getName() + ':';
+            res += node.getKey() + ':';
             if (!node.getValue().isEmpty()) {
                 res += node.getValue().get(0);
             }

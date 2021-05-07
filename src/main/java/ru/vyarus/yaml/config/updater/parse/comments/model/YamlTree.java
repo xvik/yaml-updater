@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.comments.model;
+package ru.vyarus.yaml.config.updater.parse.comments.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,8 +57,8 @@ public class YamlTree {
         if (node.isListValue()) {
             out.append("- ");
         }
-        if (node.getName() != null) {
-            out.append(node.getName()).append(": ");
+        if (node.getKey() != null) {
+            out.append(node.getKey()).append(": ");
         }
         if (!node.getValue().isEmpty()) {
             if (node.getValue().size() == 1) {

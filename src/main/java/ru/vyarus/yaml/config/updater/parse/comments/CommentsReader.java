@@ -1,8 +1,8 @@
-package ru.vyarus.yaml.config.updater.comments;
+package ru.vyarus.yaml.config.updater.parse.comments;
 
-import ru.vyarus.yaml.config.updater.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.comments.model.YamlTree;
-import ru.vyarus.yaml.config.updater.comments.util.CountingIterator;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.util.CountingIterator;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -148,7 +148,7 @@ public class CommentsReader {
                 }
             }
             YamlNode node = new YamlNode(root, padding);
-            node.setName(name);
+            node.setKey(name);
             // null in case of trailing comment node (name would also be null)
             if (value != null) {
                 node.setValue(Collections.singletonList(value));

@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.comments.util;
+package ru.vyarus.yaml.config.updater.parse.comments.util;
 
 import java.util.Iterator;
 

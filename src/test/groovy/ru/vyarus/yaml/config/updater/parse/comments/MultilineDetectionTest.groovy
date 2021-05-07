@@ -1,6 +1,6 @@
-package ru.vyarus.yaml.config.updater.comments
+package ru.vyarus.yaml.config.updater.parse.comments
 
-import ru.vyarus.yaml.config.updater.comments.util.MultilineValue
+import ru.vyarus.yaml.config.updater.parse.comments.util.MultilineValue
 import spock.lang.Specification
 
 /**

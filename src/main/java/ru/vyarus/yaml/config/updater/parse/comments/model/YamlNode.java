@@ -1,4 +1,6 @@
-package ru.vyarus.yaml.config.updater.comments.model;
+package ru.vyarus.yaml.config.updater.parse.comments.model;
+
+import ru.vyarus.yaml.config.updater.parse.api.YamlLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +22,10 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class YamlNode {
-    private final YamlNode root;
-    private final int padding;
-    // name is null for comment only block (could go last in file)
-    private String name;
+public class YamlNode extends YamlLine<YamlNode> {
+
+    // key may be null for comment only block (could go last in file)
+
     // important: value might contain comment (right comment)!
     // so even for object declaration value may exist (containing just comment)
     private List<String> value;
@@ -34,33 +35,9 @@ public class YamlNode {
     // property commented (commented properties are searched by updating file structure, which is assuming to contain
     // all possible properties)
     private boolean commented;
-    // last node might be comment only!
-    private final List<YamlNode> children = new ArrayList<>();
-    // list value nodes are also separate objects because list node might be a sub-object
-    boolean listValue;
 
     public YamlNode(final YamlNode root, final int padding) {
-        this.root = root;
-        this.padding = padding;
-        if (root != null) {
-            root.getChildren().add(this);
-        }
-    }
-
-    public YamlNode getRoot() {
-        return root;
-    }
-
-    public int getPadding() {
-        return padding;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        super(root, padding);
     }
 
     public List<String> getValue() {
@@ -83,25 +60,13 @@ public class YamlNode {
         this.commented = commented;
     }
 
-    public List<YamlNode> getChildren() {
-        return children;
-    }
-
-    public boolean isListValue() {
-        return listValue;
-    }
-
-    public void setListValue(boolean listValue) {
-        this.listValue = listValue;
-    }
-
     public boolean isCommentOnly() {
-        return name == null && getValue().isEmpty();
+        return getKey() == null && (getValue() == null || getValue().isEmpty());
     }
 
     @Override
     public String toString() {
         return isCommentOnly() ? topComment.get(0) :
-                (isListValue() ? " -" + value : (name + ": " + value.get(0)));
+                (isListValue() ? " -" + value : (getKey() + ": " + value.get(0)));
     }
 }

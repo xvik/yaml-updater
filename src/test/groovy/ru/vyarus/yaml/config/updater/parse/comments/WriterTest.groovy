@@ -1,6 +1,6 @@
-package ru.vyarus.yaml.config.updater.comments
+package ru.vyarus.yaml.config.updater.parse.comments
 
-import ru.vyarus.yaml.config.updater.comments.model.YamlTree
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree
 import spock.lang.Specification
 
 /**
@@ -13,7 +13,7 @@ class WriterTest extends Specification {
 
         setup: "original file"
         println "processing $file"
-        String original = new File(getClass().getResource("/comments/$file").toURI()).text
+        String original = new File(getClass().getResource("/common/$file").toURI()).text
 
         when: "reading and writing"
         YamlTree tree = CommentsReader.read(original)
