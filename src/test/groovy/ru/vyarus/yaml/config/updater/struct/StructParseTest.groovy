@@ -27,7 +27,7 @@ class StructParseTest extends Specification {
         println tree
 
         then: "ok"
-        tree.nodes.size() == 4
+        tree.nodes.size() == 5
     }
 
     def "Check multiline parse"() {

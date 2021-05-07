@@ -74,6 +74,7 @@ public class CommentsReader {
                         // the property with tick would be a list value and later properties would be its children
                         // (theoretically incorrect structure, but completely normal (simple!) for current task)
                         context.listValue(whitespace, line.substring(chars.getIndex() + 1));
+                        // todo property must be parsed here
                         break;
                     default:
                         // property

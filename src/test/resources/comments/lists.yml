@@ -24,6 +24,16 @@ object2:
     two: 2.2
 
 
+object3:
+  - one: 1
+    two:
+      three: 3
+      four: 4
+    and:
+      - sub1
+      - sub2
+
+
 map_of_maps:
   one:
     a1: 1

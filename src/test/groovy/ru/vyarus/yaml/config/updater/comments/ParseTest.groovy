@@ -34,6 +34,6 @@ class ParseTest extends Specification {
         println tree
 
         then: "parsed"
-        tree.nodes.size() == 4
+        tree.nodes.size() == 5
     }
 }

@@ -8,6 +8,7 @@ import ru.vyarus.yaml.config.updater.struct.model.YamlStructTree;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,12 +52,17 @@ public class StructureReader {
         } else if (node instanceof SequenceNode) {
             // list value
             for (Node seq : ((SequenceNode) node).getValue()) {
-                if (node instanceof ScalarNode) {
+                // need position of dash, which is absent here, so just assuming -2 shift from value
+                final int listPad = seq.getStartMark().getColumn() - 2;
+
+                if (seq instanceof ScalarNode) {
                     // simple value
-                    // todo think how to identify lists
+                    context.listValue(listPad, ((ScalarNode) seq).getValue());
                 } else {
-                    // sub object
-                    // todo INCORRECT: think how to identify objects as list values
+                    // sub object: first property of it must be list node and other properties would be sub-nodes
+                    // (split and shift object)
+
+                    context.listPad = listPad;
                     processNode(seq, context);
                 }
             }
@@ -68,17 +74,30 @@ public class StructureReader {
     private static class Context {
         List<YamlStruct> rootNodes = new ArrayList<>();
         YamlStruct current;
+        // indicates list value before object item (to store first property as list value with dash padding)
+        int listPad;
 
         public void property(final int padding, final String name, final String value) {
             YamlStruct root = null;
-            // not true only for getting back from subtree to root level
-            if (padding > 0 && current != null) {
+            if (listPad > 0) {
+                // then its a first property of object - list item
                 root = current;
-                while (root != null && root.getPadding() >= padding) {
-                    root = root.getRoot();
+            } else {
+                // not true only for getting back from subtree to root level
+                if (padding > 0 && current != null) {
+                    root = current;
+                    while (root != null && root.getPadding() >= padding) {
+                        root = root.getRoot();
+                    }
                 }
             }
-            YamlStruct node = new YamlStruct(root, padding);
+            // for lists, using dash padding on the first record instead of property position
+            YamlStruct node = new YamlStruct(root, listPad > 0 ? listPad :padding);
+            if (listPad > 0) {
+                node.setListValue(true);
+                // reset list marker (in case of list object all subsequent properties must be children of the first one)
+                listPad = 0;
+            }
             node.setName(name);
             if (value != null) {
                 node.setValue(value);
@@ -87,6 +106,14 @@ public class StructureReader {
             if (root == null) {
                 rootNodes.add(node);
             }
+        }
+
+        public void listValue(final int padding, final String value) {
+            // if current on same level then it was previous value and need to reference root
+            YamlStruct node = new YamlStruct(current.getPadding() == padding ? current.getRoot() : current, padding);
+            node.setListValue(true);
+            // doesn't care here what is this (could be value or object)
+            node.setValue(value);
         }
     }
 }
