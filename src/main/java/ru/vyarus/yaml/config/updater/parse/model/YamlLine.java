@@ -11,7 +11,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
-public class YamlLine<T extends YamlLine> {
+public abstract class YamlLine<T extends YamlLine> {
 
     private final T root;
     private final int padding;
