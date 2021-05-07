@@ -58,9 +58,11 @@ public class CommentsWriter {
 
             String res = "";
             if (node.isListValue()) {
-                res += "- ";
+                res += "-";
             }
-            res += node.getKey() + ':';
+            if (node.getKey() != null) {
+                res += node.getKey() + ':';
+            }
             if (!node.getValue().isEmpty()) {
                 res += node.getValue().get(0);
             }
