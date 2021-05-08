@@ -61,6 +61,11 @@ public class CommentsWriter {
                 res += "-";
             }
             if (node.getKey() != null) {
+                if (node.isListValue()) {
+                    // recover whitespace after dash
+                    res += String.valueOf(space(node.getKeyPadding() - node.getPadding() - 1));
+                }
+
                 res += node.getKey() + ':';
             }
             if (!node.getValue().isEmpty()) {
@@ -87,11 +92,18 @@ public class CommentsWriter {
 
     private static void writeLine(final int padding, final String line, final PrintWriter out) throws IOException {
         if (padding > 0) {
-            final char[] space = new char[padding];
-            Arrays.fill(space, ' ');
-            out.write(space);
+            out.write(space(padding));
         }
         out.write(line);
         out.write(System.lineSeparator());
+    }
+
+    private static char[] space(final int length) {
+        if (length == 0) {
+            return new char[0];
+        }
+        final char[] space = new char[length];
+        Arrays.fill(space, ' ');
+        return space;
     }
 }
