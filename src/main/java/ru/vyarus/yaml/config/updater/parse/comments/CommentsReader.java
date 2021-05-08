@@ -3,6 +3,7 @@ package ru.vyarus.yaml.config.updater.parse.comments;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.parse.comments.util.CountingIterator;
+import ru.vyarus.yaml.config.updater.parse.comments.util.MultilineValue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +12,6 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,11 +58,18 @@ public class CommentsReader {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
             while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE) ;
-            if (chars.getIndex() == chars.getEndIndex()) {
+            final int whitespace = chars.getIndex();
+            final boolean whitespaceOnly = chars.getIndex() == chars.getEndIndex();
+            if (context.detectMultilineValue(whitespace, whitespaceOnly, line)) {
+                // multiline value continues
+                return;
+            }
+            if (whitespaceOnly) {
                 // whitespace only: consider this as comment for simplicity to preserve overall structure
+                // NOTE this might be the second line of flow multiline value, which is impossible to know before
+                // looking next line
                 context.comment(line);
             } else {
-                int whitespace = chars.getIndex();
                 switch (chars.current()) {
                     case '#':
                         // commented line (stored as is)
@@ -72,13 +79,34 @@ public class CommentsReader {
                     case '-':
                         // list value: lists parsed by line, so in case of objects under list tick (dash),
                         // the property with tick would be a list value and later properties would be its children
-                        // (theoretically incorrect structure, but completely normal (simple!) for current task)
-                        context.listValue(whitespace, line.substring(chars.getIndex() + 1));
-                        // todo property must be parsed here
+                        // (theoretically incorrect structure, but completely normal for current task)
+
+                        // skip whitespace after dash
+                        while (chars.next() == ' ') ;
+
+                        // property-like structure might be quoted (simple string)
+                        Prop lprop = null;
+                        if (chars.current() != '\'' || chars.current() != '"') {
+                            lprop = parseProperty(chars, line);
+                        }
+                        if (lprop == null) {
+                            // not a property (simple value); take everything after dash
+                            lprop = new Prop(whitespace, null, line.substring(whitespace + 1));
+                        }
+                        // first property in list item or list constant
+                        context.listValue(whitespace, lprop);
+
                         break;
                     default:
-                        // property
-                        parseProperty(context, whitespace, chars, line);
+                        // flow multiline is when string value continues on new line without special markers
+                        if (!context.detectFlowMultiline(whitespace, line)) {
+                            // property
+                            final Prop prop = parseProperty(chars, line);
+                            if (prop == null) {
+                                throw new IllegalStateException("Property line expected, but no property found");
+                            }
+                            context.property(whitespace, prop);
+                        }
                 }
             }
         } catch (Exception ex) {
@@ -87,20 +115,22 @@ public class CommentsReader {
         }
     }
 
-    private static void parseProperty(final Context context,
-                                      final int padding,
-                                      final CharacterIterator chars,
-                                      final String line) {
-        // todo multiline value support (next lines, use boolean in context)
-        // extracting property name
-        while (chars.current() != ':' && chars.next() != CharacterIterator.DONE) ;
-        if (chars.current() != ':') {
-            throw new IllegalStateException("Property terminator ':' not found");
+    private static Prop parseProperty(final CharacterIterator chars, final String line) {
+        // stream assumed to be set at the beginning of possible property (after list dash or after whitespace)
+        int padding = chars.getIndex();
+        int comment = line.indexOf('#', padding);
+        int split = line.indexOf(':', padding);
+        if (split < 0 || (comment > 0 && split > comment)) {
+            // no property marker or it is in comment part - not a property
+            return null;
         }
-        String name = line.substring(padding, chars.getIndex());
-        String value = chars.getIndex() == chars.getEndIndex() ? null : line.substring(chars.getIndex() + 1);
-        // todo multiline value detection (by ending)
-        context.property(padding, name, value);
+        String name = line.substring(padding, split);
+        // value may include in-line comment! pure value is not important
+        String value = split == chars.getEndIndex() ? null : line.substring(split + 1);
+        final Prop res = new Prop(padding, name, value);
+        // detecting multiline markers
+        res.multiline = MultilineValue.detect(value);
+        return res;
     }
 
     private static String visualizeError(final String line, final CharacterIterator chars) {
@@ -115,30 +145,42 @@ public class CommentsReader {
         return demo;
     }
 
+    private static class Prop {
+        public final int padding;
+        public final String key;
+        public final String value;
+        public MultilineValue.Marker multiline;
+
+        public Prop(final int padding, final String key, final String value) {
+            this.padding = padding;
+            this.key = key;
+            this.value = value;
+        }
+    }
+
     private static class Context {
         // storing only root nodes, sub nodes only required in context
         List<YamlNode> rootNodes = new ArrayList<>();
         YamlNode current;
         // comments aggregator
         List<String> comments = new ArrayList<>();
-        List<String> value;
+        MultilineValue.Marker multiline;
 
         public void comment(final String line) {
             comments.add(line);
         }
 
-        public void listValue(final int padding, final String value) {
-            // if current on same level then it was previous value and need to reference root
-            YamlNode node = new YamlNode(current.getPadding() == padding ? current.getRoot() : current, padding);
-            node.setListValue(true);
-            // doesn't care here what is this (could be value or object)
-            node.setValue(Collections.singletonList(value));
-            flushComments(node);
-            // node becomes current because list value could be an object
-            current = node;
+        public void listValue(final int padding, final Prop prop) {
+            property(padding, prop);
+            current.setListValue(true);
         }
 
-        public void property(final int padding, final String name, final String value) {
+        public void property(final int padding, final Prop prop) {
+            // close ongoing multiline (value is already aggregated)
+            if (multiline != null) {
+                multiline = null;
+            }
+
             YamlNode root = null;
             // not true only for getting back from subtree to root level
             if (padding > 0 && current != null) {
@@ -147,11 +189,23 @@ public class CommentsReader {
                     root = root.getRoot();
                 }
             }
-            YamlNode node = new YamlNode(root, padding);
-            node.setKey(name);
-            // null in case of trailing comment node (name would also be null)
-            if (value != null) {
-                node.setValue(Collections.singletonList(value));
+            final YamlNode node = new YamlNode(root, padding);
+            // null in case of trailing comment node
+            if (prop != null) {
+                if (prop.key != null) {
+                    node.setKey(prop.key);
+                    // this is only important for lists where dash padding used as root
+                    // (required only for flow multiline values detection)
+                    node.setKeyPadding(prop.padding);
+                }
+                if (prop.value != null) {
+                    final List<String> valList = new ArrayList<>();
+                    valList.add(prop.value);
+                    node.setValue(valList);
+                }
+
+                // remember multiline marker it it was detected in value
+                multiline = prop.multiline;
             }
             flushComments(node);
             current = node;
@@ -160,10 +214,43 @@ public class CommentsReader {
             }
         }
 
+        public boolean detectMultilineValue(final int padding, final boolean whitespaceOnly, final String line) {
+            if (multiline != null && (whitespaceOnly || multiline.indent <= padding)) {
+                current.getValue().add(line);
+                if (multiline.indent == -1) {
+                    // indent computed by the first line (multiline defined, but without number (| or >))
+                    multiline.indent = padding;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public boolean detectFlowMultiline(final int padding, final String line) {
+            if (current != null) {
+                // will go there only once for multiline value as after this multiline would be already detected,
+                // aggregating everything below (by padding)
+                if (current.getKeyPadding() < padding && current.getValue() != null
+                        && MultilineValue.couldBeFlowMultiline(current.getValue().get(0))) {
+                    if (!comments.isEmpty()) {
+                        // edge case: when the second (and maybe few following) lines of flow multiline value
+                        // are empty lines, it is impossible to detect as multiline, and they would go to comment
+                        // instead
+                        current.getValue().addAll(comments);
+                        comments.clear();
+                    }
+                    current.getValue().add(line);
+                    multiline = MultilineValue.flowMarker(padding);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void finish() {
             // save trailing comments as separate node
             if (!comments.isEmpty()) {
-                property(0, null, null);
+                property(0, null);
             }
         }
 

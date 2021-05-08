@@ -97,9 +97,13 @@ public class StructureReader {
                 // reset list marker (in case of list object all subsequent properties must be children of the first one)
                 listPad = 0;
             }
-            node.setKey(name);
+            if (name != null) {
+                node.setKey(name);
+            }
             if (value != null) {
                 node.setValue(value);
+                // different only for lists (first list item property)
+                node.setKeyPadding(padding);
             }
             current = node;
             if (root == null) {

@@ -5,6 +5,7 @@ simple_list:
   - two
   # comment
   - three
+  - 'prop: like'
 
 object:
   - one: 1

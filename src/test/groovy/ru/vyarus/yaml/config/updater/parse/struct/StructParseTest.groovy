@@ -37,6 +37,6 @@ class StructParseTest extends Specification {
         println tree
 
         then: "ok"
-        tree.nodes.size() == 12
+        tree.nodes.size() == 13
     }
 }

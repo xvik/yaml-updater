@@ -20,14 +20,9 @@ public class MultilineValue {
      */
     private static final Pattern MULTILINE = Pattern.compile("([|>])([+-])?(\\d+)?$");
 
-    public static Marker detect(String line) {
-        String source = line;
+    public static Marker detect(final String line) {
         // cut off possible inline comment (prop: | # some comment)
-        int comment = source.indexOf('#');
-        if (comment > 0) {
-            source = source.substring(0, comment);
-        }
-        source = source.trim();
+        String source = cutComment(line);
         Marker res = null;
         final Matcher match = MULTILINE.matcher(source);
         if (match.find()) {
@@ -44,6 +39,29 @@ public class MultilineValue {
             }
         }
         return res;
+    }
+
+    public static boolean couldBeFlowMultiline(final String value) {
+        final String pure = cutComment(value);
+        return pure != null && !pure.isEmpty();
+    }
+
+    public static Marker flowMarker(final int indent) {
+        final Marker res = new Marker();
+        res.indent = indent;
+        return res;
+    }
+
+    private static String cutComment(final String line) {
+        if (line == null) {
+             return null;
+        }
+        String source = line;
+        final int comment = source.indexOf('#');
+        if (comment > 0) {
+            source = source.substring(0, comment);
+        }
+        return source.trim();
     }
 
     public static class Marker {

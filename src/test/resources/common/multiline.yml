@@ -62,3 +62,7 @@ list:
   - ob2: |
       multiline
       marker
+
+flow: something before whitespace
+
+  something after whitespace

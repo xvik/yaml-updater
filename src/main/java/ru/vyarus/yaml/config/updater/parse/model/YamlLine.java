@@ -17,6 +17,9 @@ public abstract class YamlLine<T extends YamlLine> {
     private final int padding;
     private String key;
     private boolean listValue;
+    // for list value, padding is dash padding, but this value would be a real padding
+    // in all other cases it is the same as simple padding
+    private int keyPadding = -1;
     private final List<T> children = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
@@ -50,6 +53,15 @@ public abstract class YamlLine<T extends YamlLine> {
 
     public void setListValue(final boolean listValue) {
         this.listValue = listValue;
+    }
+
+    public int getKeyPadding() {
+        // if not set, use main padding
+        return keyPadding == -1 ? padding : keyPadding;
+    }
+
+    public void setKeyPadding(int keyPadding) {
+        this.keyPadding = keyPadding;
     }
 
     public List<T> getChildren() {

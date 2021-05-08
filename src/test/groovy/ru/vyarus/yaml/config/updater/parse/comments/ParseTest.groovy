@@ -25,7 +25,7 @@ class ParseTest extends Specification {
         println tree
 
         then: "parsed"
-        tree.nodes.size() == 12
+        tree.nodes.size() == 13
     }
 
     def "Check list values"() {
