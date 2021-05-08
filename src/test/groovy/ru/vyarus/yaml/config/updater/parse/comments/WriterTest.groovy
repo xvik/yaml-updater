@@ -27,5 +27,6 @@ class WriterTest extends Specification {
         'sample.yml'    | _
         'multiline.yml' | _
         'lists.yml'     | _
+        'complex.yml'   | _
     }
 }
