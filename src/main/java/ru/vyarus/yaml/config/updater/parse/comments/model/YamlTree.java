@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.comments.model;
 
+import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,16 +9,11 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class YamlTree {
-
-    private final List<YamlNode> nodes;
+public class YamlTree extends TreeNode<YamlNode> {
 
     public YamlTree(final List<YamlNode> nodes) {
-        this.nodes = nodes;
-    }
-
-    public List<YamlNode> getNodes() {
-        return nodes;
+        super(null);
+        getChildren().addAll(nodes);
     }
 
     @Override
@@ -24,10 +21,10 @@ public class YamlTree {
         // to string shows structural view to quickly identify parsing errors
         final StringBuilder out = new StringBuilder();
 
-        if (nodes == null || nodes.isEmpty()) {
+        if (getChildren().isEmpty()) {
             out.append("<empty>");
         } else {
-            nodes.forEach(node -> renderNode(node, out));
+            getChildren().forEach(node -> renderNode(node, out));
         }
 
         return out.toString();

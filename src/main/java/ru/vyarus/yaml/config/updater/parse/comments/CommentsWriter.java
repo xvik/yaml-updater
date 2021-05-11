@@ -40,7 +40,7 @@ public class CommentsWriter {
 
     public static void write(final YamlTree tree, final OutputStream out) {
         final PrintWriter res = new PrintWriter(out);
-        tree.getNodes().forEach(node -> writeNode(node, res));
+        tree.getChildren().forEach(node -> writeNode(node, res));
         res.flush();
         res.close();
     }

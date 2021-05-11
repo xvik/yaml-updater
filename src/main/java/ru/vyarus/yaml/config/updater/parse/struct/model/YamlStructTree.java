@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.struct.model;
 
+import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,16 +9,11 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
-public class YamlStructTree {
-
-    private final List<YamlStruct> nodes;
+public class YamlStructTree extends TreeNode<YamlStruct> {
 
     public YamlStructTree(final List<YamlStruct> nodes) {
-        this.nodes = nodes;
-    }
-
-    public List<YamlStruct> getNodes() {
-        return nodes;
+        super(null);
+        this.getChildren().addAll(nodes);
     }
 
     @Override
@@ -24,10 +21,10 @@ public class YamlStructTree {
         // to string shows structural view to quickly identify parsing errors
         final StringBuilder out = new StringBuilder();
 
-        if (nodes == null || nodes.isEmpty()) {
+        if (getChildren().isEmpty()) {
             out.append("<empty>");
         } else {
-            nodes.forEach(node -> renderNode(node, out));
+            getChildren().forEach(node -> renderNode(node, out));
         }
 
         return out.toString();

@@ -1,0 +1,12 @@
+# something
+
+# something 2
+prop1:
+  prop1.1: 1.1
+
+  prop1.2: 1.2
+
+prop2:
+
+  # sub comment
+  prop2.1: 2.1

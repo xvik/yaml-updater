@@ -16,7 +16,7 @@ class ParseTest extends Specification {
         println tree
 
         then: "parsed"
-        tree.nodes.size() == 4
+        tree.children.size() == 4
     }
 
     def "Check multiline values"() {
@@ -25,7 +25,7 @@ class ParseTest extends Specification {
         println tree
 
         then: "parsed"
-        tree.nodes.size() == 13
+        tree.children.size() == 13
     }
 
     def "Check list values"() {
@@ -34,6 +34,6 @@ class ParseTest extends Specification {
         println tree
 
         then: "parsed"
-        tree.nodes.size() == 5
+        tree.children.size() == 5
     }
 }

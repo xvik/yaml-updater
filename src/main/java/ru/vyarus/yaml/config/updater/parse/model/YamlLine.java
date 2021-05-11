@@ -1,8 +1,5 @@
 package ru.vyarus.yaml.config.updater.parse.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Base class for comments and structure parsers. In both cases model represent one or more yaml file lines.
  * For lists, object in list item is split to first property - list value and other props - its children
@@ -11,28 +8,22 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
-public abstract class YamlLine<T extends YamlLine> {
+public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
 
-    private final T root;
     private final int padding;
     private String key;
     private boolean listValue;
     // for list value, padding is dash padding, but this value would be a real padding
     // in all other cases it is the same as simple padding
     private int keyPadding = -1;
-    private final List<T> children = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     public YamlLine(final T root, final int padding) {
-        this.root = root;
+        super(root);
         this.padding = padding;
         if (root != null) {
-            root.getChildren().add(this);
+            root.getChildren().add((T) this);
         }
-    }
-
-    public T getRoot() {
-        return root;
     }
 
     public int getPadding() {
@@ -62,9 +53,5 @@ public abstract class YamlLine<T extends YamlLine> {
 
     public void setKeyPadding(int keyPadding) {
         this.keyPadding = keyPadding;
-    }
-
-    public List<T> getChildren() {
-        return children;
     }
 }
