@@ -9,7 +9,7 @@ import spock.lang.Specification
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-class MergeTest extends Specification {
+class TreeMergerTest extends Specification {
 
     def "Check simple merge"() {
 

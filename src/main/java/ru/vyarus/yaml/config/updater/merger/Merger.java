@@ -62,9 +62,9 @@ public class Merger {
         // tmp file used to catch possible writing errors and only then override old file
         work = File.createTempFile("merge-result", ".yml");
 
-        if (!config.getDeleteProps().isEmpty()) {
+//        if (!config.getDeleteProps().isEmpty()) {
             // todo remove nodes
-        }
+//        }
     }
 
     private void prepareNewConfig() throws Exception {
