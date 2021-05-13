@@ -1,8 +1,9 @@
 package ru.vyarus.yaml.config.updater.parse.model;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Universal tree-like structure. Required to unify both yaml lines tree and object, containing root nodes.
@@ -35,5 +36,13 @@ public abstract class TreeNode<T extends YamlLine<T>> {
             }
         }
         return res;
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
+    public boolean containsList() {
+        return !children.isEmpty() && children.get(0).isListValue();
     }
 }

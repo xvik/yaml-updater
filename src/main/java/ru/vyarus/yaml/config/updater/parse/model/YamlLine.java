@@ -10,7 +10,7 @@ package ru.vyarus.yaml.config.updater.parse.model;
  */
 public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
 
-    private final int padding;
+    private int padding;
     private String key;
     private boolean listValue;
     // for list value, padding is dash padding, but this value would be a real padding
@@ -28,6 +28,10 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
 
     public int getPadding() {
         return padding;
+    }
+
+    public void setPadding(int padding) {
+        this.padding = padding;
     }
 
     public String getKey() {
