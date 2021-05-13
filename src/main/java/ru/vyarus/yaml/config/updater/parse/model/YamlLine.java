@@ -54,4 +54,8 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
     public void setKeyPadding(int keyPadding) {
         this.keyPadding = keyPadding;
     }
+
+    public boolean isProperty() {
+        return key != null;
+    }
 }

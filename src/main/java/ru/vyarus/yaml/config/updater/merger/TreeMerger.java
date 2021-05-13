@@ -16,6 +16,7 @@ import java.util.Map;
 public class TreeMerger {
 
     public static void merge(YamlTree node, YamlTree from) {
+        // todo trees must be unified by padding first!
         mergeLevel(node, from);
     }
 
@@ -25,22 +26,54 @@ public class TreeMerger {
             return;
         }
 
+        if (from.getChildren().isEmpty()) {
+            // nothing to sync - current children subtree remains
+            return;
+        }
+
+        // updating file structure taken and only existing nodes replaced by current values
+        // nodes not found in new config would be also inserted
+
         Map<String, YamlNode> newProps = from.getProps();
-        List<String> processed = new ArrayList<>();
-        for(YamlNode child: node.getChildren()) {
-            YamlNode update = newProps.get(child.getKey());
-            if (update != null) {
-                mergeLevel(child, update);
-                processed.add(child.getKey());
+
+        List<YamlNode> updated = new ArrayList<>(from.getChildren());
+
+        int prevNodeIdx = 0;
+
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            YamlNode curr = node.getChildren().get(i);
+            final String key = curr.getKey();
+            if (curr.isProperty() && newProps.containsKey(key)) {
+                // replace new node with old node
+                int idx = updated.indexOf(newProps.get(key));
+                YamlNode newnode = updated.remove(idx);
+                updated.add(idx, curr);
+
+                // copy comment from new node (it might be updated and contain more actual instructions)
+                if (newnode.hasComment()) {
+                    curr.getTopComment().clear();
+                    curr.getTopComment().addAll(newnode.getTopComment());
+                }
+
+                // sync entire tree
+                mergeLevel(curr, newnode);
+
+                prevNodeIdx = idx;
+                continue;
+            }
+
+            // current node not found in new tree: trying to find a good place for insertion using previous context
+
+            if (prevNodeIdx == 0) {
+                // first node will also go first
+                updated.add(0, curr);
+            } else {
+                // insert it after previous element
+                updated.add(++prevNodeIdx, curr);
             }
         }
 
-        // adding all new nodes ar the end
-        // todo later implement correct in-place addition
-        for (String key: newProps.keySet()) {
-            if (!processed.contains(key)) {
-                node.getChildren().add(newProps.get(key));
-            }
-        }
+        node.getChildren().clear();
+        node.getChildren().addAll(updated);
     }
 }

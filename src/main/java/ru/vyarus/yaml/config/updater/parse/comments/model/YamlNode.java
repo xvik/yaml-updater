@@ -60,6 +60,10 @@ public class YamlNode extends YamlLine<YamlNode> {
         this.commented = commented;
     }
 
+    public boolean hasComment() {
+        return !getTopComment().isEmpty();
+    }
+
     public boolean isCommentOnly() {
         return getKey() == null && (getValue() == null || getValue().isEmpty());
     }

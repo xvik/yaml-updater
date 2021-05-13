@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.config.updater.merger
 
+
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree
@@ -29,14 +30,14 @@ prop1:
   # comment line
   prop1.3: 1.3
 
+# in the middle
+prop11:
+  prop11.1: 11.1
+
 prop2:
 
   # sub comment
   prop2.1: 2.1
-
-# in the middle
-prop11:
-  prop11.1: 11.1
 
 # complex
 
