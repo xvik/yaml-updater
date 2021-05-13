@@ -21,13 +21,45 @@ public class TreeMerger {
     }
 
     private static void mergeLevel(TreeNode<YamlNode> node, TreeNode<YamlNode> from) {
-        if (node instanceof YamlLine && ((YamlNode) node).isListValue()) {
-            // todo support lists merging and ESPECIALLY complex list structures
+        if (from.getChildren().isEmpty()) {
+            // nothing to sync - current children subtree remains
             return;
         }
 
-        if (from.getChildren().isEmpty()) {
-            // nothing to sync - current children subtree remains
+        // special logic for list values
+        if (node instanceof YamlLine && !node.getChildren().isEmpty() && node.getChildren().get(0).isListValue()) {
+            YamlNode cur = (YamlNode) node;
+            YamlNode upd = (YamlNode) from;
+            // looking only object lists
+            if (cur.getChildren().get(0).isProperty() && !upd.getChildren().isEmpty()) {
+                // ASSUMPTION: first list item object property is an identity property
+
+                for(YamlNode child: cur.getChildren()) {
+                    // no way to track node
+                    if (!child.hasValue()) {
+                        continue;
+                    }
+
+                    String key = child.getKey();
+                    String val = child.getFirstLineValue();
+
+                    // important to find only one match in target list
+                    List<YamlNode> cand = new ArrayList<>();
+                    for (YamlNode up : upd.getChildren()) {
+                        if (key.equals(up.getKey()) && val.equals(up.getFirstLineValue())) {
+                            cand.add(up);
+                        }
+                    }
+
+                    if (cand.size() != 1) {
+                        // failed to find EXACT matching value
+                        continue;
+                    }
+
+                    // merge object subtree
+                    mergeLevel(child, cand.get(0));
+                }
+            }
             return;
         }
 

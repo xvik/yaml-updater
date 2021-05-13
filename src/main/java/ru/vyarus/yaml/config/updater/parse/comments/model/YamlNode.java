@@ -68,9 +68,17 @@ public class YamlNode extends YamlLine<YamlNode> {
         return getKey() == null && (getValue() == null || getValue().isEmpty());
     }
 
+    public String getFirstLineValue() {
+        return value != null && !value.isEmpty() ? value.get(0) : null;
+    }
+
+    public boolean hasValue() {
+        return getFirstLineValue() != null;
+    }
+
     @Override
     public String toString() {
         return isCommentOnly() ? topComment.get(0) :
-                (isListValue() ? " -" + value : (getKey() + ": " + value.get(0)));
+                ((isListValue() ? " - ":"") + (isProperty() ? (getKey() + ": ") : "") + value.get(0));
     }
 }

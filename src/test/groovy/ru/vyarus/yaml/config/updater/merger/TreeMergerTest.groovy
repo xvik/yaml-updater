@@ -39,6 +39,18 @@ prop2:
   # sub comment
   prop2.1: 2.1
 
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+      three: 3
+
+# comment changed
+pppp: some
+
 # complex
 
 # comment
