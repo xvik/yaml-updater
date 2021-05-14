@@ -176,11 +176,6 @@ public class CommentsReader {
         }
 
         public void property(final int padding, final Prop prop) {
-            // close ongoing multiline (value is already aggregated)
-            if (multiline != null) {
-                multiline = null;
-            }
-
             YamlNode root = null;
             // not true only for getting back from subtree to root level
             if (padding > 0 && current != null) {
@@ -222,6 +217,9 @@ public class CommentsReader {
                     multiline.indent = padding;
                 }
                 return true;
+            } else if (multiline != null) {
+                // obviously multiline ended
+                multiline = null;
             }
             return false;
         }
