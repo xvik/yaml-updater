@@ -134,15 +134,20 @@ public class TreeMerger {
         boolean increase = shift > 0;
         if (shift != 0) {
             if (node.getValue().size() > 1) {
-                // important to shift multiline values
-
-                // todo shift comment too
+                // important to shift multiline values (otherwise value may be flowed)
 
                 // first value line is a part of property declaration
                 List<String> res = new ArrayList<>();
                 res.add(node.getValue().get(0));
                 for (int j = 1; j < node.getValue().size(); j++) {
                     String line = node.getValue().get(j);
+
+                    // skip blank lines
+                    if (line.trim().isEmpty()) {
+                        res.add(line);
+                        continue;
+                    }
+
                     if (increase) {
                         // increase padding
                         final char[] space = new char[shift];
@@ -156,14 +161,38 @@ public class TreeMerger {
                 }
                 node.setValue(res);
             }
+            if (node.hasComment()) {
+                // shifting comment
+                List<String> cmt = new ArrayList<>();
+                for (String line: node.getTopComment()) {
+                    // skip blank lines
+                    if (line.trim().isEmpty()) {
+                        cmt.add(line);
+                        continue;
+                    }
+
+                    if (increase) {
+                        // increase padding
+                        final char[] space = new char[shift];
+                        Arrays.fill(space, ' ');
+                        line = String.valueOf(space) + line;
+                    } else {
+                        // reduce padding (cut off whitespace)
+                        int cmtStart = line.indexOf('#');
+                        // shift left, but only whitespace before comment
+                        line = line.substring(Math.min(-shift, cmtStart));
+                    }
+                    cmt.add(line);
+                }
+                node.getTopComment().clear();
+                node.getTopComment().addAll(cmt);
+            }
             node.setKeyPadding(node.getKeyPadding() + shift);
             node.setPadding(node.getPadding() + shift);
 
             // important to shift entire subtree (otherwise list position could be flowed)
-            if (increase) {
-                for (YamlNode child : node.getChildren()) {
-                    shiftNode(child, shift);
-                }
+            for (YamlNode child : node.getChildren()) {
+                shiftNode(child, shift);
             }
         }
     }
