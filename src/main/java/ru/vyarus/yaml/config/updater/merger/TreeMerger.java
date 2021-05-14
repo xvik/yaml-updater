@@ -133,6 +133,7 @@ public class TreeMerger {
     private static void shiftNode(YamlNode node, int shift) {
         boolean increase = shift > 0;
         if (shift != 0) {
+            // todo there is a problem when value would contain shift number!!!
             if (node.getValue().size() > 1) {
                 // important to shift multiline values (otherwise value may be flowed)
 
