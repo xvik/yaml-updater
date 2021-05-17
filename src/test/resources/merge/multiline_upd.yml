@@ -1,0 +1,18 @@
+object:
+    simple: value with
+        multiple lines (flow)
+
+    include_newlines: |
+        exactly as you see
+        will appear these three
+        lines of poetry
+
+    middle_newlines: |
+        exactly as you see
+        will appear these three
+
+        lines of poetry
+
+    sub: |4
+          first line
+        second line

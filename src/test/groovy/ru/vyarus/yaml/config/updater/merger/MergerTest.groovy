@@ -182,4 +182,79 @@ prop3:
         current.delete()
         update.delete()
     }
+
+
+    def "Check multiline values merge"() {
+
+        setup: "prepare files"
+        File current = Files.createTempFile("config", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        File update = Files.createTempFile("update", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        when: "merging"
+        new Merger(MergerConfig.builder(current, update).backup(false).build()).execute()
+
+        then: "updated"
+        current.text == """object:
+    simple: value with
+      multiple lines (flow)
+
+    include_newlines: |
+      exactly as you see
+      will appear these three
+      lines of poetry
+
+    middle_newlines: |
+      exactly as you see
+      will appear these three
+
+      lines of poetry
+
+    sub: |2
+        first line
+      second line
+"""
+
+        cleanup:
+        current.delete()
+        update.delete()
+    }
+
+    def "Check multiline values negative shift merge"() {
+
+        setup: "prepare files"
+        File current = Files.createTempFile("config", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        File update = Files.createTempFile("update", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        when: "merging"
+        new Merger(MergerConfig.builder(current, update).backup(false).build()).execute()
+
+        then: "updated"
+        current.text == """object:
+  simple: value with
+      multiple lines (flow)
+
+  include_newlines: |
+      exactly as you see
+      will appear these three
+      lines of poetry
+
+  middle_newlines: |
+      exactly as you see
+      will appear these three
+
+      lines of poetry
+
+  sub: |4
+        first line
+      second line
+"""
+
+        cleanup:
+        current.delete()
+        update.delete()
+    }
 }

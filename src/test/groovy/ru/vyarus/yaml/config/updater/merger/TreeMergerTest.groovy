@@ -159,4 +159,66 @@ prop3:
 """
 
     }
+
+    def "Check multiline shift"() {
+
+        when: "merging"
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
+        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
+        TreeMerger.merge(tree, upd)
+
+        then: "merged"
+        CommentsWriter.write(tree) == """object:
+    simple: value with
+      multiple lines (flow)
+
+    include_newlines: |
+      exactly as you see
+      will appear these three
+      lines of poetry
+
+    middle_newlines: |
+      exactly as you see
+      will appear these three
+
+      lines of poetry
+
+    sub: |2
+        first line
+      second line
+"""
+
+    }
+
+
+    def "Check multiline negative shift"() {
+
+        when: "merging"
+        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
+        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
+        TreeMerger.merge(tree, upd)
+
+        then: "merged"
+        CommentsWriter.write(tree) == """object:
+  simple: value with
+      multiple lines (flow)
+
+  include_newlines: |
+      exactly as you see
+      will appear these three
+      lines of poetry
+
+  middle_newlines: |
+      exactly as you see
+      will appear these three
+
+      lines of poetry
+
+  sub: |4
+        first line
+      second line
+"""
+
+    }
+
 }
