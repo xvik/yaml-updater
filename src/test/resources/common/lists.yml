@@ -6,6 +6,8 @@ simple_list:
   # comment
   - three
   - 'prop: like'
+  - multiline
+    property
 
 object:
   - one: 1

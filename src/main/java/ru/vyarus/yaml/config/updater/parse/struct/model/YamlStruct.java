@@ -16,8 +16,8 @@ import ru.vyarus.yaml.config.updater.parse.model.YamlLine;
 public class YamlStruct extends YamlLine<YamlStruct> {
     private String value;
 
-    public YamlStruct(final YamlStruct root, final int padding) {
-        super(root, padding);
+    public YamlStruct(final YamlStruct root, final int padding, final int lineNum) {
+        super(root, padding, lineNum);
     }
 
     public String getValue() {
@@ -30,6 +30,6 @@ public class YamlStruct extends YamlLine<YamlStruct> {
 
     @Override
     public String toString() {
-        return isListValue() ? " -" + value : (getKey() + ": " + value);
+        return (isListValue() ? "- " : "") + (isProperty() ? (getKey() + ": ") : "") + (value == null ? "" : value);
     }
 }

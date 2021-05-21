@@ -95,8 +95,6 @@ ability to specify reference yaml structure with all known properties to detect 
 
 
 
-multiline with number shift problem!!!! need to store multiline configuration
-
 validate strict and comment trees after reading (self-validation)!!!
 use struct from updating doc to parse commented lines
 implement deletions!

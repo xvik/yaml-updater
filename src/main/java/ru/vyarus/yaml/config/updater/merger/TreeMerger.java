@@ -2,10 +2,10 @@ package ru.vyarus.yaml.config.updater.merger;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +90,7 @@ public class TreeMerger {
 
             // first of all sync paddings (no matter if list is a scalar and would not be updated)
             int pad = upd.getChildren().get(0).getPadding();
-            for(YamlNode child: cur.getChildren()) {
+            for (YamlNode child : cur.getChildren()) {
                 // important to shift list node itself before continuing (otherwise subtree could be shifted)
                 shiftNode(child, pad - child.getPadding());
             }
@@ -150,9 +150,7 @@ public class TreeMerger {
 
                     if (increase) {
                         // increase padding
-                        final char[] space = new char[shift];
-                        Arrays.fill(space, ' ');
-                        line = String.valueOf(space) + line;
+                        line = TreeStringUtils.shiftRight(line, shift);
                     } else {
                         // reduce padding (cut off whitespace)
                         line = line.substring(-shift);
@@ -164,7 +162,7 @@ public class TreeMerger {
             if (node.hasComment()) {
                 // shifting comment
                 List<String> cmt = new ArrayList<>();
-                for (String line: node.getTopComment()) {
+                for (String line : node.getTopComment()) {
                     // skip blank lines
                     if (line.trim().isEmpty()) {
                         cmt.add(line);
@@ -173,9 +171,7 @@ public class TreeMerger {
 
                     if (increase) {
                         // increase padding
-                        final char[] space = new char[shift];
-                        Arrays.fill(space, ' ');
-                        line = String.valueOf(space) + line;
+                        line = TreeStringUtils.shiftRight(line, shift);
                     } else {
                         // reduce padding (cut off whitespace)
                         int cmtStart = line.indexOf('#');

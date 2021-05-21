@@ -1,8 +1,8 @@
 package ru.vyarus.yaml.config.updater.parse.struct.model;
 
+import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,14 +31,7 @@ public class YamlStructTree extends TreeNode<YamlStruct> {
     }
 
     private void renderNode(final YamlStruct node, final StringBuilder out) {
-        String padding = "";
-        if (node.getPadding() > 0) {
-            final char[] space = new char[node.getPadding()];
-            Arrays.fill(space, ' ');
-            padding = String.valueOf(space);
-        }
-
-        out.append(padding);
+        out.append(TreeStringUtils.whitespace(node.getPadding()));
         if (node.isListValue()) {
             out.append("- ");
         }
@@ -47,11 +40,12 @@ public class YamlStructTree extends TreeNode<YamlStruct> {
         }
         if (node.getValue() != null) {
             // identify multiline values (and avoid visual ambiguity)
-            String val = node.getValue().replace("\n", "\\n");
+            String val = "'" + node.getValue().replace("\n", "\\n");
             if (val.length() > 80) {
                 val = val.substring(0, 80) + "...";
             }
-            out.append(val);
+            // value identified with quotes to avoid umbiquity whe value looks like property
+            out.append(val + "'");
         }
         out.append("\n");
 

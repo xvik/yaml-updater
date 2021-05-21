@@ -46,6 +46,7 @@ public class CommentsReader {
         while (lines.hasNext()) {
             final String line = lines.next();
             try {
+                context.lineNum = lines.getPosition();
                 processLine(line, context);
             } catch (Exception ex) {
                 throw new IllegalStateException("Error parsing line " + lines.getPosition(), ex);
@@ -156,9 +157,15 @@ public class CommentsReader {
             this.key = key;
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return key + ": " + value;
+        }
     }
 
     private static class Context {
+        int lineNum;
         // storing only root nodes, sub nodes only required in context
         List<YamlNode> rootNodes = new ArrayList<>();
         YamlNode current;
@@ -184,7 +191,7 @@ public class CommentsReader {
                     root = root.getRoot();
                 }
             }
-            final YamlNode node = new YamlNode(root, padding);
+            final YamlNode node = new YamlNode(root, padding, lineNum);
             // null in case of trailing comment node
             if (prop != null) {
                 if (prop.key != null) {

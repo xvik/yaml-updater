@@ -36,8 +36,8 @@ public class YamlNode extends YamlLine<YamlNode> {
     // all possible properties)
     private boolean commented;
 
-    public YamlNode(final YamlNode root, final int padding) {
-        super(root, padding);
+    public YamlNode(final YamlNode root, final int padding, final int lineNum) {
+        super(root, padding, lineNum);
     }
 
     public List<String> getValue() {
@@ -79,6 +79,6 @@ public class YamlNode extends YamlLine<YamlNode> {
     @Override
     public String toString() {
         return isCommentOnly() ? topComment.get(0) :
-                ((isListValue() ? " - ":"") + (isProperty() ? (getKey() + ": ") : "") + value.get(0));
+                ((isListValue() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "") + value.get(0));
     }
 }

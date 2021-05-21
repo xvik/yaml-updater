@@ -2,17 +2,10 @@ package ru.vyarus.yaml.config.updater.parse.comments;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 /**
  * @author Vyacheslav Rusakov
@@ -63,7 +56,7 @@ public class CommentsWriter {
             if (node.getKey() != null) {
                 if (node.isListValue()) {
                     // recover whitespace after dash
-                    res += String.valueOf(space(node.getKeyPadding() - node.getPadding() - 1));
+                    res += TreeStringUtils.whitespace(node.getKeyPadding() - node.getPadding() - 1);
                 }
 
                 res += node.getKey() + ':';
@@ -90,20 +83,11 @@ public class CommentsWriter {
         }
     }
 
-    private static void writeLine(final int padding, final String line, final PrintWriter out) throws IOException {
+    private static void writeLine(final int padding, final String line, final PrintWriter out) {
         if (padding > 0) {
-            out.write(space(padding));
+            out.write(TreeStringUtils.whitespace(padding));
         }
         out.write(line);
         out.write(System.lineSeparator());
-    }
-
-    private static char[] space(final int length) {
-        if (length == 0) {
-            return new char[0];
-        }
-        final char[] space = new char[length];
-        Arrays.fill(space, ' ');
-        return space;
     }
 }

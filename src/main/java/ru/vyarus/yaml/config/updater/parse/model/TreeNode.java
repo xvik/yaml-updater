@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-public abstract class TreeNode<T extends YamlLine<T>> {
+public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware {
     private final T root;
     private final List<T> children = new ArrayList<>();
 
@@ -44,5 +44,10 @@ public abstract class TreeNode<T extends YamlLine<T>> {
 
     public boolean containsList() {
         return !children.isEmpty() && children.get(0).isListValue();
+    }
+
+    @Override
+    public int getLineNum() {
+        return 0;
     }
 }

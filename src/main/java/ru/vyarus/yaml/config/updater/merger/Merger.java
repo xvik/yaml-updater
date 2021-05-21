@@ -40,8 +40,8 @@ public class Merger {
 
     public void execute() {
         try {
-            prepareCurrentConfig();
             prepareNewConfig();
+            prepareCurrentConfig();
             merge();
             validateResult();
             backupAndReplace();
@@ -50,21 +50,6 @@ public class Merger {
         } finally {
             cleanup();
         }
-    }
-
-    private void prepareCurrentConfig() throws Exception {
-        final File currentCfg = config.getCurrent();
-        if (currentCfg.exists()) {
-            // read current file with two parsers (snake first to make sure file is valid)
-            currentStructure = StructureReader.read(currentCfg);
-            currentTree = CommentsReader.read(currentCfg);
-        }
-        // tmp file used to catch possible writing errors and only then override old file
-        work = File.createTempFile("merge-result", ".yml");
-
-//        if (!config.getDeleteProps().isEmpty()) {
-            // todo remove nodes
-//        }
     }
 
     private void prepareNewConfig() throws Exception {
@@ -80,6 +65,13 @@ public class Merger {
             // read structure first to validate correctness!
             updateStructure = StructureReader.read(update);
             updateTree = CommentsReader.read(update);
+            try {
+                // validate comments parser correctness using snakeyaml result
+                ParserValidator.validate(updateTree, updateStructure);
+            } catch (Exception ex) {
+                throw new IllegalStateException("Failed to parse new config: "
+                        + config.getUpdate().getAbsolutePath(), ex);
+            }
         } finally {
             if (update != null) {
                 try {
@@ -89,6 +81,28 @@ public class Merger {
                 }
             }
         }
+    }
+
+    private void prepareCurrentConfig() throws Exception {
+        final File currentCfg = config.getCurrent();
+        if (currentCfg.exists()) {
+            // read current file with two parsers (snake first to make sure file is valid)
+            currentStructure = StructureReader.read(currentCfg);
+            currentTree = CommentsReader.read(currentCfg);
+            try {
+                // validate comments parser correctness using snakeyaml result
+                ParserValidator.validate(currentTree, currentStructure);
+            } catch (Exception ex) {
+                throw new IllegalStateException("Failed to parse current config: "
+                        + config.getCurrent().getAbsolutePath(), ex);
+            }
+        }
+        // tmp file used to catch possible writing errors and only then override old file
+        work = File.createTempFile("merge-result", ".yml");
+
+//        if (!config.getDeleteProps().isEmpty()) {
+        // todo remove nodes
+//        }
     }
 
     private void merge() {
@@ -106,7 +120,7 @@ public class Merger {
     private void validateResult() {
         // make sure updated file is valid
         YamlStructTree updated = StructureReader.read(work);
-        // todo validate with updating file to make sure
+        ResultValidator.validate(updated, currentStructure, updateStructure);
     }
 
     private void backupAndReplace() throws IOException {
@@ -123,7 +137,7 @@ public class Merger {
     }
 
     private void cleanup() {
-        if (work.exists()) {
+        if (work != null && work.exists()) {
             try {
                 Files.delete(work.toPath());
             } catch (IOException e) {

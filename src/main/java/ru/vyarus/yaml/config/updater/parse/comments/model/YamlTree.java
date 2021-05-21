@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.config.updater.parse.comments.model;
 
+import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
 
 import java.util.Arrays;
@@ -31,12 +32,7 @@ public class YamlTree extends TreeNode<YamlNode> {
     }
 
     private void renderNode(final YamlNode node, final StringBuilder out) {
-        String padding = "";
-        if (node.getPadding() > 0) {
-            final char[] space = new char[node.getPadding()];
-            Arrays.fill(space, ' ');
-            padding = String.valueOf(space);
-        }
+        String padding = TreeStringUtils.whitespace(node.getPadding());
 
         if (!node.getTopComment().isEmpty()) {
             out.append(padding).append("# comment");
@@ -60,7 +56,7 @@ public class YamlTree extends TreeNode<YamlNode> {
         if (!node.getValue().isEmpty()) {
             if (node.getValue().size() == 1) {
                 // for batter navigation show simple values
-                out.append(node.getValue().get(0).trim());
+                out.append("'").append(node.getValue().get(0).trim()).append("'");
             } else {
                 out.append("value ").append(node.getValue().size()).append(" lines");
             }

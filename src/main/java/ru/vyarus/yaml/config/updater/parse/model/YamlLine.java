@@ -8,8 +8,10 @@ package ru.vyarus.yaml.config.updater.parse.model;
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
-public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
+public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implements LineNumberAware {
 
+    // line number, counting from 1
+    private int lineNum;
     private int padding;
     private String key;
     private boolean listValue;
@@ -18,9 +20,10 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
     private int keyPadding = -1;
 
     @SuppressWarnings("unchecked")
-    public YamlLine(final T root, final int padding) {
+    public YamlLine(final T root, final int padding, final int lineNum) {
         super(root);
         this.padding = padding;
+        this.lineNum = lineNum;
         if (root != null) {
             root.getChildren().add((T) this);
         }
@@ -30,8 +33,13 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
         return padding;
     }
 
+    // setter remains for merge shifts, which could change padding
     public void setPadding(int padding) {
         this.padding = padding;
+    }
+
+    public int getLineNum() {
+        return lineNum;
     }
 
     public String getKey() {
