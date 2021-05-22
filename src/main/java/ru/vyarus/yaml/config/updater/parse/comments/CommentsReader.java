@@ -87,7 +87,7 @@ public class CommentsReader {
 
                         // property-like structure might be quoted (simple string)
                         Prop lprop = null;
-                        if (chars.current() != '\'' || chars.current() != '"') {
+                        if (chars.current() != '\'' && chars.current() != '"') {
                             lprop = parseProperty(chars, line);
                         }
                         if (lprop == null) {

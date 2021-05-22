@@ -1,0 +1,23 @@
+simple_list:
+  - one
+  # comment
+  - three
+
+object:
+  - one: 1
+
+
+object2:
+  -
+    one: 1
+
+
+object3:
+  - one: 1
+    two:
+      three: 3
+
+
+map_of_maps:
+  one:
+    a1: 1

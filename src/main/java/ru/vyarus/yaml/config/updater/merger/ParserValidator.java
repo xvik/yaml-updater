@@ -28,7 +28,7 @@ public class ParserValidator {
         if (children.size() < childrenStruct.size()) {
             throw new IllegalStateException("Comments parser validation problem on line " + comments.getLineNum()
                     + ": " + children.size() + " child nodes found but should be at least " + childrenStruct.size()
-                    + "\n" + debugTees(comments, struct));
+                    + "(this is parser bug, please report it!)\n" + debugTees(comments, struct));
         }
 
         final Iterator<YamlNode> cmtIt = children.iterator();
@@ -43,7 +43,8 @@ public class ParserValidator {
 
             if (!strIt.hasNext()) {
                 throw new IllegalStateException("Comments parser validation problem on line "
-                        + line.getLineNum() + ": line should not exist \n" + debugTees(comments, struct));
+                        + line.getLineNum() + ": line should not exist (this is parser bug, please report it!)\n"
+                        + debugTees(comments, struct));
             }
             YamlStruct match = strIt.next();
 
@@ -51,7 +52,8 @@ public class ParserValidator {
                 if (!line.getKey().equals(match.getKey())) {
                     throw new IllegalStateException("Comments parser validation problem on line "
                             + line.getLineNum()
-                            + ": line should be different (" + match + ")");
+                            + ": line should be different: " + match + " (this is parser bug, please report it!)\n"
+                            + debugTees(comments, struct));
                 }
 
                 // validate subtree
@@ -92,7 +94,7 @@ public class ParserValidator {
 
         // shift result to fit exception output
         final StringBuilder collect = new StringBuilder();
-        for(String line: res) {
+        for (String line : res) {
             collect.append(TreeStringUtils.shiftRight(line, 6)).append('\n');
         }
         return collect.toString();

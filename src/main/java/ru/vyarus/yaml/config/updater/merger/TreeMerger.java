@@ -95,6 +95,8 @@ public class TreeMerger {
                 shiftNode(child, pad - child.getPadding());
             }
 
+            // todo incorrect for objects with empty dash
+
             // synchronizing only object lists
             if (cur.getChildren().get(0).isProperty()) {
                 // ASSUMPTION: first list item object property is an identity property

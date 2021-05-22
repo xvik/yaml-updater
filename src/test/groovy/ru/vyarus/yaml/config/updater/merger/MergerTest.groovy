@@ -257,4 +257,59 @@ prop3:
         current.delete()
         update.delete()
     }
+
+
+    def "Check lists merge"() {
+
+        setup: "prepare files"
+        File current = Files.createTempFile("config", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        File update = Files.createTempFile("update", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        when: "merging"
+        new Merger(MergerConfig.builder(current, update).backup(false).build()).execute()
+
+        then: "updated"
+        current.text == """# explicitly shifted lines
+
+simple_list:
+  - one
+  # comment
+  - three
+# new comment appear
+object:
+  - one: 1
+    two: 2
+
+
+object2:
+  -
+    one: 1
+    two: 2
+
+
+object3:
+  - one: 1
+    two:
+      three: 3
+      four: 4
+    and:
+      - sub1
+      - sub2
+
+
+map_of_maps:
+  one:
+    a1: 1
+    a2: 2
+  two:
+    b1: 1
+    b2: 2
+"""
+
+        cleanup:
+        current.delete()
+        update.delete()
+    }
 }

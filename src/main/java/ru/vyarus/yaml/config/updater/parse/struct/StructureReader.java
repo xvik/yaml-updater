@@ -58,10 +58,18 @@ public class StructureReader {
                     // simple value
                     context.listValue(listPad, seq.getStartMark().getLine() + 1, ((ScalarNode) seq).getValue());
                 } else {
-                    // sub object: first property of it must be list node and other properties would be sub-nodes
-                    // (split and shift object)
+                    boolean tickSameLine = seq.getStartMark().get_snippet().trim().startsWith("-");
+                    if (!tickSameLine) {
+                        // case when properties start after empty dash (next line)
+                        // and hierarchically it must be reproduced (unification with comments parser)
+                        context.listValue(listPad, seq.getStartMark().getLine() + 1, null);
+                    } else {
+                        // sub object: first property of it must be list node and other properties would be sub-nodes
+                        // (split and shift object)
 
-                    context.listPad = listPad;
+                        context.listPad = listPad;
+                    }
+
                     processNode(seq, context);
                 }
             }

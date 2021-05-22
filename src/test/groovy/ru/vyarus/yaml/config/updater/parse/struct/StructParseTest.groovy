@@ -45,9 +45,11 @@ object:
   - one: '1.1'
     two: '2.2'
 object2: 
-  - one: '1'
+  - 
+    one: '1'
     two: '2'
-  - one: '1.1'
+  - 
+    one: '1.1'
     two: '2.2'
 object3: 
   - one: '1'
