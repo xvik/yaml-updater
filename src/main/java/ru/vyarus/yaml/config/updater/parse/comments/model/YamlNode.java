@@ -69,7 +69,7 @@ public class YamlNode extends YamlLine<YamlNode> {
     }
 
     public String getFirstLineValue() {
-        return value != null && !value.isEmpty() ? value.get(0) : null;
+        return value != null && !value.isEmpty() && !value.get(0).isEmpty() ? value.get(0) : null;
     }
 
     public boolean hasValue() {

@@ -95,7 +95,15 @@ public class TreeMerger {
                 shiftNode(child, pad - child.getPadding());
             }
 
-            // todo incorrect for objects with empty dash
+            // empty dash case
+            if (!cur.hasValue() && cur.hasChildren() && !upd.hasValue()) {
+                // merge subtrees
+                mergeLevel(cur.getChildren().get(0), upd.getChildren().get(0));
+                return true;
+            }
+
+            // todo support empty dash merged with non empty dash
+            // todo support random properties order (match by all available props)
 
             // synchronizing only object lists
             if (cur.getChildren().get(0).isProperty()) {
