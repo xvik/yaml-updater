@@ -47,3 +47,20 @@ map_of_maps:
   two:
     b1: 1
     b2: 2
+
+empty:
+  -
+    one: 1
+    two: 2
+
+reorder:
+  - one: 1
+    two: 2
+
+complexMatch:
+  - one: 1
+    two: 3
+    three: 3
+  - one: 1
+    two: 2
+    three: 4

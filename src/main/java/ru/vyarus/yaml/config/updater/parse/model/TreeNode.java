@@ -12,7 +12,7 @@ import java.util.Map;
  * @since 11.05.2021
  */
 public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware {
-    private final T root;
+    private T root;
     private final List<T> children = new ArrayList<>();
 
     public TreeNode(T root) {
@@ -21,6 +21,10 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
 
     public T getRoot() {
         return root;
+    }
+
+    public void setRoot(T root) {
+        this.root = root;
     }
 
     public List<T> getChildren() {

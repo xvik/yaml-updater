@@ -5,9 +5,7 @@ import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Vyacheslav Rusakov
@@ -15,11 +13,11 @@ import java.util.Map;
  */
 public class TreeMerger {
 
-    public static void merge(YamlTree node, YamlTree from) {
+    public static void merge(final YamlTree node, final YamlTree from) {
         mergeLevel(node, from);
     }
 
-    private static void mergeLevel(TreeNode<YamlNode> node, TreeNode<YamlNode> from) {
+    private static void mergeLevel(final TreeNode<YamlNode> node, final TreeNode<YamlNode> from) {
         if (!from.hasChildren()) {
             // nothing to sync - current children subtree remains
             return;
@@ -33,12 +31,12 @@ public class TreeMerger {
         // updating file structure taken and only existing nodes replaced by current values
         // nodes not found in new config would be also inserted
 
-        Map<String, YamlNode> newProps = from.getProps();
+        final Map<String, YamlNode> newProps = from.getProps();
 
-        List<YamlNode> updated = new ArrayList<>(from.getChildren());
+        final List<YamlNode> updated = new ArrayList<>(from.getChildren());
 
         // current file paddings must be unified with updating file or the resulting file become invalid
-        int padding = from.getChildren().get(0).getPadding();
+        final int padding = from.getChildren().get(0).getPadding();
         // previous node index
         int prevNodeIdx = -1;
 
@@ -84,9 +82,15 @@ public class TreeMerger {
     }
 
     private static boolean processList(TreeNode<YamlNode> node, TreeNode<YamlNode> from) {
+        // node containing list items (node itself is not a list item)
         if (node.containsList()) {
             YamlNode cur = (YamlNode) node;
             YamlNode upd = (YamlNode) from;
+
+            // nothing to merge
+            if (!upd.hasChildren()) {
+                return true;
+            }
 
             // first of all sync paddings (no matter if list is a scalar and would not be updated)
             int pad = upd.getChildren().get(0).getPadding();
@@ -95,46 +99,68 @@ public class TreeMerger {
                 shiftNode(child, pad - child.getPadding());
             }
 
-            // empty dash case
-            if (!cur.hasValue() && cur.hasChildren() && !upd.hasValue()) {
-                // merge subtrees
-                mergeLevel(cur.getChildren().get(0), upd.getChildren().get(0));
-                return true;
-            }
+            // Processing required only for lists with object nodes (assuming new properties might be added to object)
+            // For both scalar and object lists new list items are not added
+            // List structure might be simply shifted object (first property with dash and other item properties
+            // are children) or dash line might be empty, in this case first node is empty and all item props
+            // specified as children (keeping declaration structure is important for comments recovery)
 
-            // todo support empty dash merged with non empty dash
-            // todo support random properties order (match by all available props)
+            // flat lists required for objects comparison
+            final List<YamlListNode> curList = flattenListItems(cur);
+            final List<YamlListNode> updList = flattenListItems(upd);
 
-            // synchronizing only object lists
-            if (cur.getChildren().get(0).isProperty()) {
-                // ASSUMPTION: first list item object property is an identity property
+            // all items should be unified with the new file structure (e.g. empty dash -> normal dash)
+            // remembering target structure
+            boolean targetEmptyDash = updList.get(0).emptyDash;
 
-                for (YamlNode child : cur.getChildren()) {
-                    // no way to track node
-                    if (!child.hasValue()) {
-                        continue;
-                    }
+            for (YamlListNode item : curList) {
+                // nothing to sync in scalar items
+                if (!item.object) {
+                    continue;
+                }
 
-                    String key = child.getKey();
-                    String val = child.getFirstLineValue();
+                final YamlListNode match = findMatch(item, updList);
+                if (match != null) {
+                    // actual items merge (padding is already synced so no additional shift will appear)
+                    mergeLevel(item, match);
 
-                    // important to find only one match in target list
-                    List<YamlNode> cand = new ArrayList<>();
-                    for (YamlNode up : upd.getChildren()) {
-                        if (key.equals(up.getKey()) && val.equals(up.getFirstLineValue())) {
-                            cand.add(up);
-                        }
-                    }
+                    // avoid one node matches for multiple nodes
+                    updList.remove(match);
+                }
 
-                    if (cand.size() != 1) {
-                        // failed to find EXACT matching value
-                        continue;
-                    }
-
-                    // merge object subtree
-                    mergeLevel(child, cand.get(0));
+                if (updList.isEmpty()) {
+                    break;
                 }
             }
+
+            // recover merged items structure
+            for (YamlListNode item : curList) {
+                YamlNode root;
+                if (targetEmptyDash) {
+                    if (item.emptyDash) {
+                        // empty -- empty (no change)
+                        root = item.identity;
+                        item.identity.getChildren().clear();
+                    } else {
+                        // prop -- empty (new node required)
+                        root = new YamlNode(cur, pad, item.identity.getLineNum());
+                        root.setValue(new ArrayList<>(Collections.singletonList("")));
+                    }
+                } else {
+                    // no matter how it was, always use first prop as root
+                    root = item.getChildren().remove(0);
+                }
+                root.setRoot(cur);
+                root.setPadding(pad);
+                root.setListValue(true);
+                root.getChildren().addAll(item.getChildren());
+                root.getChildren().forEach(yamlNode -> yamlNode.setRoot(root));
+                // re-attach item to list node
+                if (!cur.getChildren().contains(root)) {
+                    cur.getChildren().add(root);
+                }
+            }
+
             return true;
         }
         return false;
@@ -200,6 +226,101 @@ public class TreeMerger {
             for (YamlNode child : node.getChildren()) {
                 shiftNode(child, shift);
             }
+        }
+    }
+
+    private static List<YamlListNode> flattenListItems(final YamlNode node) {
+        // required to unify various list representations (especially id current and updating lists use different
+        // schemes)
+        final List<YamlListNode> res = new ArrayList<>();
+        for (YamlNode item : node.getChildren()) {
+            final YamlListNode child = new YamlListNode(item);
+            child.getChildren().addAll(item.getChildren());
+            if (!child.emptyDash) {
+                // first shifted property
+                child.getChildren().add(0, item);
+                // have to damage structure for correct merging
+                item.getChildren().clear();
+
+                // node should not remain list value because order of props could change
+                item.setListValue(false);
+                item.setPadding(item.getKeyPadding());
+            }
+            if (child.hasChildren() && child.getChildren().get(0).isProperty()) {
+                child.object = true;
+            }
+            res.add(child);
+        }
+        // processed items would be re-added
+        node.getChildren().clear();
+        return res;
+    }
+
+    private static YamlListNode findMatch(final YamlListNode node, final List<YamlListNode> list) {
+        final List<YamlListNode> cand = new ArrayList<>(list);
+        // reset counters for new item matching
+        cand.forEach(yamlListNode -> yamlListNode.propsMatched = 0);
+
+        // using as much properties as required to find unique match
+        for (YamlNode prop : node.getChildren()) {
+            if (!prop.hasValue()) {
+                continue;
+            }
+            final Iterator<YamlListNode> it = cand.iterator();
+            // searching matched item by one prop (from previously selected nodes)
+            while (it.hasNext()) {
+                YamlListNode cnd = it.next();
+                boolean match = false;
+                boolean propFound = false;
+                for (YamlNode uprop : cnd.getChildren()) {
+                    if (prop.getKey().equals(uprop.getKey())) {
+                        propFound = true;
+                        if (prop.getValueIdentity().equals(uprop.getValueIdentity())) {
+                            match = true;
+                            cnd.propsMatched++;
+                        }
+                        break;
+                    }
+                }
+                // avoid removing items where tested property was missing (maybe other props would match)
+                if (propFound && !match) {
+                    it.remove();
+                }
+            }
+            if (cand.isEmpty()) {
+                // nothing matched or exactly one match
+                break;
+            }
+        }
+
+        // filter candidates without any match (to avoid false matching for totally different lists)
+        cand.removeIf(yamlListNode -> yamlListNode.propsMatched == 0);
+
+        // search for EXACT match
+        return cand.size() == 1 ? cand.get(0) : null;
+    }
+
+    private static class YamlListNode extends YamlNode {
+        public final YamlNode identity;
+        // empty dash line or first property just after dash
+        public boolean emptyDash;
+        // object item or scalar
+        public boolean object;
+
+        // used during items matching to count how many properties match
+        public int propsMatched;
+
+        public YamlListNode(final YamlNode item) {
+            // line number is unique identity for list item
+            super(null, item.getPadding(), item.getLineNum());
+            this.identity = item;
+            this.emptyDash = !item.hasValue() && item.hasChildren();
+        }
+
+        @Override
+        public String toString() {
+            return "(" + (object ? "object " + getChildren().size() : "scalar") + " | " + (emptyDash ? "empty dash" : "inline") + ") "
+                    + identity.getLineNum() + ": " + identity;
         }
     }
 }

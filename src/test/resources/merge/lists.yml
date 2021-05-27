@@ -21,3 +21,19 @@ object3:
 map_of_maps:
   one:
     a1: 1
+
+empty:
+  - one: 1
+    two: 2
+    three: 3
+
+reorder:
+  - two: 2
+    one: 1
+    three: 3
+
+complexMatch:
+  - one: 1
+    two: 2
+
+# todo direct children of first list item prop

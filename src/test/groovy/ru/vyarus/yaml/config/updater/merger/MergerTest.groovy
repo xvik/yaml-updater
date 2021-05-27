@@ -306,6 +306,112 @@ map_of_maps:
   two:
     b1: 1
     b2: 2
+
+empty:
+  -
+    one: 1
+    two: 2
+    three: 3
+
+reorder:
+  - one: 1
+    three: 3
+    two: 2
+
+complexMatch:
+  - one: 1
+    two: 2
+    three: 4
+
+# todo direct children of first list item prop
+"""
+
+        cleanup:
+        current.delete()
+        update.delete()
+    }
+
+    def "Check lists merge reversed"() {
+
+        setup: "prepare files"
+        File current = Files.createTempFile("config", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        File update = Files.createTempFile("update", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        when: "merging"
+        new Merger(MergerConfig.builder(current, update).backup(false).build()).execute()
+
+        then: "updated"
+        current.text == """# explicitly shifted lines
+
+simple_list:
+  - one
+
+  # comment
+  - two
+  # comment
+  - three
+  - 'prop: like'
+  - multiline
+    property
+
+
+object:
+  - one: 1
+    two: 2
+    # shifted comment
+  - one: 1.1
+    two: 2.2
+
+
+object2:
+  -
+    one: 1
+    two: 2
+    # shifted comment
+  -
+    one: 1.1
+    two: 2.2
+
+
+object3:
+  - one: 1
+    two:
+      three: 3
+      four: 4
+    and:
+      - sub1
+      - sub2
+
+
+map_of_maps:
+  one:
+    a1: 1
+    a2: 2
+  two:
+    b1: 1
+    b2: 2
+
+empty:
+  - one: 1
+    two: 2
+    three: 3
+
+reorder:
+  - two: 2
+    one: 1
+    three: 3
+
+complexMatch:
+  - one: 1
+    two: 3
+    three: 3
+  - one: 1
+    two: 2
+    three: 4
+
+# todo direct children of first list item prop
 """
 
         cleanup:

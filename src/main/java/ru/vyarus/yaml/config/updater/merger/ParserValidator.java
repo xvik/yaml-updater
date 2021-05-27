@@ -28,7 +28,7 @@ public class ParserValidator {
         if (children.size() < childrenStruct.size()) {
             throw new IllegalStateException("Comments parser validation problem on line " + comments.getLineNum()
                     + ": " + children.size() + " child nodes found but should be at least " + childrenStruct.size()
-                    + "(this is parser bug, please report it!)\n" + debugTees(comments, struct));
+                    + "(this is parser a bug, please report it!)\n" + debugTees(comments, struct));
         }
 
         final Iterator<YamlNode> cmtIt = children.iterator();
@@ -36,14 +36,14 @@ public class ParserValidator {
         while (cmtIt.hasNext()) {
             YamlNode line = cmtIt.next();
 
-            if (line.isCommented()) {
+            if (line.isCommented() || line.isCommentOnly()) {
                 // structure parser can't see commented lines and so can't validate correctness
                 continue;
             }
 
             if (!strIt.hasNext()) {
                 throw new IllegalStateException("Comments parser validation problem on line "
-                        + line.getLineNum() + ": line should not exist (this is parser bug, please report it!)\n"
+                        + line.getLineNum() + ": line should not exist (this is a parser bug, please report it!)\n"
                         + debugTees(comments, struct));
             }
             YamlStruct match = strIt.next();
@@ -52,13 +52,16 @@ public class ParserValidator {
                 if (!line.getKey().equals(match.getKey())) {
                     throw new IllegalStateException("Comments parser validation problem on line "
                             + line.getLineNum()
-                            + ": line should be different: " + match + " (this is parser bug, please report it!)\n"
+                            + ": line should be different: " + match + " (this is a parser bug, please report it!)\n"
                             + debugTees(comments, struct));
                 }
 
-                // validate subtree
-                validateSubtrees(line, match);
+                // store correctly parsed value (without comments) for precise list items matching
+                line.setParsedValue(match.getValue());
             }
+
+            // validate subtree (even for non properties because structures must be equal)
+            validateSubtrees(line, match);
         }
     }
 
@@ -101,7 +104,7 @@ public class ParserValidator {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends YamlLine<T>> ReportLines debugTree(TreeNode<T> node) {
+    private static <T extends YamlLine<T>> ReportLines debugTree(final TreeNode<T> node) {
         final ReportLines lines = new ReportLines();
         if (node instanceof YamlLine) {
             debugTreeLeaf(lines, (T) node, 0);

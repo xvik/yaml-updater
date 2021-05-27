@@ -36,6 +36,9 @@ public class YamlNode extends YamlLine<YamlNode> {
     // all possible properties)
     private boolean commented;
 
+    // this value is set from structure parser
+    private String parsedValue;
+
     public YamlNode(final YamlNode root, final int padding, final int lineNum) {
         super(root, padding, lineNum);
     }
@@ -60,12 +63,20 @@ public class YamlNode extends YamlLine<YamlNode> {
         this.commented = commented;
     }
 
+    public String getParsedValue() {
+        return parsedValue;
+    }
+
+    public void setParsedValue(String parsedValue) {
+        this.parsedValue = parsedValue;
+    }
+
     public boolean hasComment() {
         return !getTopComment().isEmpty();
     }
 
     public boolean isCommentOnly() {
-        return getKey() == null && (getValue() == null || getValue().isEmpty());
+        return getKey() == null && (getValue() == null || getValue().isEmpty()) && !topComment.isEmpty();
     }
 
     public String getFirstLineValue() {
@@ -76,9 +87,16 @@ public class YamlNode extends YamlLine<YamlNode> {
         return getFirstLineValue() != null;
     }
 
+    public String getValueIdentity() {
+        final String firstLineValue = getFirstLineValue();
+        // trim value to increase chance for matching with real value (could be also comment here, ruining compare)
+        return getParsedValue() == null ? (firstLineValue == null ? null : firstLineValue.trim()) : getParsedValue();
+    }
+
     @Override
     public String toString() {
         return isCommentOnly() ? topComment.get(0) :
-                ((isListValue() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "") + value.get(0));
+                ((isListValue() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "")
+                        + (hasValue() ? value.get(0) : ""));
     }
 }

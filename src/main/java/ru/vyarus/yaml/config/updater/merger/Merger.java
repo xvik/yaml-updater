@@ -11,12 +11,14 @@ import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Vyacheslav Rusakov
@@ -118,9 +120,29 @@ public class Merger {
     }
 
     private void validateResult() {
-        // make sure updated file is valid
-        YamlStructTree updated = StructureReader.read(work);
-        ResultValidator.validate(updated, currentStructure, updateStructure);
+        try {
+            // make sure updated file is valid
+            YamlStructTree updated = StructureReader.read(work);
+            ResultValidator.validate(updated, currentStructure, updateStructure);
+        } catch (Exception ex) {
+            String yamlContent;
+            try {
+                final StringBuilder res = new StringBuilder();
+                int i = 1;
+                final List<String> lines = Files.readAllLines(work.toPath(), StandardCharsets.UTF_8);
+                for (String line : lines) {
+                    res.append(String.format("%4s| ", i++)).append(line);
+                    if (i <= lines.size()) {
+                        res.append("\n");
+                    }
+                }
+                yamlContent = res.toString();
+            } catch (Exception e) {
+                logger.warn("Failed to read merged file: can't show it in log", e);
+                yamlContent = "\t\t<error reading merged file>";
+            }
+            throw new IllegalStateException("Failed to validate merge result: \n\n" + yamlContent + "\n", ex);
+        }
     }
 
     private void backupAndReplace() throws IOException {
