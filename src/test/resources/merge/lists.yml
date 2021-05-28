@@ -36,4 +36,6 @@ complexMatch:
   - one: 1
     two: 2
 
-# todo direct children of first list item prop
+sublist:
+  - one:
+      sub1: 1

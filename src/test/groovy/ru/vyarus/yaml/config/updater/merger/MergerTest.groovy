@@ -323,7 +323,10 @@ complexMatch:
     two: 2
     three: 4
 
-# todo direct children of first list item prop
+sublist:
+  - one:
+      sub1: 1
+      sub2: 2
 """
 
         cleanup:
@@ -411,7 +414,10 @@ complexMatch:
     two: 2
     three: 4
 
-# todo direct children of first list item prop
+sublist:
+  - one:
+      sub1: 1
+      sub2: 2
 """
 
         cleanup:

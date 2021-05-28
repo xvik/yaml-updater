@@ -64,3 +64,8 @@ complexMatch:
   - one: 1
     two: 2
     three: 4
+
+sublist:
+  - one:
+      sub1: 1
+      sub2: 2
