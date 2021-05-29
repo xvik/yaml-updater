@@ -70,4 +70,25 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     public boolean isProperty() {
         return key != null;
     }
+
+    /**
+     * Note, for list items possible empty dash line is ignored (not a level in path).
+     *
+     * @return property path in yaml structure (like prop1/prop2[3]/sub)
+     */
+    public String getYamlPath() {
+        final String rootPath = getRoot() != null ? getRoot().getYamlPath() : "";
+        String path = rootPath;
+        if (isListValue()) {
+            path += "[" + getRoot().getChildren().indexOf(this) + "]";
+        } else if (path.length() > 0 && getRoot().isListValue() && getRoot().isProperty()) {
+            // in tree first property of list item object is a parent for other props
+            // need to cut it off
+            path = path.substring(0, path.lastIndexOf("/"));
+        }
+        if (isProperty()) {
+            path += (path.isEmpty() ? "" : "/") + getKey();
+        }
+        return path;
+    }
 }
