@@ -152,7 +152,7 @@ public class TreeMerger {
                 }
                 root.setRoot(cur);
                 root.setPadding(pad);
-                root.setListValue(true);
+                root.setListItem(true);
                 root.getChildren().addAll(item.getChildren());
                 root.getChildren().forEach(yamlNode -> yamlNode.setRoot(root));
                 // re-attach item to list node
@@ -243,7 +243,7 @@ public class TreeMerger {
                 item.getChildren().clear();
 
                 // node should not remain list value because order of props could change
-                item.setListValue(false);
+                item.setListItem(false);
                 item.setPadding(item.getKeyPadding());
             }
             if (child.hasChildren() && child.getChildren().get(0).isProperty()) {

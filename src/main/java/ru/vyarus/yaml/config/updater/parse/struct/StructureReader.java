@@ -99,7 +99,7 @@ public class StructureReader {
             // for lists, using dash padding on the first record instead of property position
             YamlStruct node = new YamlStruct(root, listPad > 0 ? listPad : padding, lineNum);
             if (listPad > 0) {
-                node.setListValue(true);
+                node.setListItem(true);
                 // reset list marker (in case of list object all subsequent properties must be children of the first one)
                 listPad = 0;
             }

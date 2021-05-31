@@ -1,16 +1,15 @@
 package ru.vyarus.yaml.config.updater.parse.comments.model;
 
 import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
-import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+import ru.vyarus.yaml.config.updater.parse.model.TreeRoot;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class YamlTree extends TreeNode<YamlNode> {
+public class YamlTree extends TreeRoot<YamlNode> {
 
     public YamlTree(final List<YamlNode> nodes) {
         super(null);
@@ -47,7 +46,7 @@ public class YamlTree extends TreeNode<YamlNode> {
         }
 
         out.append(padding);
-        if (node.isListValue()) {
+        if (node.isListItem()) {
             out.append("- ");
         }
         if (node.getKey() != null) {

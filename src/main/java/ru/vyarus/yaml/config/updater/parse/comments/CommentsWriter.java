@@ -50,11 +50,11 @@ public class CommentsWriter {
             }
 
             String res = "";
-            if (node.isListValue()) {
+            if (node.isListItem()) {
                 res += "-";
             }
             if (node.getKey() != null) {
-                if (node.isListValue()) {
+                if (node.isListItem()) {
                     // recover whitespace after dash
                     res += TreeStringUtils.whitespace(node.getKeyPadding() - node.getPadding() - 1);
                 }

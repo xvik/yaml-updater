@@ -96,7 +96,7 @@ public class YamlNode extends YamlLine<YamlNode> {
     @Override
     public String toString() {
         return isCommentOnly() ? topComment.get(0) :
-                ((isListValue() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "")
+                ((isListItem() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "")
                         + (hasValue() ? value.get(0) : ""));
     }
 }

@@ -75,19 +75,19 @@ class TreePathsTest extends Specification {
     }
 
     private String toPaths(YamlStructTree tree) {
-        List<String> paths = []
-        tree.getChildren().each { toPaths(it, paths) }
-        return paths.join('\n')
+        return toPaths(tree.getAllProperties()).join('\n')
     }
 
-    private void toPaths(YamlStruct node, List<String> res) {
-        // special case: object list item is shifted: first prop is a parent for others
-        if (node.getChildren().isEmpty() || (node.isListValue() && node.isProperty())) {
-            res.add(String.format("%4s| ", node.getLineNum()) + node.getYamlPath());
+    private List<String> toPaths(List<YamlStruct> props) {
+        List<String> res = []
+        for(YamlStruct prop: props) {
+            if (prop.hasListValue()) {
+                // processing list items
+                prop.getChildren().each { res.addAll(toPaths(it.getAllPropertiesIncludingScalarLists())) }
+            } else {
+                res.add(String.format("%4s| ", prop.getLineNum()) + prop.getYamlPath());
+            }
         }
-
-        if (!node.getChildren().isEmpty()) {
-            node.getChildren().each { toPaths(it, res) }
-        }
+        return res;
     }
 }

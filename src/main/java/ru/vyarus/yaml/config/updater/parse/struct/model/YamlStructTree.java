@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.struct.model;
 
 import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
-import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+import ru.vyarus.yaml.config.updater.parse.model.TreeRoot;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
-public class YamlStructTree extends TreeNode<YamlStruct> {
+public class YamlStructTree extends TreeRoot<YamlStruct> {
 
     public YamlStructTree(final List<YamlStruct> nodes) {
         super(null);
@@ -32,7 +32,7 @@ public class YamlStructTree extends TreeNode<YamlStruct> {
 
     private void renderNode(final YamlStruct node, final StringBuilder out) {
         out.append(TreeStringUtils.whitespace(node.getPadding()));
-        if (node.isListValue()) {
+        if (node.isListItem()) {
             out.append("- ");
         }
         if (node.getKey() != null) {

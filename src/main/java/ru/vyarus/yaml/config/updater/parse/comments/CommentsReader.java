@@ -179,7 +179,7 @@ public class CommentsReader {
 
         public void listValue(final int padding, final Prop prop) {
             property(padding, prop);
-            current.setListValue(true);
+            current.setListItem(true);
         }
 
         public void property(final int padding, final Prop prop) {
