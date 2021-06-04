@@ -33,12 +33,12 @@ public class CommentsWriter {
 
     public static void write(final YamlTree tree, final OutputStream out) {
         final PrintWriter res = new PrintWriter(out);
-        tree.getChildren().forEach(node -> writeNode(node, res));
+        tree.getChildren().forEach(node -> writeNode(node, res, false));
         res.flush();
         res.close();
     }
 
-    private static void writeNode(final YamlNode node, final PrintWriter out) {
+    private static void writeNode(final YamlNode node, final PrintWriter out, final boolean listItemFirstLine) {
         try {
             // starting with comment
             for (String comment : node.getTopComment()) {
@@ -52,19 +52,25 @@ public class CommentsWriter {
             String res = "";
             if (node.isListItem()) {
                 res += "-";
+                if (node.isListItemWithProperty()) {
+                    // recover whitespace after dash
+                    res += TreeStringUtils.whitespace(node.getChildren().get(0).getPadding() - node.getPadding() - 1);
+                }
             }
             if (node.getKey() != null) {
-                if (node.isListItem()) {
-                    // recover whitespace after dash
-                    res += TreeStringUtils.whitespace(node.getKeyPadding() - node.getPadding() - 1);
-                }
-
                 res += node.getKey() + ':';
             }
             if (!node.getValue().isEmpty()) {
                 res += node.getValue().get(0);
             }
-            writeLine(node.getPadding(), res, out);
+            if (node.isListItemWithProperty()) {
+                // without new line (property must be written on the same line)
+                write(node.getPadding(), res, out);
+            } else {
+                // case when property is a first list item property written just after dash
+                // in this case padding already written on line (during dash node rendering)
+                writeLine(listItemFirstLine ? 0: node.getPadding(), res, out);
+            }
 
             // multiline value
             if (node.getValue().size() > 1) {
@@ -75,19 +81,26 @@ public class CommentsWriter {
             }
 
             // sub nodes
+            // for split list node need to merge it properly into single line
+            boolean avoidPadding = node.isListItemWithProperty();
             for (YamlNode child : node.getChildren()) {
-                writeNode(child, out);
+                writeNode(child, out, avoidPadding);
+                avoidPadding = false;
             }
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to write node: " + node, ex);
         }
     }
 
-    private static void writeLine(final int padding, final String line, final PrintWriter out) {
+    private static void write(final int padding, final String line, final PrintWriter out) {
         if (padding > 0) {
             out.write(TreeStringUtils.whitespace(padding));
         }
         out.write(line);
+    }
+
+    private static void writeLine(final int padding, final String line, final PrintWriter out) {
+        write(padding, line, out);
         out.write(System.lineSeparator());
     }
 }

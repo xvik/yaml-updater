@@ -30,6 +30,11 @@ public class YamlStruct extends YamlLine<YamlStruct> {
 
     @Override
     public String toString() {
-        return (isListItem() ? "- " : "") + (isProperty() ? (getKey() + ": ") : "") + (value == null ? "" : value);
+        final String value = this.value == null ? "" : this.value;
+        if (isListItem()) {
+            return "- " + value;
+        } else {
+            return getKey() + ": " + value;
+        }
     }
 }

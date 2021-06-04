@@ -24,14 +24,16 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
         if (getChildren().isEmpty()) {
             out.append("<empty>");
         } else {
-            getChildren().forEach(node -> renderNode(node, out));
+            getChildren().forEach(node -> renderNode(node, out, false));
         }
 
         return out.toString();
     }
 
-    private void renderNode(final YamlStruct node, final StringBuilder out) {
-        out.append(TreeStringUtils.whitespace(node.getPadding()));
+    private void renderNode(final YamlStruct node, final StringBuilder out, final boolean listItemFirstLine) {
+        if (!listItemFirstLine) {
+            out.append(TreeStringUtils.whitespace(node.getPadding()));
+        }
         if (node.isListItem()) {
             out.append("- ");
         }
@@ -47,10 +49,16 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
             // value identified with quotes to avoid umbiquity whe value looks like property
             out.append(val + "'");
         }
-        out.append("\n");
+        // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
+        if (!node.isListItem() || !node.isListItemWithProperty()) {
+            out.append("\n");
+        }
 
+        boolean avoidPadding = node.isListItemWithProperty();
         for (YamlStruct child : node.getChildren()) {
-            renderNode(child, out);
+            // render dash and first item property as single line (when avoidPadding = true)
+            renderNode(child, out, avoidPadding);
+            avoidPadding = false;
         }
     }
 }

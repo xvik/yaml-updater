@@ -20,7 +20,7 @@ class WriterTest extends Specification {
         String result = CommentsWriter.write(tree)
 
         then: "not changed"
-        original == result
+        result == original
 
         where:
         file            | _

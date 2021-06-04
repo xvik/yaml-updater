@@ -101,13 +101,10 @@ public class TreeMerger {
 
             // Processing required only for lists with object nodes (assuming new properties might be added to object)
             // For both scalar and object lists new list items are not added
-            // List structure might be simply shifted object (first property with dash and other item properties
-            // are children) or dash line might be empty, in this case first node is empty and all item props
-            // specified as children (keeping declaration structure is important for comments recovery)
 
-            // flat lists required for objects comparison
-            final List<YamlListNode> curList = flattenListItems(cur);
-            final List<YamlListNode> updList = flattenListItems(upd);
+            // use wrapper objects to simplify matching
+            final List<YamlListNode> curList = prepareListItems(cur);
+            final List<YamlListNode> updList = prepareListItems(upd);
 
             // all items should be unified with the new file structure (e.g. empty dash -> normal dash)
             // remembering target structure
@@ -135,29 +132,24 @@ public class TreeMerger {
 
             // recover merged items structure
             for (YamlListNode item : curList) {
-                YamlNode root;
-                if (targetEmptyDash) {
-                    if (item.emptyDash) {
-                        // empty -- empty (no change)
-                        root = item.identity;
-                        item.identity.getChildren().clear();
-                    } else {
-                        // prop -- empty (new node required)
-                        root = new YamlNode(cur, pad, item.identity.getLineNum());
-                        root.setValue(new ArrayList<>(Collections.singletonList("")));
-                    }
-                } else {
-                    // no matter how it was, always use first prop as root
-                    root = item.getChildren().remove(0);
-                }
+                YamlNode root = item.identity;
                 root.setRoot(cur);
-                root.setPadding(pad);
-                root.setListItem(true);
                 root.getChildren().addAll(item.getChildren());
-                root.getChildren().forEach(yamlNode -> yamlNode.setRoot(root));
                 // re-attach item to list node
                 if (!cur.getChildren().contains(root)) {
                     cur.getChildren().add(root);
+                }
+
+                if (item.object) {
+                    // list style could change (empty dash -> single line or reverse)
+                    root.setListItemWithProperty(!targetEmptyDash);
+                    root.getChildren().forEach(yamlNode -> yamlNode.setRoot(root));
+                    final YamlNode firstItemLine = root.getChildren().get(0);
+                    if (root.isListItemWithProperty() && firstItemLine.hasComment()) {
+                        // if first item contains comment need to move it before dash
+                        root.getTopComment().addAll(firstItemLine.getTopComment());
+                        firstItemLine.getTopComment().clear();
+                    }
                 }
             }
 
@@ -219,7 +211,6 @@ public class TreeMerger {
                 node.getTopComment().clear();
                 node.getTopComment().addAll(cmt);
             }
-            node.setKeyPadding(node.getKeyPadding() + shift);
             node.setPadding(node.getPadding() + shift);
 
             // important to shift entire subtree (otherwise list position could be flowed)
@@ -229,27 +220,13 @@ public class TreeMerger {
         }
     }
 
-    private static List<YamlListNode> flattenListItems(final YamlNode node) {
-        // required to unify various list representations (especially id current and updating lists use different
-        // schemes)
+    private static List<YamlListNode> prepareListItems(final YamlNode node) {
         final List<YamlListNode> res = new ArrayList<>();
         for (YamlNode item : node.getChildren()) {
             final YamlListNode child = new YamlListNode(item);
             child.getChildren().addAll(item.getChildren());
-            if (!child.emptyDash) {
-                // first shifted property
-                child.getChildren().add(0, item);
-                // have to damage structure for correct merging
-                item.getChildren().clear();
-
-                // node should not remain list value because order of props could change
-                item.setListItem(false);
-                item.setPadding(item.getKeyPadding());
-            }
-            if (child.hasChildren() && child.getChildren().get(0).isProperty()) {
-                child.object = true;
-            }
             res.add(child);
+            item.getChildren().clear();
         }
         // processed items would be re-added
         node.getChildren().clear();
@@ -263,7 +240,8 @@ public class TreeMerger {
 
         // using as much properties as required to find unique match
         for (YamlNode prop : node.getChildren()) {
-            if (!prop.hasValue()) {
+            // not subtree and no value - can't be used for matching
+            if (!prop.hasChildren() && !prop.hasValue()) {
                 continue;
             }
             final Iterator<YamlListNode> it = cand.iterator();
@@ -275,7 +253,7 @@ public class TreeMerger {
                 for (YamlNode uprop : cnd.getChildren()) {
                     if (prop.getKey().equals(uprop.getKey())) {
                         propFound = true;
-                        if (prop.getValueIdentity().equals(uprop.getValueIdentity())) {
+                        if (matches(prop, uprop)) {
                             match = true;
                             cnd.propsMatched++;
                         }
@@ -300,6 +278,42 @@ public class TreeMerger {
         return cand.size() == 1 ? cand.get(0) : null;
     }
 
+    private static boolean matches(final YamlNode a, final YamlNode b) {
+        // subtree matching
+        if (a.hasChildren()) {
+            if (!b.hasChildren()) {
+                return false;
+            }
+            int matches = 0;
+            // all props found in left subtree must match props in the right subtree
+            // (left prop may not be found on the right, but at least one property must match)
+            for(YamlNode aprop: a.getChildren()) {
+                boolean propFound = false;
+                boolean match = false;
+                for(YamlNode bprop: b.getChildren()) {
+                    if (aprop.getKey().equals(bprop.getKey())) {
+                        propFound = true;
+                        // could be deeper subtree check
+                        match = matches(aprop, bprop);
+                        if (!match) {
+                            break;
+                        } else {
+                            matches++;
+                        }
+                    }
+                }
+                // found at least one not matched property (different value)
+                if (propFound && !match) {
+                    return false;
+                }
+            }
+            // at least one property
+            return matches > 0;
+        }
+        // direct value matching
+        return a.getValueIdentity().equals(b.getValueIdentity());
+    }
+
     private static class YamlListNode extends YamlNode {
         public final YamlNode identity;
         // empty dash line or first property just after dash
@@ -314,7 +328,8 @@ public class TreeMerger {
             // line number is unique identity for list item
             super(null, item.getPadding(), item.getLineNum());
             this.identity = item;
-            this.emptyDash = !item.hasValue() && item.hasChildren();
+            this.object = item.hasChildren() && item.getChildren().get(0).isProperty();
+            this.emptyDash = this.object && !item.isListItemWithProperty();
         }
 
         @Override

@@ -64,10 +64,8 @@ public class StructureReader {
                         // and hierarchically it must be reproduced (unification with comments parser)
                         context.listValue(listPad, seq.getStartMark().getLine() + 1, null);
                     } else {
-                        // sub object: first property of it must be list node and other properties would be sub-nodes
-                        // (split and shift object)
-
-                        context.listPad = listPad;
+                        // sub object: use virtual node (indicating dash) to group sub-object properties
+                        context.virtualListItemNode(listPad, seq.getStartMark().getLine());;
                     }
 
                     processNode(seq, context);
@@ -81,35 +79,22 @@ public class StructureReader {
     private static class Context {
         List<YamlStruct> rootNodes = new ArrayList<>();
         YamlStruct current;
-        // indicates list value before object item (to store first property as list value with dash padding)
-        int listPad;
 
         public void property(final int padding, final int lineNum, final String name, final String value) {
             YamlStruct root = null;
 
-            // for objects under list value, padding would be property start, not "tick" position
-            int pad = listPad > 0 ? listPad: padding;
-            // not true only for getting back from subtree to root level
-            if (pad > 0 && current != null) {
+            if (padding > 0 && current != null) {
                 root = current;
-                while (root != null && root.getPadding() >= pad) {
+                while (root != null && root.getPadding() >= padding) {
                     root = root.getRoot();
                 }
             }
-            // for lists, using dash padding on the first record instead of property position
-            YamlStruct node = new YamlStruct(root, listPad > 0 ? listPad : padding, lineNum);
-            if (listPad > 0) {
-                node.setListItem(true);
-                // reset list marker (in case of list object all subsequent properties must be children of the first one)
-                listPad = 0;
-            }
+            YamlStruct node = new YamlStruct(root, padding, lineNum);
             if (name != null) {
                 node.setKey(name);
             }
             if (value != null) {
                 node.setValue(value);
-                // different only for lists (first list item property)
-                node.setKeyPadding(padding);
             }
             current = node;
             if (root == null) {
@@ -118,8 +103,13 @@ public class StructureReader {
         }
 
         public void listValue(final int padding, final int lineNum, final String value) {
-            listPad = padding;
             property(padding, lineNum, null, value);
+            current.setListItem(true);
+        }
+
+        public void virtualListItemNode(final int padding, final int lineNum) {
+            listValue(padding, lineNum, null);
+            current.setListItemWithProperty(true);
         }
     }
 }

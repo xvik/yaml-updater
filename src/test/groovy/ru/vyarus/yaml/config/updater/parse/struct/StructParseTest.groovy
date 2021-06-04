@@ -32,7 +32,7 @@ prop3: '3'
         YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
 
         then: "ok"
-        tree.children.size() == 5
+        tree.children.size() == 6
         tree.toString() == """simple_list: 
   - 'one'
   - 'two'
@@ -66,6 +66,10 @@ map_of_maps:
   two: 
     b1: '1'
     b2: '2'
+sublist: 
+  - one: 
+      sub1: '1'
+    two: '2'
 """
     }
 

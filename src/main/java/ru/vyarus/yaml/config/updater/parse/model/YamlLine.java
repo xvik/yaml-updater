@@ -5,8 +5,9 @@ import java.util.List;
 
 /**
  * Base class for comments and structure parsers. In both cases model represent one or more yaml file lines.
- * For lists, object in list item is split to first property - list value and other props - its children
- * (this way lines hierarchy is preserved, ignoring objects consistency as not important).
+ * The only exception is lists: if list item contains object then it would be always a child of root list item
+ * (and so sometimes two structure lines should be rendered as a single line: special marker in list item used
+ * to indicate this).
  *
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
@@ -19,10 +20,11 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     private int lineNum;
     private int padding;
     private String key;
+
     private boolean listItem;
-    // for list value, padding is dash padding, but this value would be a real padding
-    // in all other cases it is the same as simple padding
-    private int keyPadding = -1;
+    // used for list items to identify if sub-object starts on the same line as dash
+    // (in this case this virtual dash object used as sub-hierarchy grouping node)
+    private boolean listItemWithProperty;
 
     @SuppressWarnings("unchecked")
     public YamlLine(final T root, final int padding, final int lineNum) {
@@ -63,13 +65,12 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
         this.listItem = listItem;
     }
 
-    public int getKeyPadding() {
-        // if not set, use main padding
-        return keyPadding == -1 ? padding : keyPadding;
+    public boolean isListItemWithProperty() {
+        return listItemWithProperty;
     }
 
-    public void setKeyPadding(int keyPadding) {
-        this.keyPadding = keyPadding;
+    public void setListItemWithProperty(boolean listItemWithProperty) {
+        this.listItemWithProperty = listItemWithProperty;
     }
 
     public boolean isProperty() {
@@ -90,10 +91,6 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
         String path = rootPath;
         if (isListItem()) {
             path += "[" + getRoot().getChildren().indexOf(this) + "]";
-        } else if (path.length() > 0 && getRoot().isListItem() && getRoot().isProperty()) {
-            // in tree first property of list item object is a parent for other props
-            // need to cut it off
-            path = path.substring(0, path.lastIndexOf(PATH_SEPARATOR));
         }
         if (isProperty()) {
             path += (path.isEmpty() ? "" : PATH_SEPARATOR) + getKey();
@@ -138,7 +135,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     }
 
     /**
-     * Same as {@link #getAllProperties()} but also includes scalar list items fir list nodes.
+     * Same as {@link #getAllProperties()} but also includes scalar list items for list nodes.
      * @return all scalar properties and properties with list values (but not props inside list values!)
      */
     @SuppressWarnings("unchecked")
@@ -149,14 +146,11 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     }
 
     private void findProperties(final T node, final List<T> res, final boolean includeScalarListItems) {
-        if (node.isListItem() && !node.hasChildren() && !node.isProperty() && includeScalarListItems) {
+        if (node.isListItem() && !node.hasChildren() && includeScalarListItems) {
             // special case: scalar list items required too
             res.add(node);
-        } else if (node.isListItem() && node.isProperty()) {
-            // special case: for list item object first item line would contain others (if no blank dash used)
-            res.add(node);
         } else if (node.hasListValue() || (!node.hasChildren() && node.isProperty())) {
-            // stop on list value or scalar property
+            // stop on list value or leaf property (no sub objects)
             res.add(node);
             return;
         }

@@ -44,3 +44,8 @@ map_of_maps:
   two:
     b1: 1
     b2: 2
+
+sublist:
+  - one:
+      sub1: 1
+    two: 2

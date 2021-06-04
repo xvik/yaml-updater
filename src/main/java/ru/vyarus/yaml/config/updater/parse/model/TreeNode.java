@@ -35,7 +35,7 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
         final Map<String, T> res = new LinkedHashMap<>();
         // only real properties counted!
         for (T child : children) {
-            if (child.isProperty() && !child.isListItem()) {
+            if (child.isProperty()) {
                 res.put(child.getKey(), child);
             }
         }

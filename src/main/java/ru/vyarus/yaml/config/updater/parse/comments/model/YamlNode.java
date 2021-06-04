@@ -28,7 +28,7 @@ public class YamlNode extends YamlLine<YamlNode> {
 
     // important: value might contain comment (right comment)!
     // so even for object declaration value may exist (containing just comment)
-    private List<String> value;
+    private List<String> value = new ArrayList<>();
     // node comment is everything above before previous node
     // using list to avoid dealing with line separators
     private final List<String> topComment = new ArrayList<>();
@@ -76,11 +76,11 @@ public class YamlNode extends YamlLine<YamlNode> {
     }
 
     public boolean isCommentOnly() {
-        return getKey() == null && (getValue() == null || getValue().isEmpty()) && !topComment.isEmpty();
+        return hasComment() && !isListItem() && getKey() == null && (getValue() == null || getValue().isEmpty());
     }
 
     public String getFirstLineValue() {
-        return value != null && !value.isEmpty() && !value.get(0).isEmpty() ? value.get(0) : null;
+        return !value.isEmpty() && !value.get(0).isEmpty() ? value.get(0) : null;
     }
 
     public boolean hasValue() {
@@ -95,8 +95,14 @@ public class YamlNode extends YamlLine<YamlNode> {
 
     @Override
     public String toString() {
-        return isCommentOnly() ? topComment.get(0) :
-                ((isListItem() ? "- ":"") + (isProperty() ? (getKey() + ": ") : "")
-                        + (hasValue() ? value.get(0) : ""));
+        if (isCommentOnly()) {
+            return topComment.get(0);
+        }
+        final String value = hasValue() ? this.value.get(0) : "";
+        if (isListItem()) {
+            return "- " + value;
+        } else {
+            return getKey() + ": " + value;
+        }
     }
 }

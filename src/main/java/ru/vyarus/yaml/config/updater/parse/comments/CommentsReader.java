@@ -78,9 +78,10 @@ public class CommentsReader {
                         // todo detect commented property?
                         break;
                     case '-':
-                        // list value: lists parsed by line, so in case of objects under list tick (dash),
-                        // the property with tick would be a list value and later properties would be its children
-                        // (theoretically incorrect structure, but completely normal for current task)
+                        // list value
+                        // if list contains sub-object, starting on the same line as tick then virtual node
+                        // created to store sub-object (in this case two objects would represent same line)
+                        // In case of empty dash, object incapsulated automatically
 
                         // skip whitespace after dash
                         while (chars.next() == ' ') ;
@@ -178,8 +179,18 @@ public class CommentsReader {
         }
 
         public void listValue(final int padding, final Prop prop) {
-            property(padding, prop);
-            current.setListItem(true);
+            if (prop.key == null) {
+                // scalar list value or sub object starts on new line (empty dash)
+                property(padding, prop);
+                current.setListItem(true);
+            } else {
+                // sub object starts from dash: using virtual list node to group object
+                property(padding, null);
+                current.setListItem(true);
+                current.setListItemWithProperty(true);
+                // property becomes first child of virtual dash node
+                property(prop.padding, prop);
+            }
         }
 
         public void property(final int padding, final Prop prop) {
@@ -196,14 +207,9 @@ public class CommentsReader {
             if (prop != null) {
                 if (prop.key != null) {
                     node.setKey(prop.key);
-                    // this is only important for lists where dash padding used as root
-                    // (required only for flow multiline values detection)
-                    node.setKeyPadding(prop.padding);
                 }
                 if (prop.value != null) {
-                    final List<String> valList = new ArrayList<>();
-                    valList.add(prop.value);
-                    node.setValue(valList);
+                    node.getValue().add(prop.value);
                 }
 
                 // remember multiline marker it it was detected in value
@@ -235,7 +241,7 @@ public class CommentsReader {
             if (current != null) {
                 // will go there only once for multiline value as after this multiline would be already detected,
                 // aggregating everything below (by padding)
-                if (current.getKeyPadding() < padding && current.getValue() != null
+                if (current.getPadding() < padding && current.getValue() != null
                         && MultilineValue.couldBeFlowMultiline(current.getValue().get(0))) {
                     if (!comments.isEmpty()) {
                         // edge case: when the second (and maybe few following) lines of flow multiline value

@@ -24,14 +24,14 @@ public class YamlTree extends TreeRoot<YamlNode> {
         if (getChildren().isEmpty()) {
             out.append("<empty>");
         } else {
-            getChildren().forEach(node -> renderNode(node, out));
+            getChildren().forEach(node -> renderNode(node, out, false));
         }
 
         return out.toString();
     }
 
-    private void renderNode(final YamlNode node, final StringBuilder out) {
-        String padding = TreeStringUtils.whitespace(node.getPadding());
+    private void renderNode(final YamlNode node, final StringBuilder out, final boolean noPadding) {
+        String padding = noPadding ? "" : TreeStringUtils.whitespace(node.getPadding());
 
         if (!node.getTopComment().isEmpty()) {
             out.append(padding).append("# comment");
@@ -60,10 +60,16 @@ public class YamlTree extends TreeRoot<YamlNode> {
                 out.append("value ").append(node.getValue().size()).append(" lines");
             }
         }
-        out.append("\n");
+        // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
+        boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
+        if (!mergeLines) {
+            out.append("\n");
+        }
 
         for (YamlNode child : node.getChildren()) {
-            renderNode(child, out);
+            // render dash and first item property as single line (when mergeLines = true)
+            renderNode(child, out, mergeLines);
+            mergeLines = false;
         }
     }
 }
