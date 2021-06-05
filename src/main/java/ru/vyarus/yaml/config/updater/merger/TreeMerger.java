@@ -31,7 +31,7 @@ public class TreeMerger {
         // updating file structure taken and only existing nodes replaced by current values
         // nodes not found in new config would be also inserted
 
-        final Map<String, YamlNode> newProps = from.getProps();
+        final Map<String, YamlNode> newProps = from.getRootProperties();
 
         final List<YamlNode> updated = new ArrayList<>(from.getChildren());
 

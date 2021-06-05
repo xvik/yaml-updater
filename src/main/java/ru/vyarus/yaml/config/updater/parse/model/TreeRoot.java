@@ -15,6 +15,11 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
     public T find(final String path) {
         for (T child : getChildren()) {
+            // root level property
+            if (path.equals(child.getKey())) {
+                return child;
+            }
+            // multiple levels property
             T res = child.find(path);
             if (res != null) {
                 return res;
@@ -27,10 +32,10 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
      *
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
-    public List<T> getAllProperties() {
+    public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
         for (T child: getChildren()) {
-            res.addAll(child.getAllProperties());
+            res.addAll(child.getTreeLeaves());
         }
         return res;
     }

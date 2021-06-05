@@ -77,7 +77,7 @@ class TreePathsTest extends Specification {
     }
 
     private String toPaths(YamlStructTree tree) {
-        return toPaths(tree.getAllProperties()).join('\n')
+        return toPaths(tree.getTreeLeaves()).join('\n')
     }
 
     private List<String> toPaths(List<YamlStruct> props) {

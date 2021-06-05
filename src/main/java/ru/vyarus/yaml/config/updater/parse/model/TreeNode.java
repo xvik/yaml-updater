@@ -31,7 +31,7 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
         return children;
     }
 
-    public Map<String, T> getProps() {
+    public Map<String, T> getRootProperties() {
         final Map<String, T> res = new LinkedHashMap<>();
         // only real properties counted!
         for (T child : children) {

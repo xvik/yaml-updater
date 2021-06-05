@@ -100,7 +100,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
 
     public T find(final String path) {
         // need to build full path to compare
-        String target = (getRoot() == null ? "" : (getRoot().getYamlPath() + PATH_SEPARATOR)) + path;
+        String target = (getRoot() == null ? "" : (getYamlPath() + PATH_SEPARATOR)) + path;
         for (T child : getChildren()) {
             String cpath = child.getYamlPath();
             T res = null;
@@ -110,7 +110,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
                 res = child;
             } else if (target.startsWith(cpath)) {
                 // if child fits, searching deeper
-                res = child.find(path.substring(path.lastIndexOf(PATH_SEPARATOR)));
+                res = child.find(path.substring(path.lastIndexOf(PATH_SEPARATOR) + 1));
             }
             // if not fond checking other possibilities
             if (res != null) {
@@ -128,14 +128,15 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
      * (but not props inside list values!)
      */
     @SuppressWarnings("unchecked")
-    public List<T> getAllProperties() {
+    public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
         findProperties((T) this, res, false);
         return res;
     }
 
     /**
-     * Same as {@link #getAllProperties()} but also includes scalar list items for list nodes.
+     * Same as {@link #getTreeLeaves()} but also includes scalar list items for list nodes.
+     *
      * @return all scalar properties and properties with list values (but not props inside list values!)
      */
     @SuppressWarnings("unchecked")
