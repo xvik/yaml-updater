@@ -79,18 +79,30 @@ public class YamlNode extends YamlLine<YamlNode> {
         return hasComment() && !isListItem() && getKey() == null && (getValue() == null || getValue().isEmpty());
     }
 
-    public String getFirstLineValue() {
-        return !value.isEmpty() && !value.get(0).isEmpty() ? value.get(0) : null;
-    }
-
     public boolean hasValue() {
-        return getFirstLineValue() != null;
+        return getIdentityValue() != null;
     }
 
-    public String getValueIdentity() {
-        final String firstLineValue = getFirstLineValue();
-        // trim value to increase chance for matching with real value (could be also comment here, ruining compare)
-        return getParsedValue() == null ? (firstLineValue == null ? null : firstLineValue.trim()) : getParsedValue();
+    @Override
+    public String getIdentityValue() {
+        // if possible use value from snakeyaml
+        // (normally only this branch should work)
+        if (parsedValue != null) {
+            return parsedValue;
+        }
+        // collect value from parsed liens, excluding whitespace and comments
+        String res = "";
+        for (String line : value) {
+            if (line == null) {
+                continue;
+            }
+            res += line.trim();
+            int cmt = res.indexOf("#");
+            if (cmt > 0) {
+                res = res.substring(0, cmt).trim();
+            }
+        }
+        return res.isEmpty() ? null : res;
     }
 
     @Override

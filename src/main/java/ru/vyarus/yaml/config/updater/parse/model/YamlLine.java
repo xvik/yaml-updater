@@ -82,6 +82,27 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     }
 
     /**
+     * @return true for list items containing object (not scalar value)
+     */
+    public boolean isObjectListItem() {
+        return isListItem() && hasChildren() && getChildren().get(0).isProperty();
+    }
+
+    /**
+     * @return true when list item starts from new line and current line contains only dash
+     */
+    public boolean isEmptyDash() {
+        return isListItem() && !isListItemWithProperty();
+    }
+
+    /**
+     * Returned values assumed to be used in node comparisons.
+     *
+     * @return maximally accurate node value (as much as possible for used parser)
+     */
+    public abstract String getIdentityValue();
+
+    /**
      * Note, for list items possible empty dash line is ignored (not a level in path).
      *
      * @return property path in yaml structure (like prop1/prop2[3]/sub)

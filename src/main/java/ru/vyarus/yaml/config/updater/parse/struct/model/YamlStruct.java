@@ -29,6 +29,12 @@ public class YamlStruct extends YamlLine<YamlStruct> {
     }
 
     @Override
+    public String getIdentityValue() {
+        // snakeyaml returns exact value
+        return getValue();
+    }
+
+    @Override
     public String toString() {
         final String value = this.value == null ? "" : this.value;
         if (isListItem()) {
