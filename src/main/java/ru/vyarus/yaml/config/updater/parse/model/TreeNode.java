@@ -54,4 +54,8 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     public int getLineNum() {
         return 0;
     }
+
+    public abstract T find(final String path);
+
+    public abstract List<T> getTreeLeaves();
 }

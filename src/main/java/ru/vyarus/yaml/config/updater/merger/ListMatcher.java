@@ -11,6 +11,17 @@ import java.util.*;
  */
 public class ListMatcher {
 
+    /**
+     * Replaces list item positions with asterisk, so list items from different files (different list positions)
+     * could be compared.
+     *
+     * @param path yaml path
+     * @return yaml path with unified list positions
+     */
+    public static String unifyListItemPath(String path) {
+        return path.replaceAll("\\[\\d+]", "[*]");
+    }
+
     public static <T extends YamlLine<T>> T match(T node, List<T> list) {
         final List<T> cand = new ArrayList<>(list);
         // count items matched at least by one property (to filter completely different items)
@@ -32,9 +43,14 @@ public class ListMatcher {
                 for (T uprop : cnd.getChildren()) {
                     if (prop.getKey().equals(uprop.getKey())) {
                         propFound = true;
-                        if (matches(prop, uprop)) {
-                            match = true;
-                            matchedItems.add(cnd.getLineNum());
+                        try {
+                            if (matches(prop, uprop)) {
+                                match = true;
+                                matchedItems.add(cnd.getLineNum());
+                            }
+                        } catch (Exception ex) {
+                            throw new IllegalStateException("Failed to compare '" + prop.getYamlPath()
+                                    + "' list item property", ex);
                         }
                         break;
                     }
@@ -58,6 +74,11 @@ public class ListMatcher {
     }
 
     private static <T extends YamlLine<T>> boolean matches(final T a, final T b) {
+        if (a.hasListValue() && !a.getChildren().get(0).isObjectListItem()) {
+            // special case: scalar lists are not merged and so should not be compared
+            // but have assume this case as match
+            return true;
+        }
         // subtree matching
         if (a.hasChildren()) {
             if (!b.hasChildren()) {
@@ -66,10 +87,13 @@ public class ListMatcher {
             int matches = 0;
             // all props found in left subtree must match props in the right subtree
             // (left prop may not be found on the right, but at least one property must match)
-            for(T aprop: a.getChildren()) {
+            for (T aprop : a.getChildren()) {
+                if (!aprop.isProperty()) {
+                    continue;
+                }
                 boolean propFound = false;
                 boolean match = false;
-                for(T bprop: b.getChildren()) {
+                for (T bprop : b.getChildren()) {
                     if (aprop.getKey().equals(bprop.getKey())) {
                         propFound = true;
                         // could be deeper subtree check

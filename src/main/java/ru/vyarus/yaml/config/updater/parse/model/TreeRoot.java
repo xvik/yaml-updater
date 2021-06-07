@@ -13,6 +13,7 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
         super(root);
     }
 
+    @Override
     public T find(final String path) {
         for (T child : getChildren()) {
             // root level property
@@ -32,6 +33,7 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
      *
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
+    @Override
     public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
         for (T child: getChildren()) {

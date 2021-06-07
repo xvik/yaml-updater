@@ -119,6 +119,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
         return path;
     }
 
+    @Override
     public T find(final String path) {
         // need to build full path to compare
         String target = (getRoot() == null ? "" : (getYamlPath() + PATH_SEPARATOR)) + path;
@@ -148,6 +149,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
      * @return all scalar properties (but not list items) and properties with list values
      * (but not props inside list values!)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
