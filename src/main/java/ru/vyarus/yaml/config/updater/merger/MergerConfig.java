@@ -21,6 +21,7 @@ public class MergerConfig {
     private List<String> deleteProps;
     // variables to apply to fresh config placeholders (adopt config to exact environment)
     private Map<String, String> env;
+    private boolean validateResult = true;
 
     private MergerConfig() {
     }
@@ -66,6 +67,15 @@ public class MergerConfig {
         return env;
     }
 
+    /**
+     *
+     * @return true to validate result against old and new file trees (to make sure all old values preserved and new
+     *  values added)
+     */
+    public boolean isValidateResult() {
+        return validateResult;
+    }
+
     public static Builder builder(final File current, final File update) {
         return new Builder(current, update);
     }
@@ -85,6 +95,18 @@ public class MergerConfig {
 
         public Builder deleteProps(final String... deleteProps) {
             config.deleteProps = Arrays.asList(deleteProps);
+            return this;
+        }
+
+        /**
+         * Disables merged file validation (all old values remain and new values added). This might be useful
+         * only in case of bugs in validation logic (comparing yaml trees). When validation is disabled, merged
+         * file is still parsed with snakeyaml to make sure its readable.
+         *
+         * @return builder instance for chained calls
+         */
+        public Builder noResultValidation() {
+            config.validateResult = false;
             return this;
         }
 

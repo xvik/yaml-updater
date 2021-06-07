@@ -123,7 +123,10 @@ public class Merger {
         try {
             // make sure updated file is valid
             YamlStructTree updated = StructureReader.read(work);
-            ResultValidator.validate(updated, currentStructure, updateStructure);
+            if (config.isValidateResult()) {
+                logger.warn("Result validation skipped");
+                ResultValidator.validate(updated, currentStructure, updateStructure);
+            }
         } catch (Exception ex) {
             String yamlContent;
             try {
