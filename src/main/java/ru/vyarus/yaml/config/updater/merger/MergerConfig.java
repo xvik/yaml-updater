@@ -2,6 +2,7 @@ package ru.vyarus.yaml.config.updater.merger;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,9 @@ public class MergerConfig {
     private File current;
     private boolean backup;
     private File update;
-    private List<String> deleteProps;
+    private List<String> deleteProps = Collections.emptyList();
     // variables to apply to fresh config placeholders (adopt config to exact environment)
-    private Map<String, String> env;
+    private Map<String, String> env = Collections.emptyMap();
     private boolean validateResult = true;
 
     private MergerConfig() {
@@ -68,9 +69,8 @@ public class MergerConfig {
     }
 
     /**
-     *
      * @return true to validate result against old and new file trees (to make sure all old values preserved and new
-     *  values added)
+     * values added)
      */
     public boolean isValidateResult() {
         return validateResult;
@@ -93,6 +93,13 @@ public class MergerConfig {
             return this;
         }
 
+        /**
+         * IMPORTANT: properties must be separated with "/" and not "."! This is important because dot is allowed
+         * character in property name!
+         *
+         * @param deleteProps yaml paths to delete in old file (would be replaced with props from new file)
+         * @return builder instance for chained calls
+         */
         public Builder deleteProps(final String... deleteProps) {
             config.deleteProps = Arrays.asList(deleteProps);
             return this;

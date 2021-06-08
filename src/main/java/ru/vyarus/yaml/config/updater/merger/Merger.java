@@ -4,8 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.StructureReader;
+import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 
 import java.io.File;
@@ -91,6 +94,7 @@ public class Merger {
             // read current file with two parsers (snake first to make sure file is valid)
             currentStructure = StructureReader.read(currentCfg);
             currentTree = CommentsReader.read(currentCfg);
+
             try {
                 // validate comments parser correctness using snakeyaml result
                 ParserValidator.validate(currentTree, currentStructure);
@@ -98,13 +102,28 @@ public class Merger {
                 throw new IllegalStateException("Failed to parse current config: "
                         + config.getCurrent().getAbsolutePath(), ex);
             }
+
+            // removing props
+            for(String prop: config.getDeleteProps()) {
+                YamlNode node = currentTree.find(prop);
+                if (node != null) {
+                    logger.info("Removing old config property: {}", prop);
+                    // for root level property, it would not point to tree object
+                    TreeNode<YamlNode> root = node.getRoot() == null ? currentTree : node.getRoot();
+                    root.getChildren().remove(node);
+
+                    YamlStruct str = currentStructure.find(prop);
+                    // could be commented node in comments tree, not visible in struct tree
+                    if (str != null) {
+                        TreeNode<YamlStruct> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
+                        rootStr.getChildren().remove(str);
+                    }
+                }
+                // trees are equal (validated) so can't have different branches
+            }
         }
         // tmp file used to catch possible writing errors and only then override old file
         work = File.createTempFile("merge-result", ".yml");
-
-//        if (!config.getDeleteProps().isEmpty()) {
-        // todo remove nodes
-//        }
     }
 
     private void merge() {
