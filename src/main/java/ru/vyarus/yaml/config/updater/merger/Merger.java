@@ -2,6 +2,7 @@ package ru.vyarus.yaml.config.updater.merger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.yaml.config.updater.merger.tools.EnvSupport;
 import ru.vyarus.yaml.config.updater.merger.tools.ParserValidator;
 import ru.vyarus.yaml.config.updater.merger.tools.ResultValidator;
 import ru.vyarus.yaml.config.updater.merger.tools.TreeMerger;
@@ -65,9 +66,17 @@ public class Merger {
         File update = null;
         try {
             update = File.createTempFile("update", ".yml");
-            // todo implement environment appliance
+
             try (final FileOutputStream out = new FileOutputStream(update)) {
-                Files.copy(updCfg.toPath(), out);
+                if (config.getEnv().isEmpty()) {
+                    Files.copy(updCfg.toPath(), out);
+                } else {
+                    final String file = String.join(System.lineSeparator(),
+                            Files.readAllLines(updCfg.toPath(), StandardCharsets.UTF_8));
+                    final String changed = EnvSupport.apply(file, config.getEnv());
+                    out.write(changed.getBytes(StandardCharsets.UTF_8));
+                    logger.info("Environment variables applied to new config");
+                }
             }
 
             // read structure first to validate correctness!
@@ -85,7 +94,7 @@ public class Merger {
                 try {
                     Files.delete(update.toPath());
                 } catch (IOException e) {
-                    logger.warn("Failed to cleanup", e);
+                    logger.warn("Failed to cleanup temporary update file", e);
                 }
             }
         }
@@ -115,6 +124,7 @@ public class Merger {
                     TreeNode<YamlNode> root = node.getRoot() == null ? currentTree : node.getRoot();
                     root.getChildren().remove(node);
 
+                    // remove in both trees because struct tree is used for result validation
                     YamlStruct str = currentStructure.find(prop);
                     // could be commented node in comments tree, not visible in struct tree
                     if (str != null) {

@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger
+package ru.vyarus.yaml.config.updater.merger.tools
 
 import ru.vyarus.yaml.config.updater.merger.tools.TreeMerger
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader

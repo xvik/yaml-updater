@@ -6,7 +6,10 @@ import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +22,8 @@ public class StructureReader {
     public static YamlStructTree read(final File file) {
         // comments parser does not support multiple yaml documents because this is not common for configs
         // so parsing only the first document, ignoring anything else
-        try {
-            final Node node = new Yaml().compose(new FileReader(file));
+        try (FileInputStream in = new FileInputStream(file)) {
+            final Node node = new Yaml().compose(new InputStreamReader(in, StandardCharsets.UTF_8));
             final Context context = new Context();
             processNode(node, context);
             return new YamlStructTree(context.rootNodes);

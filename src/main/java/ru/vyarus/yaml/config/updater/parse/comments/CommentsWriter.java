@@ -24,18 +24,21 @@ public class CommentsWriter {
     }
 
     public static void write(final YamlTree tree, File file) {
-        try {
-            write(tree, new FileOutputStream(file));
-        } catch (FileNotFoundException e) {
+        try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8.name())) {
+            write(tree, out);
+        } catch (Exception e) {
             throw new IllegalStateException("Can't write yaml to file", e);
         }
     }
 
     public static void write(final YamlTree tree, final OutputStream out) {
-        final PrintWriter res = new PrintWriter(out);
-        tree.getChildren().forEach(node -> writeNode(node, res, false));
-        res.flush();
-        res.close();
+        write(tree, new PrintWriter(out));
+    }
+
+    private static void write(final YamlTree tree, final PrintWriter writer) {
+        tree.getChildren().forEach(node -> writeNode(node, writer, false));
+        writer.flush();
+        writer.close();
     }
 
     private static void writeNode(final YamlNode node, final PrintWriter out, final boolean listItemFirstLine) {
