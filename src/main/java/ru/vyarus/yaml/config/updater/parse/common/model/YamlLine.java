@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.parse.model;
+package ru.vyarus.yaml.config.updater.parse.common.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implements LineNumberAware {
 
-    private static final String PATH_SEPARATOR = "/";
+    public static final String PATH_SEPARATOR = "/";
 
     // line number, counting from 1
     private int lineNum;

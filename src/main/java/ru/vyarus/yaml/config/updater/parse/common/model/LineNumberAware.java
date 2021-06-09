@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.parse.model;
+package ru.vyarus.yaml.config.updater.parse.common.model;
 
 /**
  * @author Vyacheslav Rusakov

@@ -4,6 +4,7 @@ import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.parse.comments.util.CountingIterator;
 import ru.vyarus.yaml.config.updater.parse.comments.util.MultilineValue;
+import ru.vyarus.yaml.config.updater.parse.common.YamlModelUtils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -75,7 +76,6 @@ public class CommentsReader {
                     case '#':
                         // commented line (stored as is)
                         context.comment(line);
-                        // todo detect commented property?
                         break;
                     case '-':
                         // list value
@@ -182,26 +182,19 @@ public class CommentsReader {
             if (prop.key == null) {
                 // scalar list value or sub object starts on new line (empty dash)
                 property(padding, prop);
+                YamlModelUtils.listItem(current);
                 current.setListItem(true);
             } else {
                 // sub object starts from dash: using virtual list node to group object
                 property(padding, null);
-                current.setListItem(true);
-                current.setListItemWithProperty(true);
+                YamlModelUtils.virtualListItem(current);
                 // property becomes first child of virtual dash node
                 property(prop.padding, prop);
             }
         }
 
         public void property(final int padding, final Prop prop) {
-            YamlNode root = null;
-            // not true only for getting back from subtree to root level
-            if (padding > 0 && current != null) {
-                root = current;
-                while (root != null && root.getPadding() >= padding) {
-                    root = root.getRoot();
-                }
-            }
+            final YamlNode root = YamlModelUtils.findNextLineRoot(padding, current);
             final YamlNode node = new YamlNode(root, padding, lineNum);
             // null in case of trailing comment node
             if (prop != null) {

@@ -2,9 +2,9 @@ package ru.vyarus.yaml.config.updater.merger.tools;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
-import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
-import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
-import ru.vyarus.yaml.config.updater.parse.model.YamlLine;
+import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
+import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
+import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 

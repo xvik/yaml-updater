@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater.merger.tools;
 
-import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 
 import java.util.HashSet;

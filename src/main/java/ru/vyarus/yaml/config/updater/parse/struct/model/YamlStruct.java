@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater.parse.struct.model;
 
-import ru.vyarus.yaml.config.updater.parse.model.YamlLine;
+import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 
 /**
  * One or multiple lines in yaml file (multiple lines only in case of multiline value). Usually represent some

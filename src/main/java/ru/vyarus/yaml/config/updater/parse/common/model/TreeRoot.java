@@ -1,4 +1,6 @@
-package ru.vyarus.yaml.config.updater.parse.model;
+package ru.vyarus.yaml.config.updater.parse.common.model;
+
+import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +11,9 @@ import java.util.List;
  */
 public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
-    public TreeRoot(final T root) {
-        super(root);
+    public TreeRoot(final List<T> nodes) {
+        super(null);
+        getChildren().addAll(nodes);
     }
 
     @Override

@@ -2,12 +2,12 @@ package ru.vyarus.yaml.config.updater.parse.struct;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.*;
+import ru.vyarus.yaml.config.updater.parse.common.YamlModelUtils;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -39,12 +39,13 @@ public class StructureReader {
                     throw new IllegalStateException("Unsupported key node type " + tuple.getKeyNode()
                             + " in tuple " + tuple);
                 }
-                ScalarNode key = (ScalarNode) tuple.getKeyNode();
+                final ScalarNode key = (ScalarNode) tuple.getKeyNode();
+                context.lineNum = key.getStartMark().getLine() + 1;
                 String value = null;
                 if (tuple.getValueNode() instanceof ScalarNode) {
                     value = ((ScalarNode) tuple.getValueNode()).getValue();
                 }
-                context.property(key.getStartMark().getColumn(), key.getStartMark().getLine() + 1, key.getValue(), value);
+                context.property(key.getStartMark().getColumn(), key.getValue(), value);
 
                 // lists or sub objects
                 if (!(tuple.getValueNode() instanceof ScalarNode)) {
@@ -57,18 +58,19 @@ public class StructureReader {
                 // need position of dash, which is absent here, so just assuming -2 shift from value
                 final int listPad = seq.getStartMark().getColumn() - 2;
 
+                context.lineNum = seq.getStartMark().getLine() + 1;
                 if (seq instanceof ScalarNode) {
                     // simple value
-                    context.listValue(listPad, seq.getStartMark().getLine() + 1, ((ScalarNode) seq).getValue());
+                    context.listValue(listPad, ((ScalarNode) seq).getValue());
                 } else {
                     boolean tickSameLine = seq.getStartMark().get_snippet().trim().startsWith("-");
                     if (!tickSameLine) {
                         // case when properties start after empty dash (next line)
                         // and hierarchically it must be reproduced (unification with comments parser)
-                        context.listValue(listPad, seq.getStartMark().getLine() + 1, null);
+                        context.listValue(listPad, null);
                     } else {
                         // sub object: use virtual node (indicating dash) to group sub-object properties
-                        context.virtualListItemNode(listPad, seq.getStartMark().getLine());;
+                        context.virtualListItemNode(listPad);
                     }
 
                     processNode(seq, context);
@@ -80,19 +82,13 @@ public class StructureReader {
     }
 
     private static class Context {
+        int lineNum;
         List<YamlStruct> rootNodes = new ArrayList<>();
         YamlStruct current;
 
-        public void property(final int padding, final int lineNum, final String name, final String value) {
-            YamlStruct root = null;
-
-            if (padding > 0 && current != null) {
-                root = current;
-                while (root != null && root.getPadding() >= padding) {
-                    root = root.getRoot();
-                }
-            }
-            YamlStruct node = new YamlStruct(root, padding, lineNum);
+        public void property(final int padding, final String name, final String value) {
+            final YamlStruct root = YamlModelUtils.findNextLineRoot(padding, current);
+            final YamlStruct node = new YamlStruct(root, padding, lineNum);
             if (name != null) {
                 node.setKey(name);
             }
@@ -105,14 +101,14 @@ public class StructureReader {
             }
         }
 
-        public void listValue(final int padding, final int lineNum, final String value) {
-            property(padding, lineNum, null, value);
-            current.setListItem(true);
+        public void listValue(final int padding, final String value) {
+            property(padding, null, value);
+            YamlModelUtils.listItem(current);
         }
 
-        public void virtualListItemNode(final int padding, final int lineNum) {
-            listValue(padding, lineNum, null);
-            current.setListItemWithProperty(true);
+        public void virtualListItemNode(final int padding) {
+            property(padding, null, null);
+            YamlModelUtils.virtualListItem(current);
         }
     }
 }

@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.struct.model;
 
-import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
-import ru.vyarus.yaml.config.updater.parse.model.TreeRoot;
+import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
+import ru.vyarus.yaml.config.updater.parse.common.model.TreeRoot;
 
 import java.util.List;
 
@@ -12,8 +12,7 @@ import java.util.List;
 public class YamlStructTree extends TreeRoot<YamlStruct> {
 
     public YamlStructTree(final List<YamlStruct> nodes) {
-        super(null);
-        this.getChildren().addAll(nodes);
+        super(nodes);
     }
 
     @Override
@@ -30,8 +29,8 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
         return out.toString();
     }
 
-    private void renderNode(final YamlStruct node, final StringBuilder out, final boolean listItemFirstLine) {
-        if (!listItemFirstLine) {
+    private void renderNode(final YamlStruct node, final StringBuilder out, final boolean noPadding) {
+        if (!noPadding) {
             out.append(TreeStringUtils.whitespace(node.getPadding()));
         }
         if (node.isListItem()) {
@@ -50,15 +49,15 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
             out.append(val + "'");
         }
         // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
-        if (!node.isListItem() || !node.isListItemWithProperty()) {
+        boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
+        if (!mergeLines) {
             out.append("\n");
         }
 
-        boolean avoidPadding = node.isListItemWithProperty();
         for (YamlStruct child : node.getChildren()) {
             // render dash and first item property as single line (when avoidPadding = true)
-            renderNode(child, out, avoidPadding);
-            avoidPadding = false;
+            renderNode(child, out, mergeLines);
+            mergeLines = false;
         }
     }
 }

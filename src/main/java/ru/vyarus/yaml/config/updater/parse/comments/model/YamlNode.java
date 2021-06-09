@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater.parse.comments.model;
 
-import ru.vyarus.yaml.config.updater.parse.model.YamlLine;
+import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 
 import java.util.ArrayList;
 import java.util.List;

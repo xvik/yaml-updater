@@ -2,7 +2,7 @@ package ru.vyarus.yaml.config.updater.parse.comments;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
-import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
+import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

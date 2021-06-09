@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.parse.model;
+package ru.vyarus.yaml.config.updater.parse.common.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

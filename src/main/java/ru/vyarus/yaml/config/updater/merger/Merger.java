@@ -10,7 +10,7 @@ import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
-import ru.vyarus.yaml.config.updater.parse.model.TreeNode;
+import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;

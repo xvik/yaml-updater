@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.comments.model;
 
-import ru.vyarus.yaml.config.updater.parse.comments.util.TreeStringUtils;
-import ru.vyarus.yaml.config.updater.parse.model.TreeRoot;
+import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
+import ru.vyarus.yaml.config.updater.parse.common.model.TreeRoot;
 
 import java.util.List;
 
@@ -12,8 +12,7 @@ import java.util.List;
 public class YamlTree extends TreeRoot<YamlNode> {
 
     public YamlTree(final List<YamlNode> nodes) {
-        super(null);
-        getChildren().addAll(nodes);
+        super(nodes);
     }
 
     @Override

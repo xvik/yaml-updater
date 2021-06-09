@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.merger.tools;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.parse.model.YamlLine;
+import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 
 import java.util.*;
 
