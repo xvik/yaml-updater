@@ -43,7 +43,7 @@ public class YamlMerger {
     private YamlStructTree updateStructure;
     private YamlTree updateTree;
 
-    public static MergeConfig.Builder builder(final File current, final File update) {
+    public static MergeConfig.Builder create(final File current, final File update) {
         return new MergeConfig.Builder(current, update);
     }
 

@@ -20,7 +20,7 @@ class MergeWithVarsTest extends Specification {
         Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.builder(current, update).backup(false).envVars(['var': '4']).build().execute()
+        YamlMerger.create(current, update).backup(false).envVars(['var': '4']).build().execute()
 
         then: "updated"
         current.text == """# something

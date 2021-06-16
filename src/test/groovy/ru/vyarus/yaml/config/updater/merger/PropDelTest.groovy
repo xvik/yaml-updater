@@ -20,7 +20,7 @@ class PropDelTest extends Specification {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.builder(current, update).backup(false).deleteProps('prop2/list').build().execute()
+        YamlMerger.create(current, update).backup(false).deleteProps('prop2/list').build().execute()
 
         then: "list replaced"
         current.text == """# something

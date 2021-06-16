@@ -1,7 +1,6 @@
 package ru.vyarus.yaml.config.updater;
 
 import ru.vyarus.yaml.config.updater.merger.YamlMerger;
-import ru.vyarus.yaml.config.updater.merger.MergeConfig;
 
 import java.io.File;
 
@@ -12,7 +11,7 @@ import java.io.File;
 public class Cli {
 
     public static void main(String[] args) {
-        YamlMerger.builder(new File("foo"), new File("bar"))
+        YamlMerger.create(new File("foo"), new File("bar"))
                 .backup(false)
                 .build().execute();
     }
