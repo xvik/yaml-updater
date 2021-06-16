@@ -31,10 +31,10 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-public class Merger {
-    private final Logger logger = LoggerFactory.getLogger(Merger.class);
+public class YamlMerger {
+    private final Logger logger = LoggerFactory.getLogger(YamlMerger.class);
 
-    private final MergerConfig config;
+    private final MergeConfig config;
     // merge result until final validation (tmp file)
     private File work;
     private YamlStructTree currentStructure;
@@ -43,7 +43,11 @@ public class Merger {
     private YamlStructTree updateStructure;
     private YamlTree updateTree;
 
-    public Merger(MergerConfig config) {
+    public static MergeConfig.Builder builder(final File current, final File update) {
+        return new MergeConfig.Builder(current, update);
+    }
+
+    public YamlMerger(MergeConfig config) {
         this.config = config;
     }
 

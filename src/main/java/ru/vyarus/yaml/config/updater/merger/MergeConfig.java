@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-public class MergerConfig {
+public class MergeConfig {
 
     private File current;
     private boolean backup;
@@ -24,7 +24,7 @@ public class MergerConfig {
     private Map<String, String> env = Collections.emptyMap();
     private boolean validateResult = true;
 
-    private MergerConfig() {
+    private MergeConfig() {
     }
 
     /**
@@ -76,12 +76,9 @@ public class MergerConfig {
         return validateResult;
     }
 
-    public static Builder builder(final File current, final File update) {
-        return new Builder(current, update);
-    }
 
     public static class Builder {
-        private final MergerConfig config = new MergerConfig();
+        private final MergeConfig config = new MergeConfig();
 
         public Builder(File current, File update) {
             config.current = current;
@@ -122,7 +119,7 @@ public class MergerConfig {
             return this;
         }
 
-        public MergerConfig build() {
+        public YamlMerger build() {
             if (config.getCurrent() == null) {
                 throw new IllegalStateException("Current config file not specified");
             }
@@ -133,7 +130,7 @@ public class MergerConfig {
                 throw new IllegalStateException("New config file does not exists: "
                         + config.getUpdate().getAbsolutePath());
             }
-            return config;
+            return new YamlMerger(config);
         }
     }
 }
