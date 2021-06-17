@@ -1,11 +1,11 @@
-package ru.vyarus.yaml.config.updater.merger;
+package ru.vyarus.yaml.config.updater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.yaml.config.updater.merger.tools.EnvSupport;
-import ru.vyarus.yaml.config.updater.merger.tools.ParserValidator;
-import ru.vyarus.yaml.config.updater.merger.tools.ResultValidator;
-import ru.vyarus.yaml.config.updater.merger.tools.TreeMerger;
+import ru.vyarus.yaml.config.updater.update.EnvSupport;
+import ru.vyarus.yaml.config.updater.update.CommentsParserValidator;
+import ru.vyarus.yaml.config.updater.update.UpdateResultValidator;
+import ru.vyarus.yaml.config.updater.update.YamlMerger;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
@@ -31,10 +31,10 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-public class YamlMerger {
-    private final Logger logger = LoggerFactory.getLogger(YamlMerger.class);
+public class YamlUpdater {
+    private final Logger logger = LoggerFactory.getLogger(YamlUpdater.class);
 
-    private final MergeConfig config;
+    private final UpdateConfig config;
     // merge result until final validation (tmp file)
     private File work;
     private YamlStructTree currentStructure;
@@ -43,11 +43,11 @@ public class YamlMerger {
     private YamlStructTree updateStructure;
     private YamlTree updateTree;
 
-    public static MergeConfig.Builder create(final File current, final File update) {
-        return new MergeConfig.Builder(current, update);
+    public static UpdateConfig.Builder create(final File current, final File update) {
+        return new UpdateConfig.Builder(current, update);
     }
 
-    public YamlMerger(MergeConfig config) {
+    public YamlUpdater(UpdateConfig config) {
         this.config = config;
     }
 
@@ -88,7 +88,7 @@ public class YamlMerger {
             updateTree = CommentsReader.read(update);
             try {
                 // validate comments parser correctness using snakeyaml result
-                ParserValidator.validate(updateTree, updateStructure);
+                CommentsParserValidator.validate(updateTree, updateStructure);
             } catch (Exception ex) {
                 throw new IllegalStateException("Failed to parse new config: "
                         + config.getUpdate().getAbsolutePath(), ex);
@@ -113,7 +113,7 @@ public class YamlMerger {
 
             try {
                 // validate comments parser correctness using snakeyaml result
-                ParserValidator.validate(currentTree, currentStructure);
+                CommentsParserValidator.validate(currentTree, currentStructure);
             } catch (Exception ex) {
                 throw new IllegalStateException("Failed to parse current config: "
                         + config.getCurrent().getAbsolutePath(), ex);
@@ -149,7 +149,7 @@ public class YamlMerger {
             currentTree = updateTree;
         } else {
             // merge
-            TreeMerger.merge(currentTree, updateTree);
+            YamlMerger.merge(currentTree, updateTree);
         }
         // write merged result
         CommentsWriter.write(currentTree, work);
@@ -161,7 +161,7 @@ public class YamlMerger {
             YamlStructTree updated = StructureReader.read(work);
             if (config.isValidateResult()) {
                 logger.warn("Result validation skipped");
-                ResultValidator.validate(updated, currentStructure, updateStructure);
+                UpdateResultValidator.validate(updated, currentStructure, updateStructure);
             }
         } catch (Exception ex) {
             String yamlContent;

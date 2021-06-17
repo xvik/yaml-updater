@@ -1,6 +1,6 @@
-package ru.vyarus.yaml.config.updater.merger
+package ru.vyarus.yaml.config.updater
 
-
+import ru.vyarus.yaml.config.updater.YamlUpdater
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-class MergerTest extends Specification {
+class UpdaterTest extends Specification {
 
     def "Check simple merge"() {
 
@@ -21,7 +21,7 @@ class MergerTest extends Specification {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """# something
@@ -77,7 +77,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """# something
@@ -133,7 +133,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """# something
@@ -193,7 +193,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """object:
@@ -230,7 +230,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """object:
@@ -268,7 +268,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """# explicitly shifted lines
@@ -343,7 +343,7 @@ sublist:
         Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).build().execute()
+        YamlUpdater.create(current, update).backup(false).build().execute()
 
         then: "updated"
         current.text == """# explicitly shifted lines

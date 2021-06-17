@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger.tools;
+package ru.vyarus.yaml.config.updater.update;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
@@ -11,7 +11,7 @@ import java.util.*;
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-public class TreeMerger {
+public class YamlMerger {
 
     public static void merge(final YamlTree node, final YamlTree from) {
         mergeLevel(node, from);

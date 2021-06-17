@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger.tools;
+package ru.vyarus.yaml.config.updater.update;
 
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 18.05.2021
  */
-public class ParserValidator {
+public class CommentsParserValidator {
 
     public static void validate(final YamlTree comments, final YamlStructTree struct) {
         validateSubtrees(comments, struct);

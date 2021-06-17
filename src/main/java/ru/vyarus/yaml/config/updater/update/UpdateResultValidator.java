@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger.tools;
+package ru.vyarus.yaml.config.updater.update;
 
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Vyacheslav Rusakov
  * @since 17.05.2021
  */
-public class ResultValidator {
+public class UpdateResultValidator {
 
     public static void validate(final TreeNode<YamlStruct> merged,
                                 final TreeNode<YamlStruct> old,

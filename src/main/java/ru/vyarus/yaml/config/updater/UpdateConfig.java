@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger;
+package ru.vyarus.yaml.config.updater;
 
 import java.io.File;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-public class MergeConfig {
+public class UpdateConfig {
 
     private File current;
     private boolean backup;
@@ -24,7 +24,7 @@ public class MergeConfig {
     private Map<String, String> env = Collections.emptyMap();
     private boolean validateResult = true;
 
-    private MergeConfig() {
+    private UpdateConfig() {
     }
 
     /**
@@ -78,7 +78,7 @@ public class MergeConfig {
 
 
     public static class Builder {
-        private final MergeConfig config = new MergeConfig();
+        private final UpdateConfig config = new UpdateConfig();
 
         public Builder(File current, File update) {
             config.current = current;
@@ -119,7 +119,7 @@ public class MergeConfig {
             return this;
         }
 
-        public YamlMerger build() {
+        public YamlUpdater build() {
             if (config.getCurrent() == null) {
                 throw new IllegalStateException("Current config file not specified");
             }
@@ -130,7 +130,7 @@ public class MergeConfig {
                 throw new IllegalStateException("New config file does not exists: "
                         + config.getUpdate().getAbsolutePath());
             }
-            return new YamlMerger(config);
+            return new YamlUpdater(config);
         }
     }
 }

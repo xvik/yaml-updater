@@ -1,5 +1,6 @@
-package ru.vyarus.yaml.config.updater.merger
+package ru.vyarus.yaml.config.updater
 
+import ru.vyarus.yaml.config.updater.YamlUpdater
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -9,7 +10,7 @@ import java.nio.file.StandardCopyOption
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
-class PropDelTest extends Specification {
+class UpdateWithVarsTest extends Specification {
 
     def "Check simple merge"() {
 
@@ -17,12 +18,12 @@ class PropDelTest extends Specification {
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
         File update = Files.createTempFile("update", ".yml").toFile()
-        Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlMerger.create(current, update).backup(false).deleteProps('prop2/list').build().execute()
+        YamlUpdater.create(current, update).backup(false).envVars(['var': '4']).build().execute()
 
-        then: "list replaced"
+        then: "updated"
         current.text == """# something
 
 # something 2
@@ -31,7 +32,7 @@ prop1:
 
   prop1.2: 1.2
   # comment line
-  prop1.3: 1.3
+  prop1.3: 4
 
 # in the middle
 prop11:
@@ -45,7 +46,6 @@ prop2:
   list:
     - one
     - two
-    - three
 
   obj:
     - one: 1
@@ -66,5 +66,4 @@ prop3:
         current.delete()
         update.delete()
     }
-
 }

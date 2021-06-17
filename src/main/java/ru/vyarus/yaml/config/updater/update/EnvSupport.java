@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.config.updater.merger.tools;
+package ru.vyarus.yaml.config.updater.update;
 
 import java.util.Map;
 
