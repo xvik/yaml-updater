@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.config.updater.update.EnvSupport;
 import ru.vyarus.yaml.config.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.config.updater.update.UpdateResultValidator;
-import ru.vyarus.yaml.config.updater.update.YamlMerger;
+import ru.vyarus.yaml.config.updater.update.TreeMerger;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
@@ -149,7 +149,7 @@ public class YamlUpdater {
             currentTree = updateTree;
         } else {
             // merge
-            YamlMerger.merge(currentTree, updateTree);
+            TreeMerger.merge(currentTree, updateTree);
         }
         // write merged result
         CommentsWriter.write(currentTree, work);

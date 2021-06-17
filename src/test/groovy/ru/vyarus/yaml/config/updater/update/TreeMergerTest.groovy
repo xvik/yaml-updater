@@ -10,14 +10,14 @@ import spock.lang.Specification
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-class YamlMergerTest extends Specification {
+class TreeMergerTest extends Specification {
 
     def "Check simple merge"() {
 
         when: "merging"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
         YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_upd.yml').toURI()))
-        YamlMerger.merge(tree, upd)
+        TreeMerger.merge(tree, upd)
 
         then: "merged"
         CommentsWriter.write(tree) == """# something
@@ -65,7 +65,7 @@ prop3:
         when: "merging"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
         YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
-        YamlMerger.merge(tree, upd)
+        TreeMerger.merge(tree, upd)
 
         then: "merged"
         CommentsWriter.write(tree) == """# something
@@ -113,7 +113,7 @@ prop3:
         when: "merging"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
         YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
-        YamlMerger.merge(tree, upd)
+        TreeMerger.merge(tree, upd)
 
         then: "merged"
         CommentsWriter.write(tree) == """# something
@@ -165,7 +165,7 @@ prop3:
         when: "merging"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
         YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
-        YamlMerger.merge(tree, upd)
+        TreeMerger.merge(tree, upd)
 
         then: "merged"
         CommentsWriter.write(tree) == """object:
@@ -196,7 +196,7 @@ prop3:
         when: "merging"
         YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
         YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
-        YamlMerger.merge(tree, upd)
+        TreeMerger.merge(tree, upd)
 
         then: "merged"
         CommentsWriter.write(tree) == """object:

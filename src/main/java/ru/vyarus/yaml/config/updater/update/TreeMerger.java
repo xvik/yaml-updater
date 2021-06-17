@@ -11,7 +11,7 @@ import java.util.*;
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-public class YamlMerger {
+public class TreeMerger {
 
     public static void merge(final YamlTree node, final YamlTree from) {
         mergeLevel(node, from);
