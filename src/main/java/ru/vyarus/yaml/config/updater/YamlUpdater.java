@@ -63,6 +63,8 @@ public class YamlUpdater {
 
     /**
      * Creates updater. Update file might be physical file, classpath resource, remote url or whatever else.
+     * <p>
+     * Stream closed after content reading.
      *
      * @param current config file to be updated
      * @param update  update file content

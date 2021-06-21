@@ -28,10 +28,7 @@ public class StructureReader {
         // comments parser does not support multiple yaml documents because this is not common for configs
         // so parsing only the first document, ignoring anything else
         try (FileInputStream in = new FileInputStream(file)) {
-            final Node node = new Yaml().compose(new InputStreamReader(in, StandardCharsets.UTF_8));
-            final Context context = new Context();
-            processNode(node, context);
-            return new YamlStructTree(context.rootNodes);
+            return read(new InputStreamReader(in, StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml file: " + file.getAbsolutePath(), e);
         }
