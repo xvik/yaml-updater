@@ -1,7 +1,11 @@
 package ru.vyarus.yaml.config.updater.parse.struct;
 
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 import ru.vyarus.yaml.config.updater.parse.common.YamlModelUtils;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
@@ -9,6 +13,7 @@ import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,18 @@ public class StructureReader {
             processNode(node, context);
             return new YamlStructTree(context.rootNodes);
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to parse yaml structure: " + file.getAbsolutePath(), e);
+            throw new IllegalStateException("Failed to parse yaml file: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public static YamlStructTree read(final Reader reader) {
+        try {
+            final Node node = new Yaml().compose(reader);
+            final Context context = new Context();
+            processNode(node, context);
+            return new YamlStructTree(context.rootNodes);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to parse yaml structure", e);
         }
     }
 

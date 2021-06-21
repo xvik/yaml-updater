@@ -1,13 +1,22 @@
 package ru.vyarus.yaml.config.updater;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Merge configuration. Required current config and updating file. Optionally environment variables could be
+ * Update configuration. Required current config and updating file. Optionally, environment variables could be
  * provided (to replace in updating file) and special config with properties to remove (only new properties are
  * copied from update config).
  *
@@ -18,7 +27,8 @@ public class UpdateConfig {
 
     private File current;
     private boolean backup;
-    private File update;
+    // not file to allow loading from classpath (jar) or any other location
+    private String update;
     private List<String> deleteProps = Collections.emptyList();
     // variables to apply to fresh config placeholders (adopt config to exact environment)
     private Map<String, String> env = Collections.emptyMap();
@@ -43,15 +53,18 @@ public class UpdateConfig {
 
     /**
      * Configuration file may contain placeholders ({@link #getEnv()}).
-     * Only properties not found in current config would be added (for properties remove see {@link #getDeleteProps()}).
+     * Only properties not found in the current config would be added (for properties remove
+     * see {@link #getDeleteProps()}).
      *
      * @return new configuration to update from
      */
-    public File getUpdate() {
+    public String getUpdate() {
         return update;
     }
 
     /**
+     * NOTE: '/' used for property separation because in yaml property name could contain dot.
+     *
      * @return properties to remove in current file (would be replaced if provided in new file)
      */
     public List<String> getDeleteProps() {
@@ -59,8 +72,9 @@ public class UpdateConfig {
     }
 
     /**
-     * Variables replaces as {@code ${var}}. Variables are searched without counting yaml semantics.
-     * Used to adopt universal configuration to the target environment (especially useful for the first installation).
+     * Variables for replacing placeholders in update file {@code #{var}}.
+     * Variables searched without counting yaml semantics.
+     * Used to adopt configuration to the target environment (especially useful for the first installation).
      *
      * @return variables to replace in updating file
      */
@@ -77,14 +91,33 @@ public class UpdateConfig {
     }
 
 
+    /**
+     * Updater configurator.
+     */
     public static class Builder {
+        private final Logger logger = LoggerFactory.getLogger(UpdateConfig.Builder.class);
         private final UpdateConfig config = new UpdateConfig();
 
-        public Builder(File current, File update) {
+        public Builder(final File current, final InputStream update) {
+            if (current == null) {
+                throw new IllegalArgumentException("Current config file not specified");
+            }
             config.current = current;
-            config.update = update;
+
+            if (update == null) {
+                throw new IllegalArgumentException("New config file not specified");
+            }
+            final String text = read(update);
+            if (text.isEmpty()) {
+                throw new IllegalArgumentException("New config file is empty");
+            }
+            config.update = text;
         }
 
+        /**
+         * @param backup true to do backup of configuration before update
+         * @return builder instance for chained calls
+         */
         public Builder backup(final boolean backup) {
             config.backup = backup;
             return this;
@@ -93,6 +126,15 @@ public class UpdateConfig {
         /**
          * IMPORTANT: properties must be separated with "/" and not "."! This is important because dot is allowed
          * character in property name!
+         * <p>
+         * Yaml path may include list values with syntax: prop/sublist[0]/foo. It would match first item of list
+         * prop/sublist and select foo item property.
+         * <pre>
+         * prop:
+         *    sublist:
+         *      - foo: 1
+         *        bar: 2
+         * </pre>
          *
          * @param deleteProps yaml paths to delete in old file (would be replaced with props from new file)
          * @return builder instance for chained calls
@@ -103,9 +145,9 @@ public class UpdateConfig {
         }
 
         /**
-         * Disables merged file validation (all old values remain and new values added). This might be useful
-         * only in case of bugs in validation logic (comparing yaml trees). When validation is disabled, merged
-         * file is still parsed with snakeyaml to make sure its readable.
+         * Disables merged file validation (checks that all old values remains and new values added). This might be
+         * useful only in case of bugs in validation logic (comparing yaml trees). When validation is disabled, merged
+         * file is still parsed with snakeyaml to make sure it's readable.
          *
          * @return builder instance for chained calls
          */
@@ -114,23 +156,37 @@ public class UpdateConfig {
             return this;
         }
 
+        /**
+         * Variables use special syntax {@code #{name}} because with it yaml file still remains valid (variable treated
+         * as comment).
+         *
+         * @param env variables to replace in updating file
+         * @return builder instance for chained calls
+         */
         public Builder envVars(final Map<String, String> env) {
             config.env = env;
             return this;
         }
 
         public YamlUpdater build() {
-            if (config.getCurrent() == null) {
-                throw new IllegalStateException("Current config file not specified");
-            }
-            if (config.getUpdate() == null) {
-                throw new IllegalStateException("New config file not specified");
-            }
-            if (!config.getUpdate().exists()) {
-                throw new IllegalStateException("New config file does not exists: "
-                        + config.getUpdate().getAbsolutePath());
-            }
+
             return new YamlUpdater(config);
+        }
+
+        private String read(final InputStream in) {
+            try {
+                return new BufferedReader(
+                        new InputStreamReader(in, StandardCharsets.UTF_8))
+                        .lines()
+                        .collect(Collectors.joining("\n"))
+                        .trim();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.debug("Failed to close stream", e);
+                }
+            }
         }
     }
 }

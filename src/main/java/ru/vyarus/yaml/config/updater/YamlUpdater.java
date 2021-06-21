@@ -2,10 +2,6 @@ package ru.vyarus.yaml.config.updater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.yaml.config.updater.update.EnvSupport;
-import ru.vyarus.yaml.config.updater.update.CommentsParserValidator;
-import ru.vyarus.yaml.config.updater.update.UpdateResultValidator;
-import ru.vyarus.yaml.config.updater.update.TreeMerger;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
@@ -14,10 +10,17 @@ import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
 import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
+import ru.vyarus.yaml.config.updater.update.CommentsParserValidator;
+import ru.vyarus.yaml.config.updater.update.EnvSupport;
+import ru.vyarus.yaml.config.updater.update.TreeMerger;
+import ru.vyarus.yaml.config.updater.update.UpdateResultValidator;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +46,30 @@ public class YamlUpdater {
     private YamlStructTree updateStructure;
     private YamlTree updateTree;
 
+    /**
+     * Shortcut for {@link #create(File, InputStream)}.
+     *
+     * @param current config file to be updated
+     * @param update  update file
+     * @return builder instance for chained calls
+     */
     public static UpdateConfig.Builder create(final File current, final File update) {
+        try {
+            return create(current, new FileInputStream(update));
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Update file '" + update.getAbsolutePath() + "' not found", e);
+        }
+    }
+
+    /**
+     * Creates updater. Update file might be physical file, classpath resource, remote url or whatever else.
+     *
+     * @param current config file to be updated
+     * @param update  update file content
+     * @return builder instance for chained calls
+     * @see #create(File, File) shortcut for direct file case (most common)
+     */
+    public static UpdateConfig.Builder create(final File current, final InputStream update) {
         return new UpdateConfig.Builder(current, update);
     }
 
@@ -66,41 +92,20 @@ public class YamlUpdater {
     }
 
     private void prepareNewConfig() throws Exception {
-        final File updCfg = config.getUpdate();
-        File update = null;
+        String source = config.getUpdate();
+        if (!config.getEnv().isEmpty()) {
+            source = EnvSupport.apply(source, config.getEnv());
+            logger.info("Environment variables applied to new config");
+        }
+
+        // read structure first to validate correctness!
+        updateStructure = StructureReader.read(new StringReader(source));
+        updateTree = CommentsReader.read(source);
         try {
-            update = File.createTempFile("update", ".yml");
-
-            try (final FileOutputStream out = new FileOutputStream(update)) {
-                if (config.getEnv().isEmpty()) {
-                    Files.copy(updCfg.toPath(), out);
-                } else {
-                    final String file = String.join(System.lineSeparator(),
-                            Files.readAllLines(updCfg.toPath(), StandardCharsets.UTF_8));
-                    final String changed = EnvSupport.apply(file, config.getEnv());
-                    out.write(changed.getBytes(StandardCharsets.UTF_8));
-                    logger.info("Environment variables applied to new config");
-                }
-            }
-
-            // read structure first to validate correctness!
-            updateStructure = StructureReader.read(update);
-            updateTree = CommentsReader.read(update);
-            try {
-                // validate comments parser correctness using snakeyaml result
-                CommentsParserValidator.validate(updateTree, updateStructure);
-            } catch (Exception ex) {
-                throw new IllegalStateException("Failed to parse new config: "
-                        + config.getUpdate().getAbsolutePath(), ex);
-            }
-        } finally {
-            if (update != null) {
-                try {
-                    Files.delete(update.toPath());
-                } catch (IOException e) {
-                    logger.warn("Failed to cleanup temporary update file", e);
-                }
-            }
+            // validate comments parser correctness using snakeyaml result
+            CommentsParserValidator.validate(updateTree, updateStructure);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to parse new config", ex);
         }
     }
 
@@ -120,7 +125,7 @@ public class YamlUpdater {
             }
 
             // removing props
-            for(String prop: config.getDeleteProps()) {
+            for (String prop : config.getDeleteProps()) {
                 YamlNode node = currentTree.find(prop);
                 if (node != null) {
                     logger.info("Removing old config property: {}", prop);
