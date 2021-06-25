@@ -83,6 +83,10 @@ public class YamlUpdater {
     private YamlStructTree updateStructure;
     private YamlTree updateTree;
 
+    YamlUpdater(final UpdateConfig config) {
+        this.config = config;
+    }
+
     /**
      * Shortcut for {@link #create(File, InputStream)}.
      *
@@ -110,10 +114,6 @@ public class YamlUpdater {
      */
     public static UpdateConfig.Builder create(final File current, final InputStream update) {
         return new UpdateConfig.Builder(current, update);
-    }
-
-    YamlUpdater(final UpdateConfig config) {
-        this.config = config;
     }
 
     public void execute() {
@@ -168,18 +168,18 @@ public class YamlUpdater {
 
             // removing props
             for (String prop : config.getDeleteProps()) {
-                YamlNode node = currentTree.find(prop);
+                final YamlNode node = currentTree.find(prop);
                 if (node != null) {
                     logger.info("Removing configuration property: {}", prop);
                     // for root level property, it would not point to tree object
-                    TreeNode<YamlNode> root = node.getRoot() == null ? currentTree : node.getRoot();
+                    final TreeNode<YamlNode> root = node.getRoot() == null ? currentTree : node.getRoot();
                     root.getChildren().remove(node);
 
                     // remove in both trees because struct tree is used for result validation
-                    YamlStruct str = currentStructure.find(prop);
+                    final YamlStruct str = currentStructure.find(prop);
                     // could be commented node in comments tree, not visible in struct tree
                     if (str != null) {
-                        TreeNode<YamlStruct> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
+                        final TreeNode<YamlStruct> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
                         rootStr.getChildren().remove(str);
                     }
                 }
@@ -209,11 +209,12 @@ public class YamlUpdater {
         CommentsWriter.write(currentTree, work);
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private void validateResult() {
         logger.debug("Validating merged result");
         try {
             // make sure updated file is valid
-            YamlStructTree updated = StructureReader.read(work);
+            final YamlStructTree updated = StructureReader.read(work);
             if (config.isValidateResult()) {
                 UpdateResultValidator.validate(updated, currentStructure, updateStructure);
                 logger.info("Merged configuration correctness validated");

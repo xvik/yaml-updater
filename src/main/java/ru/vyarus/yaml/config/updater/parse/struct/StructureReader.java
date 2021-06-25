@@ -22,7 +22,10 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
-public class StructureReader {
+public final class StructureReader {
+
+    private StructureReader() {
+    }
 
     public static YamlStructTree read(final File file) {
         // comments parser does not support multiple yaml documents because this is not common for configs
@@ -76,7 +79,7 @@ public class StructureReader {
                     // simple value
                     context.listValue(listPad, ((ScalarNode) seq).getValue());
                 } else {
-                    boolean tickSameLine = seq.getStartMark().get_snippet().trim().startsWith("-");
+                    final boolean tickSameLine = seq.getStartMark().get_snippet().trim().startsWith("-");
                     if (!tickSameLine) {
                         // case when properties start after empty dash (next line)
                         // and hierarchically it must be reproduced (unification with comments parser)
@@ -94,6 +97,7 @@ public class StructureReader {
         }
     }
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class Context {
         int lineNum;
         List<YamlStruct> rootNodes = new ArrayList<>();

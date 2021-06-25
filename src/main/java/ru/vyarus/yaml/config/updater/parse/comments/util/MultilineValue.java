@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
-public class MultilineValue {
+public final class MultilineValue {
 
     /**
      * (https://yaml-multiline.info).
@@ -20,9 +20,12 @@ public class MultilineValue {
      */
     private static final Pattern MULTILINE = Pattern.compile("([|>])([+-])?(\\d+)?$");
 
+    private MultilineValue() {
+    }
+
     public static Marker detect(final String line) {
         // cut off possible inline comment (prop: | # some comment)
-        String source = cutComment(line);
+        final String source = cutComment(line);
         Marker res = null;
         final Matcher match = MULTILINE.matcher(source);
         if (match.find()) {
@@ -54,7 +57,7 @@ public class MultilineValue {
 
     private static String cutComment(final String line) {
         if (line == null) {
-             return null;
+            return null;
         }
         String source = line;
         final int comment = source.indexOf('#');
@@ -64,11 +67,12 @@ public class MultilineValue {
         return source.trim();
     }
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     public static class Marker {
         // true - |, false - >
         public boolean keep;
         // 0 - default (taken by first line), 1 - +, -1 - -
-        public int ending = 0;
+        public int ending;
         // custom indent
         public int indent = -1;
     }

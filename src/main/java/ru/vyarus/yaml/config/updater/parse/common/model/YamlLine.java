@@ -122,9 +122,9 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     @Override
     public T find(final String path) {
         // need to build full path to compare
-        String target = (getRoot() == null ? "" : (getYamlPath() + PATH_SEPARATOR)) + path;
+        final String target = (getRoot() == null ? "" : (getYamlPath() + PATH_SEPARATOR)) + path;
         for (T child : getChildren()) {
-            String cpath = child.getYamlPath();
+            final String cpath = child.getYamlPath();
             T res = null;
             // compared paths are full paths (from root)
             if (target.equals(cpath)) {

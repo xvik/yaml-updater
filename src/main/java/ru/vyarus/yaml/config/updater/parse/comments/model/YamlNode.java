@@ -75,6 +75,7 @@ public class YamlNode extends YamlLine<YamlNode> {
         return !getTopComment().isEmpty();
     }
 
+    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     public boolean isCommentOnly() {
         return hasComment() && !isListItem() && getKey() == null && (getValue() == null || getValue().isEmpty());
     }
@@ -97,7 +98,7 @@ public class YamlNode extends YamlLine<YamlNode> {
                 continue;
             }
             res += line.trim();
-            int cmt = res.indexOf("#");
+            final int cmt = res.indexOf("#");
             if (cmt > 0) {
                 res = res.substring(0, cmt).trim();
             }

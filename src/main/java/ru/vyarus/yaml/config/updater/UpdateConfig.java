@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-public class UpdateConfig {
+public final class UpdateConfig {
 
     private File current;
     private boolean backup;

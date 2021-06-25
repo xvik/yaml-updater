@@ -10,7 +10,10 @@ import java.util.Set;
  * @author Vyacheslav Rusakov
  * @since 17.05.2021
  */
-public class UpdateResultValidator {
+public final class UpdateResultValidator {
+
+    private UpdateResultValidator() {
+    }
 
     public static void validate(final TreeNode<YamlStruct> merged,
                                 final TreeNode<YamlStruct> old,
@@ -26,8 +29,8 @@ public class UpdateResultValidator {
             checked.add(ListMatcher.unifyListItemPath(fullYamlPath));
 
             // nulls could be when matching list items
-            YamlStruct oldNode = old != null ? old.find(yamlPath) : null;
-            YamlStruct newNode = update != null ? update.find(yamlPath) : null;
+            final YamlStruct oldNode = old != null ? old.find(yamlPath) : null;
+            final YamlStruct newNode = update != null ? update.find(yamlPath) : null;
 
             if (leaf.hasListValue()) {
                 validateList(leaf, oldNode, newNode);

@@ -4,14 +4,21 @@ import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
  * @author Vyacheslav Rusakov
  * @since 28.04.2021
  */
-public class CommentsWriter {
+public final class CommentsWriter {
+
+    private CommentsWriter() {
+    }
 
     public static String write(final YamlTree tree) {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -39,6 +46,13 @@ public class CommentsWriter {
         tree.getChildren().forEach(node -> writeNode(node, writer, false));
         writer.flush();
         writer.close();
+    }
+
+    private static void write(final int padding, final String line, final PrintWriter out) {
+        if (padding > 0) {
+            out.write(TreeStringUtils.whitespace(padding));
+        }
+        out.write(line);
     }
 
     private static void writeNode(final YamlNode node, final PrintWriter out, final boolean listItemFirstLine) {
@@ -72,7 +86,7 @@ public class CommentsWriter {
             } else {
                 // case when property is a first list item property written just after dash
                 // in this case padding already written on line (during dash node rendering)
-                writeLine(listItemFirstLine ? 0: node.getPadding(), res, out);
+                writeLine(listItemFirstLine ? 0 : node.getPadding(), res, out);
             }
 
             // multiline value
@@ -93,13 +107,6 @@ public class CommentsWriter {
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to write node: " + node, ex);
         }
-    }
-
-    private static void write(final int padding, final String line, final PrintWriter out) {
-        if (padding > 0) {
-            out.write(TreeStringUtils.whitespace(padding));
-        }
-        out.write(line);
     }
 
     private static void writeLine(final int padding, final String line, final PrintWriter out) {

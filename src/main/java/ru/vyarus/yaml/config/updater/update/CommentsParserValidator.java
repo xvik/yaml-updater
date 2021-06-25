@@ -16,12 +16,16 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 18.05.2021
  */
-public class CommentsParserValidator {
+public final class CommentsParserValidator {
+
+    private CommentsParserValidator() {
+    }
 
     public static void validate(final YamlTree comments, final YamlStructTree struct) {
         validateSubtrees(comments, struct);
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private static void validateSubtrees(final TreeNode<YamlNode> comments, final TreeNode<YamlStruct> struct) {
         final List<YamlNode> children = comments.getChildren();
         final List<YamlStruct> childrenStruct = struct.getChildren();
@@ -34,7 +38,7 @@ public class CommentsParserValidator {
         final Iterator<YamlNode> cmtIt = children.iterator();
         final Iterator<YamlStruct> strIt = childrenStruct.iterator();
         while (cmtIt.hasNext()) {
-            YamlNode line = cmtIt.next();
+            final YamlNode line = cmtIt.next();
 
             if (line.isCommented() || line.isCommentOnly()) {
                 // structure parser can't see commented lines and so can't validate correctness
@@ -46,7 +50,7 @@ public class CommentsParserValidator {
                         + line.getLineNum() + ": line should not exist (this is a parser bug, please report it!)\n"
                         + debugTees(comments, struct));
             }
-            YamlStruct match = strIt.next();
+            final YamlStruct match = strIt.next();
 
             if (line.isProperty()) {
                 if (!line.getKey().equals(match.getKey())) {
@@ -112,7 +116,10 @@ public class CommentsParserValidator {
         return lines;
     }
 
-    private static <T extends YamlLine<T>> void debugTreeLeaf(final ReportLines lines, final T line, final int padding) {
+    private static <T extends YamlLine<T>> void debugTreeLeaf(
+            final ReportLines lines,
+            final T line,
+            final int padding) {
         final String ln = String.format("%4s| ", line.getLineNum())
                 + TreeStringUtils.shiftRight(line.toString(), padding);
         lines.add(ln);
@@ -121,6 +128,7 @@ public class CommentsParserValidator {
         }
     }
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class ReportLines {
         List<String> lines = new ArrayList<>();
         int length;

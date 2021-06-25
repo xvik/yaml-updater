@@ -19,7 +19,10 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class CommentsReader {
+public final class CommentsReader {
+
+    private CommentsReader() {
+    }
 
     public static YamlTree read(final File yaml) {
         try {
@@ -56,10 +59,11 @@ public class CommentsReader {
         context.finish();
     }
 
+    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement", "checkstyle:MultipleStringLiterals"})
     private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
-            while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE) ;
+            while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE);
             final int whitespace = chars.getIndex();
             final boolean whitespaceOnly = chars.getIndex() == chars.getEndIndex();
             if (context.detectMultilineValue(whitespace, whitespaceOnly, line)) {
@@ -84,7 +88,7 @@ public class CommentsReader {
                         // In case of empty dash, object incapsulated automatically
 
                         // skip whitespace after dash
-                        while (chars.next() == ' ') ;
+                        while (chars.next() == ' ');
 
                         // property-like structure might be quoted (simple string)
                         Prop lprop = null;
@@ -119,27 +123,28 @@ public class CommentsReader {
 
     private static Prop parseProperty(final CharacterIterator chars, final String line) {
         // stream assumed to be set at the beginning of possible property (after list dash or after whitespace)
-        int padding = chars.getIndex();
-        int comment = line.indexOf('#', padding);
-        int split = line.indexOf(':', padding);
+        final int padding = chars.getIndex();
+        final int comment = line.indexOf('#', padding);
+        final int split = line.indexOf(':', padding);
         if (split < 0 || (comment > 0 && split > comment)) {
             // no property marker or it is in comment part - not a property
             return null;
         }
-        String name = line.substring(padding, split);
+        final String name = line.substring(padding, split);
         // value may include in-line comment! pure value is not important
-        String value = split == chars.getEndIndex() ? null : line.substring(split + 1);
+        final String value = split == chars.getEndIndex() ? null : line.substring(split + 1);
         final Prop res = new Prop(padding, name, value);
         // detecting multiline markers
         res.multiline = MultilineValue.detect(value);
         return res;
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private static String visualizeError(final String line, final CharacterIterator chars) {
         String demo = "\n\t" + line + "\n\t";
         final int index = chars.getIndex();
         if (index > 1) {
-            char[] array = new char[index - 1];
+            final char[] array = new char[index - 1];
             Arrays.fill(array, '-');
             demo += new String(array);
         }
@@ -147,13 +152,14 @@ public class CommentsReader {
         return demo;
     }
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class Prop {
-        public final int padding;
-        public final String key;
-        public final String value;
-        public MultilineValue.Marker multiline;
+        final int padding;
+        final String key;
+        final String value;
+        MultilineValue.Marker multiline;
 
-        public Prop(final int padding, final String key, final String value) {
+        Prop(final int padding, final String key, final String value) {
             this.padding = padding;
             this.key = key;
             this.value = value;
@@ -165,6 +171,7 @@ public class CommentsReader {
         }
     }
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class Context {
         int lineNum;
         // storing only root nodes, sub nodes only required in context

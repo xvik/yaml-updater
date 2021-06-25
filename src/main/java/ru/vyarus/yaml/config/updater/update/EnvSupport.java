@@ -12,8 +12,11 @@ import java.util.stream.Collectors;
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
-public class EnvSupport {
-    private final static Logger LOGGER = LoggerFactory.getLogger(EnvSupport.class);
+public final class EnvSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnvSupport.class);
+
+    private EnvSupport() {
+    }
 
     public static String apply(final String text,
                                final Map<String, String> env) {
@@ -45,7 +48,7 @@ public class EnvSupport {
         }
         String res = text;
         for (Map.Entry<String, String> entry : env.entrySet()) {
-            String var = prefix + entry.getKey() + postfix;
+            final String var = prefix + entry.getKey() + postfix;
             String value = entry.getValue();
             if (value == null) {
                 value = "";

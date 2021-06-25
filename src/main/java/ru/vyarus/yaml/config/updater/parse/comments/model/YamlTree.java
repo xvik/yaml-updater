@@ -29,8 +29,9 @@ public class YamlTree extends TreeRoot<YamlNode> {
         return out.toString();
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private void renderNode(final YamlNode node, final StringBuilder out, final boolean noPadding) {
-        String padding = noPadding ? "" : TreeStringUtils.whitespace(node.getPadding());
+        final String padding = noPadding ? "" : TreeStringUtils.whitespace(node.getPadding());
 
         if (!node.getTopComment().isEmpty()) {
             out.append(padding).append("# comment");

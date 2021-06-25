@@ -6,7 +6,10 @@ import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
  * @author Vyacheslav Rusakov
  * @since 09.06.2021
  */
-public class YamlModelUtils {
+public final class YamlModelUtils {
+
+    private YamlModelUtils() {
+    }
 
     /**
      * Searches for correct parent node by current node padding. Used while parsing yaml file line-by-line.

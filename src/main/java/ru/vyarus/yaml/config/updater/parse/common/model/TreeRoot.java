@@ -1,7 +1,5 @@
 package ru.vyarus.yaml.config.updater.parse.common.model;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
                 return child;
             }
             // multiple levels property
-            T res = child.find(path);
+            final T res = child.find(path);
             if (res != null) {
                 return res;
             }
@@ -33,13 +31,12 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
     }
 
     /**
-     *
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
     @Override
     public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
-        for (T child: getChildren()) {
+        for (T child : getChildren()) {
             res.addAll(child.getTreeLeaves());
         }
         return res;

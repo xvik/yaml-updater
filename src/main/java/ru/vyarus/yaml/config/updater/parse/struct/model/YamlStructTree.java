@@ -29,6 +29,7 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
         return out.toString();
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private void renderNode(final YamlStruct node, final StringBuilder out, final boolean noPadding) {
         if (!noPadding) {
             out.append(TreeStringUtils.whitespace(node.getPadding()));

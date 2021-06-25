@@ -1,15 +1,21 @@
 package ru.vyarus.yaml.config.updater.update;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
 import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vyacheslav Rusakov
  * @since 06.06.2021
  */
-public class ListMatcher {
+public final class ListMatcher {
+
+    private ListMatcher() {
+    }
 
     /**
      * Replaces list item positions with asterisk, so list items from different files (different list positions)
@@ -37,7 +43,7 @@ public class ListMatcher {
             final Iterator<T> it = cand.iterator();
             // searching matched item by one prop (from previously selected nodes)
             while (it.hasNext()) {
-                T cnd = it.next();
+                final T cnd = it.next();
                 boolean match = false;
                 boolean propFound = false;
                 for (T uprop : cnd.getChildren()) {
@@ -115,35 +121,5 @@ public class ListMatcher {
         }
         // direct value matching
         return a.getIdentityValue().equals(b.getIdentityValue());
-    }
-
-    private static class YamlListNode<T> extends YamlLine {
-        public final YamlNode identity;
-        // empty dash line or first property just after dash
-        public boolean emptyDash;
-        // object item or scalar
-        public boolean object;
-
-        // used during items matching to count how many properties match
-        public int propsMatched;
-
-        public YamlListNode(final YamlNode item) {
-            // line number is unique identity for list item
-            super(null, item.getPadding(), item.getLineNum());
-            this.identity = item;
-            this.object = item.hasChildren() && item.getChildren().get(0).isProperty();
-            this.emptyDash = this.object && !item.isListItemWithProperty();
-        }
-
-        @Override
-        public String getIdentityValue() {
-            throw new UnsupportedOperationException("Fake node");
-        }
-
-        @Override
-        public String toString() {
-            return "(" + (object ? "object " + getChildren().size() : "scalar") + " | " + (emptyDash ? "empty dash" : "inline") + ") "
-                    + identity.getLineNum() + ": " + identity;
-        }
     }
 }

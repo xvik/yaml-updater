@@ -6,7 +6,10 @@ import java.util.Arrays;
  * @author Vyacheslav Rusakov
  * @since 21.05.2021
  */
-public class TreeStringUtils {
+public final class TreeStringUtils {
+
+    private TreeStringUtils() {
+    }
 
     public static String whitespace(int length) {
         String res = "";
@@ -19,7 +22,7 @@ public class TreeStringUtils {
     }
 
     public static String shiftRight(final String line, final int length) {
-        String padding = whitespace(length);
+        final String padding = whitespace(length);
         return padding.isEmpty() ? line : (padding + line);
     }
 

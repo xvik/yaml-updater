@@ -11,7 +11,10 @@ import java.util.*;
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-public class TreeMerger {
+public final class TreeMerger {
+
+    private TreeMerger() {
+    }
 
     public static void merge(final YamlTree node, final YamlTree from) {
         mergeLevel(node, from);
@@ -41,7 +44,7 @@ public class TreeMerger {
         int prevNodeIdx = -1;
 
         for (int i = 0; i < node.getChildren().size(); i++) {
-            YamlNode curr = node.getChildren().get(i);
+            final YamlNode curr = node.getChildren().get(i);
 
             // update old node's padding
             shiftNode(curr, padding - curr.getPadding());
@@ -49,8 +52,8 @@ public class TreeMerger {
             final String key = curr.getKey();
             if (curr.isProperty() && newProps.containsKey(key)) {
                 // replace new node with old node
-                int idx = updated.indexOf(newProps.get(key));
-                YamlNode newnode = updated.remove(idx);
+                final int idx = updated.indexOf(newProps.get(key));
+                final YamlNode newnode = updated.remove(idx);
                 updated.add(idx, curr);
 
                 // copy comment from new node (it might be updated and contain more actual instructions)
@@ -84,8 +87,8 @@ public class TreeMerger {
     private static boolean processList(TreeNode<YamlNode> node, TreeNode<YamlNode> from) {
         // node containing list items (node itself is not a list item)
         if (node.containsList()) {
-            YamlNode cur = (YamlNode) node;
-            YamlNode upd = (YamlNode) from;
+            final YamlNode cur = (YamlNode) node;
+            final YamlNode upd = (YamlNode) from;
 
             // nothing to merge
             if (!upd.hasChildren()) {
@@ -93,7 +96,7 @@ public class TreeMerger {
             }
 
             // first of all sync paddings (no matter if list is a scalar and would not be updated)
-            int pad = upd.getChildren().get(0).getPadding();
+            final int pad = upd.getChildren().get(0).getPadding();
             for (YamlNode child : cur.getChildren()) {
                 // important to shift list node itself before continuing (otherwise subtree could be shifted)
                 shiftNode(child, pad - child.getPadding());
@@ -108,7 +111,7 @@ public class TreeMerger {
 
             // all items should be unified with the new file structure (e.g. empty dash -> normal dash)
             // remembering target structure
-            boolean targetEmptyDash = updList.get(0).isEmptyDash();
+            final boolean targetEmptyDash = updList.get(0).isEmptyDash();
 
             for (YamlNode item : curList) {
                 // nothing to sync in scalar items
@@ -157,14 +160,14 @@ public class TreeMerger {
         return false;
     }
 
-    private static void shiftNode(YamlNode node, int shift) {
-        boolean increase = shift > 0;
+    private static void shiftNode(final YamlNode node, final int shift) {
+        final boolean increase = shift > 0;
         if (shift != 0) {
             if (node.getValue().size() > 1) {
                 // important to shift multiline values (otherwise value may be flowed)
 
                 // first value line is a part of property declaration
-                List<String> res = new ArrayList<>();
+                final List<String> res = new ArrayList<>();
                 res.add(node.getValue().get(0));
                 for (int j = 1; j < node.getValue().size(); j++) {
                     String line = node.getValue().get(j);
@@ -188,8 +191,9 @@ public class TreeMerger {
             }
             if (node.hasComment()) {
                 // shifting comment
-                List<String> cmt = new ArrayList<>();
-                for (String line : node.getTopComment()) {
+                final List<String> cmt = new ArrayList<>();
+                for (String ln : node.getTopComment()) {
+                    String line = ln;
                     // skip blank lines
                     if (line.trim().isEmpty()) {
                         cmt.add(line);
@@ -201,7 +205,7 @@ public class TreeMerger {
                         line = TreeStringUtils.shiftRight(line, shift);
                     } else {
                         // reduce padding (cut off whitespace)
-                        int cmtStart = line.indexOf('#');
+                        final int cmtStart = line.indexOf('#');
                         // shift left, but only whitespace before comment
                         line = line.substring(Math.min(-shift, cmtStart));
                     }
