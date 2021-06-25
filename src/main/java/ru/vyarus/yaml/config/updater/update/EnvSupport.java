@@ -1,12 +1,19 @@
 package ru.vyarus.yaml.config.updater.update;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
 public class EnvSupport {
+    private final static Logger LOGGER = LoggerFactory.getLogger(EnvSupport.class);
 
     public static String apply(final String text,
                                final Map<String, String> env) {
@@ -30,6 +37,12 @@ public class EnvSupport {
             throw new IllegalArgumentException("Variable postfix required");
         }
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Replacing variables in format '{}name{}' from: \n{}", prefix, postfix,
+                    env.entrySet().stream()
+                            .map(entry -> "    " + entry.getKey() + "=" + entry.getValue())
+                            .collect(Collectors.joining("\n")));
+        }
         String res = text;
         for (Map.Entry<String, String> entry : env.entrySet()) {
             String var = prefix + entry.getKey() + postfix;
@@ -37,7 +50,17 @@ public class EnvSupport {
             if (value == null) {
                 value = "";
             }
-            res = res.replace(var, value);
+
+            final Matcher matcher = Pattern.compile(var, Pattern.LITERAL).matcher(res);
+            final String replacement = Matcher.quoteReplacement(value);
+            int cntr = 0;
+            while (matcher.find()) {
+                cntr++;
+            }
+            if (cntr > 0) {
+                LOGGER.debug("    {} ({}) replaced with: {}", var, cntr, replacement);
+                res = matcher.replaceAll(replacement);
+            }
         }
         return res;
     }

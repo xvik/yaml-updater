@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 
 /**
  * Update configuration. Required current config and updating file. Optionally, environment variables could be
- * provided (to replace in updating file) and special config with properties to remove (only new properties are
- * copied from update config).
+ * provided (to replace in updating file). To override existing values (or to remove outdated paths) specify yaml
+ * paths to remove in old file before update (note that yaml path elements split with '/' because yaml property
+ * could contain dots).
  *
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
@@ -169,7 +170,6 @@ public class UpdateConfig {
         }
 
         public YamlUpdater build() {
-
             return new YamlUpdater(config);
         }
 

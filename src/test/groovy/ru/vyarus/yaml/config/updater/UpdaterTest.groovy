@@ -1,6 +1,5 @@
 package ru.vyarus.yaml.config.updater
 
-import ru.vyarus.yaml.config.updater.YamlUpdater
 import spock.lang.Specification
 
 import java.nio.file.Files
