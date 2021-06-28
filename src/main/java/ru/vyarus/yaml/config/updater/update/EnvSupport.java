@@ -9,6 +9,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
+ * Environment variables could be used to personalize updating yaml file. For example:
+ * <pre>
+ * some:
+ *    - prop: #{var}
+ * </pre>
+ * <p>
+ * Such syntax allows yaml parser to treat variable as a comment (if it would not be replaced). Also, variables
+ * in format {@code ${va}} are often used directly in the configuration (to be replaced at runtime with environment
+ * variables).
+ * <p>
+ * Variable names are case sensitive. Unknown variables are not replaced. Null values replaced with empty.
+ *
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
@@ -18,6 +30,13 @@ public final class EnvSupport {
     private EnvSupport() {
     }
 
+    /**
+     * Replace variables in provided text.
+     *
+     * @param text text to process
+     * @param env variables map
+     * @return text with replaced known variables
+     */
     public static String apply(final String text,
                                final Map<String, String> env) {
         // non standard vars identity used because:

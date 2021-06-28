@@ -13,6 +13,14 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * Comments parse is a very simple yaml parser and to make sure it works correctly comparing parsed structure with
+ * snakeyaml parse result (parsed trees are unified to represent equal trees).
+ * <p>
+ * Comments parser and snakeyaml models are unified to get equally trees (easier for comparison).
+ * <p>
+ * During comparison, property values parsed by snakeyaml are assigned in comments tree. This is required for
+ * list items matching logic accuracy (otherwise different comments near values could prevent values matching).
+ *
  * @author Vyacheslav Rusakov
  * @since 18.05.2021
  */
@@ -21,6 +29,13 @@ public final class CommentsParserValidator {
     private CommentsParserValidator() {
     }
 
+    /**
+     * Compare that parsed trees are structurally the same to verify comments parser correctness (assuming snakeyaml
+     * works perfectly).
+     *
+     * @param comments comments parser result
+     * @param struct snakeyaml result
+     */
     public static void validate(final YamlTree comments, final YamlStructTree struct) {
         validateSubtrees(comments, struct);
     }
@@ -69,6 +84,13 @@ public final class CommentsParserValidator {
         }
     }
 
+    /**
+     * Prints comments model tree nearby snakeyaml model tree to visually see the difference.
+     *
+     * @param comments comments subtree
+     * @param struct snakeyaml subtree
+     * @return rendered trees string
+     */
     private static String debugTees(final TreeNode<YamlNode> comments, final TreeNode<YamlStruct> struct) {
         final ReportLines cmtTree = debugTree(comments);
         final List<String> res = new ArrayList<>();

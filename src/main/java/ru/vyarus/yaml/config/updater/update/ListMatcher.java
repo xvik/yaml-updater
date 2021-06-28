@@ -9,6 +9,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * List matching utilities. Assuming list items might be reordered in yaml files. Also, updating file could contain
+ * more (or less) properties.
+ * <p>
+ * It is important to update list items because in complex configs, list items contain entire subtrees which might
+ * also change (new properties added, comments changed, etc).
+ * <p>
+ * Searches for items with the maximum number of similar values. Use values from snakeyaml parser to increase
+ * accuracy. If items contains subtrees - apply same matching logic for entire subtree.
+ * <p>
+ * Note that matching should work in both directions: find old node in new file's list or an opposite (no matter how
+ * items were changed).
+ *
  * @author Vyacheslav Rusakov
  * @since 06.06.2021
  */
@@ -28,6 +40,23 @@ public final class ListMatcher {
         return path.replaceAll("\\[\\d+]", "[*]");
     }
 
+    /**
+     * Searches for matched list item in the items list (assuming item from one file and list from another, no matter
+     * what direction).
+     * <p>
+     * Matches complete subtrees. Searches for items with the maximum amount of the same properties containing same
+     * values. If value would differ in any property - item would not be matched,
+     * <p>
+     * NOTE: if item matches with multiple nodes in the list, null will be returned because match must be exact!
+     * Otherwise there is a high chance to incorrectly merge file (better not merge part at all).
+     * <p>
+     * IMPORTANT: to avoid matching same items for different targets, remove matched item from candidates list.
+     *
+     * @param node list item node to find match for
+     * @param list collection of list items to find matching in
+     * @param <T>  structure type (works for both comments and snakeyaml structures)
+     * @return matched item or null
+     */
     public static <T extends YamlLine<T>> T match(T node, List<T> list) {
         final List<T> cand = new ArrayList<>(list);
         // count items matched at least by one property (to filter completely different items)

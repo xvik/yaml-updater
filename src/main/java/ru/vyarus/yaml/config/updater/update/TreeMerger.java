@@ -5,9 +5,24 @@ import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
 import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
+ * Merges commented models. Rules:
+ * - All yaml nodes presented in current config will remain, but comments might be updated (if matching node found
+ * in update file).
+ * - All new properties copied from update file.
+ * - Update file's properties order used (so if in current and update file the same properties would be used,
+ * but order changed - update file order would be applied).
+ * - Properties padding taken from update file. For example, if in current file properties were shifted with two spaced
+ * and in update file with 4 then all properties would be shifted according to update file (even if no new properties
+ * applied). Shift appear on subtree level (where subtrees could be matched) so if there are subtrees in old file
+ * not present in new one - old paddings will remain there (no target to align by).
+ * - Lists are not merged. But if list contain object items, such items are updated (new properties added).
+ * Items matched by property values.
+ *
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
@@ -16,6 +31,12 @@ public final class TreeMerger {
     private TreeMerger() {
     }
 
+    /**
+     * Merge commented models.
+     *
+     * @param node old file
+     * @param from new file
+     */
     public static void merge(final YamlTree node, final YamlTree from) {
         mergeLevel(node, from);
     }
@@ -84,7 +105,7 @@ public final class TreeMerger {
         node.getChildren().addAll(updated);
     }
 
-    private static boolean processList(TreeNode<YamlNode> node, TreeNode<YamlNode> from) {
+    private static boolean processList(final TreeNode<YamlNode> node, final TreeNode<YamlNode> from) {
         // node containing list items (node itself is not a list item)
         if (node.containsList()) {
             final YamlNode cur = (YamlNode) node;

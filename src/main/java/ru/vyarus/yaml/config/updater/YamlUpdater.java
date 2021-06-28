@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Yaml configuration merger preserving comments. Use two yaml partsers: snakeyaml for self-validation and
+ * Yaml configuration merger preserving comments. Use two yaml parsers: snakeyaml for self-validation and
  * custom one collecting comments (it cares about structure only, not parsing actual values).
  * Bu default, this custom parser could read and write yaml file without changing anything.
  * <p>
