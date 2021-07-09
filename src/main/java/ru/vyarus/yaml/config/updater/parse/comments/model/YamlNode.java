@@ -43,43 +43,87 @@ public class YamlNode extends YamlLine<YamlNode> {
         super(root, padding, lineNum);
     }
 
+    /**
+     * @return property value (multiple lines for multi-line values) or empty list
+     */
     public List<String> getValue() {
         return value;
     }
 
-    public void setValue(List<String> value) {
+    /**
+     * Register property value.
+     *
+     * @param value property value
+     */
+    public void setValue(final List<String> value) {
         this.value = value;
     }
 
+    /**
+     * NOTE: If multiple comments above property, separated by blank lines - it all would be assumed as property
+     * comment (everything is remembered to re-create exactly the same file).
+     *
+     * @return comment (multiple lines) above property or empty list if no comment
+     */
     public List<String> getTopComment() {
         return topComment;
     }
 
+    /**
+     * TODO not supported now
+     *
+     * @return true for commented property
+     */
     public boolean isCommented() {
         return commented;
     }
 
-    public void setCommented(boolean commented) {
+    /**
+     * Mark property as commented. It is important to recognize such properties to not append already present, but
+     * commented property on merge.
+     *
+     * @param commented commented property marker
+     */
+    public void setCommented(final boolean commented) {
         this.commented = commented;
     }
 
+    /**
+     * NOTE: such value may not be set if comments parser used directly (e.g. in tests).
+     *
+     * @return value from snakeyaml parser or null
+     */
     public String getParsedValue() {
         return parsedValue;
     }
 
-    public void setParsedValue(String parsedValue) {
+    /**
+     * Property value, parsed by snakeyaml parser. Used for list items matching (see {@link #getIdentityValue()}).
+     *
+     * @param parsedValue value from snakeyaml parser
+     */
+    public void setParsedValue(final String parsedValue) {
         this.parsedValue = parsedValue;
     }
 
+    /**
+     * @return true if property has comment above
+     */
     public boolean hasComment() {
         return !getTopComment().isEmpty();
     }
 
+    /**
+     * @return true if node contains only comment without property (trailing file or subtree comment)
+     */
     @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     public boolean isCommentOnly() {
         return hasComment() && !isListItem() && getKey() == null && (getValue() == null || getValue().isEmpty());
     }
 
+    /**
+     * @return true if property has non empty value
+     */
     public boolean hasValue() {
         return getIdentityValue() != null;
     }
