@@ -6,6 +6,8 @@ import ru.vyarus.yaml.config.updater.parse.common.model.TreeRoot;
 import java.util.List;
 
 /**
+ * Yaml tree build by snakeyaml-based parser.
+ *
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */

@@ -107,7 +107,7 @@ public final class TreeMerger {
 
     private static boolean processList(final TreeNode<YamlNode> node, final TreeNode<YamlNode> from) {
         // node containing list items (node itself is not a list item)
-        if (node.containsList()) {
+        if (node.hasListValue()) {
             final YamlNode cur = (YamlNode) node;
             final YamlNode upd = (YamlNode) from;
 

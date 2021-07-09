@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Base class for both comments and structure trees.
+ *
  * @author Vyacheslav Rusakov
  * @since 30.05.2021
  */
@@ -30,9 +32,6 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
         return null;
     }
 
-    /**
-     * @return all scalar properties and properties with list values (not looking inside list values!)
-     */
     @Override
     public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();

@@ -3,6 +3,8 @@ package ru.vyarus.yaml.config.updater.parse.common;
 import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
 
 /**
+ * Yaml model utils. Aggregates logic common for both parsers.
+ *
  * @author Vyacheslav Rusakov
  * @since 09.06.2021
  */
@@ -32,14 +34,14 @@ public final class YamlModelUtils {
     }
 
     /**
-     * Marks node as list item. For scala values, value node itself is marked as list item.
+     * Marks node as list item. For scalar values, value node itself is marked as list item.
      * For object items, it must be empty line with dash (otherwise virtual object must be created to properly
      * aggregate item object).
      *
      * @param node real node to mark as list item
      * @param <T>  node type
      */
-    public static <T extends YamlLine<T>> void listItem(T node) {
+    public static <T extends YamlLine<T>> void listItem(final T node) {
         node.setListItem(true);
     }
 
@@ -52,7 +54,7 @@ public final class YamlModelUtils {
      * @param node virtual node to mark
      * @param <T>  node type
      */
-    public static <T extends YamlLine<T>> void virtualListItem(T node) {
+    public static <T extends YamlLine<T>> void virtualListItem(final T node) {
         if (node.getKey() != null) {
             throw new IllegalStateException("Incorrect usage: property node can't be marked as virtual list node: "
                     + node);

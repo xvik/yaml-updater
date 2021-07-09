@@ -12,6 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * Renders comments model. Would render exactly the same content as in just read yaml file (by comments parser).
+ *
  * @author Vyacheslav Rusakov
  * @since 28.04.2021
  */
@@ -20,6 +22,10 @@ public final class CommentsWriter {
     private CommentsWriter() {
     }
 
+    /**
+     * @param tree comments model tree
+     * @return rendered yaml string
+     */
     public static String write(final YamlTree tree) {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         write(tree, out);
@@ -30,6 +36,12 @@ public final class CommentsWriter {
         }
     }
 
+    /**
+     * Writes yaml into file.
+     *
+     * @param tree comments model tree
+     * @param file target file
+     */
     public static void write(final YamlTree tree, File file) {
         try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8.name())) {
             write(tree, out);
@@ -38,6 +50,12 @@ public final class CommentsWriter {
         }
     }
 
+    /**
+     * Writes yaml into stream.
+     *
+     * @param tree comments model tree
+     * @param out  output stream
+     */
     public static void write(final YamlTree tree, final OutputStream out) {
         write(tree, new PrintWriter(out));
     }

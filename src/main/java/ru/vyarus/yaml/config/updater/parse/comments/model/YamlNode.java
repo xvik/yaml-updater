@@ -7,8 +7,8 @@ import java.util.List;
 
 /**
  * One or multiple lines in yaml file. Usually represent property ({@code something: val}), its value and comment.
- * Everything before property that is not a property assumed to be it's comment (important to recover comments as-is;
- * actually it doesn't matter what property they belong actually, its important to not change structure).
+ * Everything before property that is not a property assumed to be its comment (important to recover comments as-is;
+ * actually it doesn't matter what property they belong actually, it's important to not change structure).
  * <p>
  * If there are only comment lines at the end of yaml file then special node would be used: comment without property.
  * <p>

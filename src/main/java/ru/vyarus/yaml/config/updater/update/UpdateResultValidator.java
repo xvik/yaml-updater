@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Validates merged file against old and new configs: all old values must be preserved and all new values must be
+ * added. List items are also checked.
+ * <p>
+ * Use snakeyaml-based models for correct values comparison.
+ *
  * @author Vyacheslav Rusakov
  * @since 17.05.2021
  */
@@ -15,6 +20,13 @@ public final class UpdateResultValidator {
     private UpdateResultValidator() {
     }
 
+    /**
+     * Validate merge result correctness.
+     *
+     * @param merged merge result (just read)
+     * @param old    old yaml
+     * @param update new yaml
+     */
     public static void validate(final TreeNode<YamlStruct> merged,
                                 final TreeNode<YamlStruct> old,
                                 final TreeNode<YamlStruct> update) {

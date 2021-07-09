@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Yaml multi-line value detector utility.
+ *
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
@@ -23,6 +25,12 @@ public final class MultilineValue {
     private MultilineValue() {
     }
 
+    /**
+     * Detect multi-line marker at the end of the line.
+     *
+     * @param line line to check
+     * @return marker descriptor or null if not found
+     */
     public static Marker detect(final String line) {
         // cut off possible inline comment (prop: | # some comment)
         final String source = cutComment(line);
@@ -44,17 +52,34 @@ public final class MultilineValue {
         return res;
     }
 
+    /**
+     * @param value line to analyze
+     * @return true if line contains any "value" that could potentially continue as flow multiline value
+     */
     public static boolean couldBeFlowMultiline(final String value) {
         final String pure = cutComment(value);
         return pure != null && !pure.isEmpty();
     }
 
+    /**
+     * Flow multiline value is a value spanning multiple lines without additional markers. The only rule is
+     * the following lines should not have smaller padding.
+     *
+     * @param indent value indent (actually, leading property indent)
+     * @return flow multiline descriptor
+     */
     public static Marker flowMarker(final int indent) {
         final Marker res = new Marker();
         res.indent = indent;
         return res;
     }
 
+    /**
+     * Removes trailing yaml comment.
+     *
+     * @param line line to cut
+     * @return line without trailing comment
+     */
     private static String cutComment(final String line) {
         if (line == null) {
             return null;
@@ -67,6 +92,9 @@ public final class MultilineValue {
         return source.trim();
     }
 
+    /**
+     * Multi-line value descriptor.
+     */
     @SuppressWarnings("checkstyle:VisibilityModifier")
     public static class Marker {
         // true - |, false - >

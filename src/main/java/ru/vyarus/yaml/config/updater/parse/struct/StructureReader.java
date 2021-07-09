@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Snakeyaml-based parser. Builds exactly the same structure as comments parser (to simplify comparisons).
+ * <p>
+ * Object list items are split into "dash" object and properties as children. This way item object structure could
+ * be completely preserved.
+ *
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
@@ -27,6 +32,10 @@ public final class StructureReader {
     private StructureReader() {
     }
 
+    /**
+     * @param file yaml file
+     * @return parsed yaml model tree
+     */
     public static YamlStructTree read(final File file) {
         // comments parser does not support multiple yaml documents because this is not common for configs
         // so parsing only the first document, ignoring anything else
@@ -37,6 +46,10 @@ public final class StructureReader {
         }
     }
 
+    /**
+     * @param reader yaml content reader
+     * @return parsed yaml model tree
+     */
     public static YamlStructTree read(final Reader reader) {
         try {
             final Node node = new Yaml().compose(reader);

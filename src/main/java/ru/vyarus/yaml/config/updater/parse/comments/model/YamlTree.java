@@ -6,6 +6,8 @@ import ru.vyarus.yaml.config.updater.parse.common.model.TreeRoot;
 import java.util.List;
 
 /**
+ * Yaml tree built by comments parser.
+ *
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */

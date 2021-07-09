@@ -3,6 +3,8 @@ package ru.vyarus.yaml.config.updater.parse.comments.util;
 import java.util.Iterator;
 
 /**
+ * Iterator, remembering processed items count.
+ *
  * @author Vyacheslav Rusakov
  * @since 23.04.2021
  */
@@ -11,7 +13,7 @@ public class CountingIterator<T> implements Iterator<T> {
     private final Iterator<T> it;
     private int pos;
 
-    public CountingIterator(Iterator<T> it) {
+    public CountingIterator(final Iterator<T> it) {
         this.it = it;
     }
 
@@ -28,6 +30,9 @@ public class CountingIterator<T> implements Iterator<T> {
         return res;
     }
 
+    /**
+     * @return current item position, starting from 0
+     */
     public int getPosition() {
         return pos;
     }

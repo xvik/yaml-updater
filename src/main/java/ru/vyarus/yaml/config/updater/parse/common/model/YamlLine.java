@@ -19,8 +19,10 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     // line number, counting from 1
     private int lineNum;
     private int padding;
+    // property name, if property line
     private String key;
 
+    // indicate list item: for object item all properties would be as children, for scalar items - in this object
     private boolean listItem;
     // used for list items to identify if sub-object starts on the same line as dash
     // (in this case this virtual dash object used as sub-hierarchy grouping node)
@@ -36,49 +38,80 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
         }
     }
 
+    /**
+     * @return left padding of line (whitespace before)
+     */
     public int getPadding() {
         return padding;
     }
 
-    // setter remains for merge shifts, which could change padding
-    public void setPadding(int padding) {
+    /**
+     * Changes item padding. Required for merge shifts (when old and new files has different paddings and must be
+     * unified).
+     *
+     * @param padding updated padding
+     */
+    public void setPadding(final int padding) {
         this.padding = padding;
     }
 
+    /**
+     * @return yaml line number in file (counting from 1)
+     */
     public int getLineNum() {
         return lineNum;
     }
 
+    /**
+     * @return property name or null if line does not represent property
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * @param key property name
+     */
     public void setKey(final String key) {
         this.key = key;
     }
 
+    /**
+     * In all cases list item means "dash". For scalar value property and (or) value would be in the same object.
+     * For object item, all properties would be children.
+     *
+     * @return true to indicate list item
+     */
     public boolean isListItem() {
         return listItem;
     }
 
+    /**
+     * @param listItem indicate list item
+     */
     public void setListItem(final boolean listItem) {
         this.listItem = listItem;
     }
 
+    /**
+     * @return true if children are object item and the first property must start on the same line as dash
+     */
     public boolean isListItemWithProperty() {
         return listItemWithProperty;
     }
 
+    /**
+     * @param listItemWithProperty indicate first object property must start on the same line with dash
+     */
     public void setListItemWithProperty(boolean listItemWithProperty) {
         this.listItemWithProperty = listItemWithProperty;
     }
 
+    /**
+     * @return true for property line
+     */
     public boolean isProperty() {
         return key != null;
-    }
-
-    public boolean hasListValue() {
-        return hasChildren() && getChildren().get(0).isListItem();
     }
 
     /**
@@ -147,7 +180,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
      * almost always list nodes processing is situation-specific).
      *
      * @return all scalar properties (but not list items) and properties with list values
-     * (but not props inside list values!)
+     * (but not properties inside list values!)
      */
     @Override
     @SuppressWarnings("unchecked")

@@ -16,6 +16,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Custom yaml parser, preserving comments. Everything above property assumed to be it's comment.
+ * Possible free comment at the end of file is parsed as special comment-only node.
+ * <p>
+ * Parser works by line. For values it does not parse exact value, instead remembers entire line to aggregate
+ * possible in-line comments. Multi-line values are explicitly supported (but, also, all lines in multi line value
+ * remembered completely to exactly reproduce original structure).
+ * <p>
+ * Parser assumed to be used on valid yaml file only (and so snakeyaml must be used first to validate file).
+ *
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
@@ -24,6 +33,10 @@ public final class CommentsReader {
     private CommentsReader() {
     }
 
+    /**
+     * @param yaml yaml file
+     * @return parsed yaml model tree
+     */
     public static YamlTree read(final File yaml) {
         try {
             return readLines(Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8));
@@ -32,6 +45,10 @@ public final class CommentsReader {
         }
     }
 
+    /**
+     * @param yaml yaml string
+     * @return parsed yaml model tree
+     */
     public static YamlTree read(final String yaml) {
         try {
             return readLines(Arrays.asList(yaml.split("\\r?\\n")));
@@ -40,7 +57,7 @@ public final class CommentsReader {
         }
     }
 
-    private static YamlTree readLines(List<String> lines) {
+    private static YamlTree readLines(final List<String> lines) {
         final Context context = new Context();
         readNodes(new CountingIterator<>(lines.iterator()), context);
         return new YamlTree(context.rootNodes);
@@ -63,7 +80,7 @@ public final class CommentsReader {
     private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
-            while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE);
+            while (chars.current() == ' ' && chars.next() != CharacterIterator.DONE) ;
             final int whitespace = chars.getIndex();
             final boolean whitespaceOnly = chars.getIndex() == chars.getEndIndex();
             if (context.detectMultilineValue(whitespace, whitespaceOnly, line)) {
@@ -88,7 +105,7 @@ public final class CommentsReader {
                         // In case of empty dash, object incapsulated automatically
 
                         // skip whitespace after dash
-                        while (chars.next() == ' ');
+                        while (chars.next() == ' ') ;
 
                         // property-like structure might be quoted (simple string)
                         Prop lprop = null;
