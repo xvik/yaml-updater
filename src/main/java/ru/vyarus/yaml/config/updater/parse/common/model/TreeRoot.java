@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Base class for both comments and structure trees.
  *
+ * @param <T> child nodes type
  * @author Vyacheslav Rusakov
  * @since 30.05.2021
  */
@@ -18,18 +19,20 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
     @Override
     public T find(final String path) {
+        T res = null;
         for (T child : getChildren()) {
             // root level property
             if (path.equals(child.getKey())) {
-                return child;
+                res = child;
+                break;
             }
             // multiple levels property
-            final T res = child.find(path);
+            res = child.find(path);
             if (res != null) {
-                return res;
+                break;
             }
         }
-        return null;
+        return res;
     }
 
     @Override

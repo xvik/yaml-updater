@@ -11,9 +11,9 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class YamlTree extends TreeRoot<YamlNode> {
+public class CmtTree extends TreeRoot<CmtNode> {
 
-    public YamlTree(final List<YamlNode> nodes) {
+    public CmtTree(final List<CmtNode> nodes) {
         super(nodes);
     }
 
@@ -32,7 +32,7 @@ public class YamlTree extends TreeRoot<YamlNode> {
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
-    private void renderNode(final YamlNode node, final StringBuilder out, final boolean noPadding) {
+    private void renderNode(final CmtNode node, final StringBuilder out, final boolean noPadding) {
         final String padding = noPadding ? "" : TreeStringUtils.whitespace(node.getPadding());
 
         if (!node.getTopComment().isEmpty()) {
@@ -47,6 +47,22 @@ public class YamlTree extends TreeRoot<YamlNode> {
             }
         }
 
+        renderValue(node, out, padding);
+        // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
+        boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
+        if (!mergeLines) {
+            out.append("\n");
+        }
+
+        for (CmtNode child : node.getChildren()) {
+            // render dash and first item property as single line (when mergeLines = true)
+            renderNode(child, out, mergeLines);
+            mergeLines = false;
+        }
+    }
+
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
+    private void renderValue(final CmtNode node, final StringBuilder out, final String padding) {
         out.append(padding);
         if (node.isListItem()) {
             out.append("- ");
@@ -61,17 +77,6 @@ public class YamlTree extends TreeRoot<YamlNode> {
             } else {
                 out.append("value ").append(node.getValue().size()).append(" lines");
             }
-        }
-        // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
-        boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
-        if (!mergeLines) {
-            out.append("\n");
-        }
-
-        for (YamlNode child : node.getChildren()) {
-            // render dash and first item property as single line (when mergeLines = true)
-            renderNode(child, out, mergeLines);
-            mergeLines = false;
         }
     }
 }

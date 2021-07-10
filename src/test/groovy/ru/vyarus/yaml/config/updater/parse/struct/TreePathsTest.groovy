@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.struct
 
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree
 import spock.lang.Specification
 
 /**
@@ -12,7 +12,7 @@ class TreePathsTest extends Specification {
     def "Check simple parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
 
         then: "generating leaf paths"
         toPaths(tree) == """   5| prop1/prop1.1
@@ -24,7 +24,7 @@ class TreePathsTest extends Specification {
     def "Check lists parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
 
         then: "generating leaf paths"
         toPaths(tree) == """   2| simple_list[0]
@@ -56,7 +56,7 @@ class TreePathsTest extends Specification {
     def "Check multiline parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
 
         then: "generating leaf paths"
         toPaths(tree) == """   1| simple
@@ -76,13 +76,13 @@ class TreePathsTest extends Specification {
   66| flow"""
     }
 
-    private String toPaths(YamlStructTree tree) {
+    private String toPaths(StructTree tree) {
         return toPaths(tree.getTreeLeaves()).join('\n')
     }
 
-    private List<String> toPaths(List<YamlStruct> props) {
+    private List<String> toPaths(List<StructNode> props) {
         List<String> res = []
-        for(YamlStruct prop: props) {
+        for(StructNode prop: props) {
             if (prop.hasListValue()) {
                 // processing list items
                 prop.getChildren().each { res.addAll(toPaths(it.getAllPropertiesIncludingScalarLists())) }

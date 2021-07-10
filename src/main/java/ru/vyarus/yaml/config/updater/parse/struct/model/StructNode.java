@@ -13,10 +13,10 @@ import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
-public class YamlStruct extends YamlLine<YamlStruct> {
+public class StructNode extends YamlLine<StructNode> {
     private String value;
 
-    public YamlStruct(final YamlStruct root, final int padding, final int lineNum) {
+    public StructNode(final StructNode root, final int padding, final int lineNum) {
         super(root, padding, lineNum);
     }
 

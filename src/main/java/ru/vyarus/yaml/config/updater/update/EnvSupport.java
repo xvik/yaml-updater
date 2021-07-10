@@ -31,10 +31,10 @@ public final class EnvSupport {
     }
 
     /**
-     * Replace variables in provided text.
+     * Replace variables in the provided text.
      *
      * @param text text to process
-     * @param env variables map
+     * @param env  variables map
      * @return text with replaced known variables
      */
     public static String apply(final String text,
@@ -45,6 +45,15 @@ public final class EnvSupport {
         return apply(text, "#{", "}", env);
     }
 
+    /**
+     * Replace variables in the provided text.
+     *
+     * @param text    text to process
+     * @param prefix  variable prefix
+     * @param postfix variable postfix
+     * @param env     variables map
+     * @return text with replaced known variables
+     */
     public static String apply(final String text,
                                final String prefix,
                                final String postfix,
@@ -65,6 +74,13 @@ public final class EnvSupport {
                             .map(entry -> "    " + entry.getKey() + "=" + entry.getValue())
                             .collect(Collectors.joining("\n")));
         }
+        return replace(text, prefix, postfix, env);
+    }
+
+    private static String replace(final String text,
+                                  final String prefix,
+                                  final String postfix,
+                                  final Map<String, String> env) {
         String res = text;
         for (Map.Entry<String, String> entry : env.entrySet()) {
             final String var = prefix + entry.getKey() + postfix;

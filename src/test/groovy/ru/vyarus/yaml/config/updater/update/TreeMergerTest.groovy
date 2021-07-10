@@ -3,7 +3,7 @@ package ru.vyarus.yaml.config.updater.update
 
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree
 import spock.lang.Specification
 
 /**
@@ -15,8 +15,8 @@ class TreeMergerTest extends Specification {
     def "Check simple merge"() {
 
         when: "merging"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
-        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_upd.yml').toURI()))
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
+        CmtTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_upd.yml').toURI()))
         TreeMerger.merge(tree, upd)
 
         then: "merged"
@@ -63,8 +63,8 @@ prop3:
     def "Check merge with shift"() {
 
         when: "merging"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
-        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
+        CmtTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
         TreeMerger.merge(tree, upd)
 
         then: "merged"
@@ -111,8 +111,8 @@ prop3:
     def "Check merge with negative shift"() {
 
         when: "merging"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
-        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()))
+        CmtTree upd = CommentsReader.read(new File(getClass().getResource('/merge/simple.yml').toURI()))
         TreeMerger.merge(tree, upd)
 
         then: "merged"
@@ -163,8 +163,8 @@ prop3:
     def "Check multiline shift"() {
 
         when: "merging"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
-        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
+        CmtTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
         TreeMerger.merge(tree, upd)
 
         then: "merged"
@@ -194,8 +194,8 @@ prop3:
     def "Check multiline negative shift"() {
 
         when: "merging"
-        YamlTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
-        YamlTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()))
+        CmtTree upd = CommentsReader.read(new File(getClass().getResource('/merge/multiline.yml').toURI()))
         TreeMerger.merge(tree, upd)
 
         then: "merged"

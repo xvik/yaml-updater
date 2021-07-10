@@ -7,8 +7,8 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import ru.vyarus.yaml.config.updater.parse.common.YamlModelUtils;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ public final class StructureReader {
      * @param file yaml file
      * @return parsed yaml model tree
      */
-    public static YamlStructTree read(final File file) {
+    public static StructTree read(final File file) {
         // comments parser does not support multiple yaml documents because this is not common for configs
         // so parsing only the first document, ignoring anything else
         try (FileInputStream in = new FileInputStream(file)) {
@@ -50,12 +50,12 @@ public final class StructureReader {
      * @param reader yaml content reader
      * @return parsed yaml model tree
      */
-    public static YamlStructTree read(final Reader reader) {
+    public static StructTree read(final Reader reader) {
         try {
             final Node node = new Yaml().compose(reader);
             final Context context = new Context();
             processNode(node, context);
-            return new YamlStructTree(context.rootNodes);
+            return new StructTree(context.rootNodes);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml structure", e);
         }
@@ -113,12 +113,12 @@ public final class StructureReader {
     @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class Context {
         int lineNum;
-        List<YamlStruct> rootNodes = new ArrayList<>();
-        YamlStruct current;
+        List<StructNode> rootNodes = new ArrayList<>();
+        StructNode current;
 
         public void property(final int padding, final String name, final String value) {
-            final YamlStruct root = YamlModelUtils.findNextLineRoot(padding, current);
-            final YamlStruct node = new YamlStruct(root, padding, lineNum);
+            final StructNode root = YamlModelUtils.findNextLineRoot(padding, current);
+            final StructNode node = new StructNode(root, padding, lineNum);
             if (name != null) {
                 node.setKey(name);
             }

@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater.parse.comments
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree
 import spock.lang.Specification
 
 /**
@@ -16,7 +16,7 @@ class WriterTest extends Specification {
         String original = new File(getClass().getResource("/common/$file").toURI()).text
 
         when: "reading and writing"
-        YamlTree tree = CommentsReader.read(original)
+        CmtTree tree = CommentsReader.read(original)
         String result = CommentsWriter.write(tree)
 
         then: "not changed"

@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.update;
 
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,22 +27,22 @@ public final class UpdateResultValidator {
      * @param old    old yaml
      * @param update new yaml
      */
-    public static void validate(final TreeNode<YamlStruct> merged,
-                                final TreeNode<YamlStruct> old,
-                                final TreeNode<YamlStruct> update) {
+    public static void validate(final TreeNode<StructNode> merged,
+                                final TreeNode<StructNode> old,
+                                final TreeNode<StructNode> update) {
         final Set<String> checked = new HashSet<>();
         // for list items it is important to cut off path before item and search by sub path only
         // (because items would be on different indexes and so paths would be different in trees)
-        final String rootPath = merged instanceof YamlStruct ? ((YamlStruct) merged).getYamlPath() : null;
-        for (YamlStruct leaf : merged.getTreeLeaves()) {
+        final String rootPath = merged instanceof StructNode ? ((StructNode) merged).getYamlPath() : null;
+        for (StructNode leaf : merged.getTreeLeaves()) {
             final String fullYamlPath = leaf.getYamlPath();
             final String yamlPath = fullYamlPath.substring(rootPath != null ? rootPath.length() + 1 : 0);
             // ignore list positions in path (for list items correct items already selected)
             checked.add(ListMatcher.unifyListItemPath(fullYamlPath));
 
             // nulls could be when matching list items
-            final YamlStruct oldNode = old != null ? old.find(yamlPath) : null;
-            final YamlStruct newNode = update != null ? update.find(yamlPath) : null;
+            final StructNode oldNode = old != null ? old.find(yamlPath) : null;
+            final StructNode newNode = update != null ? update.find(yamlPath) : null;
 
             if (leaf.hasListValue()) {
                 validateList(leaf, oldNode, newNode);
@@ -72,7 +72,7 @@ public final class UpdateResultValidator {
 
         // check for missed values (which should not be removed)
         if (old != null) {
-            for (YamlStruct node : old.getTreeLeaves()) {
+            for (StructNode node : old.getTreeLeaves()) {
                 final String yamlPath = node.getYamlPath();
                 if (!checked.contains(ListMatcher.unifyListItemPath(yamlPath))) {
                     throw new IllegalStateException(String.format(
@@ -84,7 +84,7 @@ public final class UpdateResultValidator {
 
         // check for not added values from update file
         if (update != null) {
-            for (YamlStruct node : update.getTreeLeaves()) {
+            for (StructNode node : update.getTreeLeaves()) {
                 final String yamlPath = node.getYamlPath();
                 if (!checked.contains(ListMatcher.unifyListItemPath(yamlPath))) {
                     throw new IllegalStateException(String.format(
@@ -95,16 +95,16 @@ public final class UpdateResultValidator {
         }
     }
 
-    private static void validateList(final YamlStruct list,
-                                     final YamlStruct oldList,
-                                     final YamlStruct newList) {
-        for (YamlStruct item : list.getChildren()) {
+    private static void validateList(final StructNode list,
+                                     final StructNode oldList,
+                                     final StructNode newList) {
+        for (StructNode item : list.getChildren()) {
             if (!item.isObjectListItem()) {
                 // scalar lists not merged
                 continue;
             }
-            final YamlStruct oldItem = ListMatcher.match(item, oldList.getChildren());
-            final YamlStruct newItem = ListMatcher.match(item, newList.getChildren());
+            final StructNode oldItem = ListMatcher.match(item, oldList.getChildren());
+            final StructNode newItem = ListMatcher.match(item, newList.getChildren());
             if (oldItem == null && newItem == null) {
                 throw new IllegalStateException("Can't find reference list item neither in old nor in new file: "
                         + item.getYamlPath());

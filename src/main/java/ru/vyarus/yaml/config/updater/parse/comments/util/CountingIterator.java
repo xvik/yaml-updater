@@ -5,6 +5,7 @@ import java.util.Iterator;
 /**
  * Iterator, remembering processed items count.
  *
+ * @param <T> value type
  * @author Vyacheslav Rusakov
  * @since 23.04.2021
  */

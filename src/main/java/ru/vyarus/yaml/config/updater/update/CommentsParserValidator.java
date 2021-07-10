@@ -1,12 +1,12 @@
 package ru.vyarus.yaml.config.updater.update;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.common.model.YamlLine;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,24 +36,24 @@ public final class CommentsParserValidator {
      * @param comments comments parser result
      * @param struct snakeyaml result
      */
-    public static void validate(final YamlTree comments, final YamlStructTree struct) {
+    public static void validate(final CmtTree comments, final StructTree struct) {
         validateSubtrees(comments, struct);
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
-    private static void validateSubtrees(final TreeNode<YamlNode> comments, final TreeNode<YamlStruct> struct) {
-        final List<YamlNode> children = comments.getChildren();
-        final List<YamlStruct> childrenStruct = struct.getChildren();
+    private static void validateSubtrees(final TreeNode<CmtNode> comments, final TreeNode<StructNode> struct) {
+        final List<CmtNode> children = comments.getChildren();
+        final List<StructNode> childrenStruct = struct.getChildren();
         if (children.size() < childrenStruct.size()) {
             throw new IllegalStateException("Comments parser validation problem on line " + comments.getLineNum()
                     + ": " + children.size() + " child nodes found but should be at least " + childrenStruct.size()
                     + "(this is parser a bug, please report it!)\n" + debugTees(comments, struct));
         }
 
-        final Iterator<YamlNode> cmtIt = children.iterator();
-        final Iterator<YamlStruct> strIt = childrenStruct.iterator();
+        final Iterator<CmtNode> cmtIt = children.iterator();
+        final Iterator<StructNode> strIt = childrenStruct.iterator();
         while (cmtIt.hasNext()) {
-            final YamlNode line = cmtIt.next();
+            final CmtNode line = cmtIt.next();
 
             if (line.isCommented() || line.isCommentOnly()) {
                 // structure parser can't see commented lines and so can't validate correctness
@@ -65,7 +65,7 @@ public final class CommentsParserValidator {
                         + line.getLineNum() + ": line should not exist (this is a parser bug, please report it!)\n"
                         + debugTees(comments, struct));
             }
-            final YamlStruct match = strIt.next();
+            final StructNode match = strIt.next();
 
             if (line.isProperty()) {
                 if (!line.getKey().equals(match.getKey())) {
@@ -91,7 +91,7 @@ public final class CommentsParserValidator {
      * @param struct snakeyaml subtree
      * @return rendered trees string
      */
-    private static String debugTees(final TreeNode<YamlNode> comments, final TreeNode<YamlStruct> struct) {
+    private static String debugTees(final TreeNode<CmtNode> comments, final TreeNode<StructNode> struct) {
         final ReportLines cmtTree = debugTree(comments);
         final List<String> res = new ArrayList<>();
         if (struct != null) {

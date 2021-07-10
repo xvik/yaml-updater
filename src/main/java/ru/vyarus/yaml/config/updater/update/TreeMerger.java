@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.update;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 
@@ -37,27 +37,22 @@ public final class TreeMerger {
      * @param node old file
      * @param from new file
      */
-    public static void merge(final YamlTree node, final YamlTree from) {
+    public static void merge(final CmtTree node, final CmtTree from) {
         mergeLevel(node, from);
     }
 
-    private static void mergeLevel(final TreeNode<YamlNode> node, final TreeNode<YamlNode> from) {
-        if (!from.hasChildren()) {
-            // nothing to sync - current children subtree remains
-            return;
-        }
-
-        // special logic for list values
-        if (processList(node, from)) {
+    private static void mergeLevel(final TreeNode<CmtNode> node, final TreeNode<CmtNode> from) {
+        // nothing to sync case (current children subtree remains) and special logic for list values
+        if (!from.hasChildren() || processList(node, from)) {
             return;
         }
 
         // updating file structure taken and only existing nodes replaced by current values
         // nodes not found in new config would be also inserted
 
-        final Map<String, YamlNode> newProps = from.getRootProperties();
+        final Map<String, CmtNode> newProps = from.getRootProperties();
 
-        final List<YamlNode> updated = new ArrayList<>(from.getChildren());
+        final List<CmtNode> updated = new ArrayList<>(from.getChildren());
 
         // current file paddings must be unified with updating file or the resulting file become invalid
         final int padding = from.getChildren().get(0).getPadding();
@@ -65,7 +60,7 @@ public final class TreeMerger {
         int prevNodeIdx = -1;
 
         for (int i = 0; i < node.getChildren().size(); i++) {
-            final YamlNode curr = node.getChildren().get(i);
+            final CmtNode curr = node.getChildren().get(i);
 
             // update old node's padding
             shiftNode(curr, padding - curr.getPadding());
@@ -74,7 +69,7 @@ public final class TreeMerger {
             if (curr.isProperty() && newProps.containsKey(key)) {
                 // replace new node with old node
                 final int idx = updated.indexOf(newProps.get(key));
-                final YamlNode newnode = updated.remove(idx);
+                final CmtNode newnode = updated.remove(idx);
                 updated.add(idx, curr);
 
                 // copy comment from new node (it might be updated and contain more actual instructions)
@@ -105,11 +100,11 @@ public final class TreeMerger {
         node.getChildren().addAll(updated);
     }
 
-    private static boolean processList(final TreeNode<YamlNode> node, final TreeNode<YamlNode> from) {
+    private static boolean processList(final TreeNode<CmtNode> node, final TreeNode<CmtNode> from) {
         // node containing list items (node itself is not a list item)
         if (node.hasListValue()) {
-            final YamlNode cur = (YamlNode) node;
-            final YamlNode upd = (YamlNode) from;
+            final CmtNode cur = (CmtNode) node;
+            final CmtNode upd = (CmtNode) from;
 
             // nothing to merge
             if (!upd.hasChildren()) {
@@ -118,7 +113,7 @@ public final class TreeMerger {
 
             // first of all sync paddings (no matter if list is a scalar and would not be updated)
             final int pad = upd.getChildren().get(0).getPadding();
-            for (YamlNode child : cur.getChildren()) {
+            for (CmtNode child : cur.getChildren()) {
                 // important to shift list node itself before continuing (otherwise subtree could be shifted)
                 shiftNode(child, pad - child.getPadding());
             }
@@ -127,20 +122,20 @@ public final class TreeMerger {
             // For both scalar and object lists new list items are not added
 
             // use wrapper objects to simplify matching
-            final List<YamlNode> curList = cur.getChildren();
-            final List<YamlNode> updList = new ArrayList<>(upd.getChildren());
+            final List<CmtNode> curList = cur.getChildren();
+            final List<CmtNode> updList = new ArrayList<>(upd.getChildren());
 
             // all items should be unified with the new file structure (e.g. empty dash -> normal dash)
             // remembering target structure
             final boolean targetEmptyDash = updList.get(0).isEmptyDash();
 
-            for (YamlNode item : curList) {
+            for (CmtNode item : curList) {
                 // nothing to sync in scalar items
                 if (!item.isObjectListItem()) {
                     continue;
                 }
 
-                final YamlNode match = ListMatcher.match(item, updList);
+                final CmtNode match = ListMatcher.match(item, updList);
                 if (match != null) {
                     // actual items merge (padding is already synced so no additional shift will appear)
                     mergeLevel(item, match);
@@ -155,7 +150,7 @@ public final class TreeMerger {
             }
 
             // recover merged items structure
-            for (YamlNode item : curList) {
+            for (CmtNode item : curList) {
                 // re-mapping new nodes
                 item.setRoot(cur);
                 if (!cur.getChildren().contains(item)) {
@@ -167,7 +162,7 @@ public final class TreeMerger {
                     // list style could change (empty dash -> single line or reverse)
                     item.setListItemWithProperty(!targetEmptyDash);
 
-                    final YamlNode firstItemLine = item.getChildren().get(0);
+                    final CmtNode firstItemLine = item.getChildren().get(0);
                     if (item.isListItemWithProperty() && firstItemLine.hasComment()) {
                         // if first item contains comment need to move it before dash
                         item.getTopComment().addAll(firstItemLine.getTopComment());
@@ -181,7 +176,7 @@ public final class TreeMerger {
         return false;
     }
 
-    private static void shiftNode(final YamlNode node, final int shift) {
+    private static void shiftNode(final CmtNode node, final int shift) {
         final boolean increase = shift > 0;
         if (shift != 0) {
             if (node.getValue().size() > 1) {
@@ -238,7 +233,7 @@ public final class TreeMerger {
             node.setPadding(node.getPadding() + shift);
 
             // important to shift entire subtree (otherwise list position could be flowed)
-            for (YamlNode child : node.getChildren()) {
+            for (CmtNode child : node.getChildren()) {
                 shiftNode(child, shift);
             }
         }

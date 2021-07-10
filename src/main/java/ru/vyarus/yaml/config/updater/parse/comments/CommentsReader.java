@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.comments;
 
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.config.updater.parse.comments.util.CountingIterator;
 import ru.vyarus.yaml.config.updater.parse.comments.util.MultilineValue;
 import ru.vyarus.yaml.config.updater.parse.common.YamlModelUtils;
@@ -37,7 +37,7 @@ public final class CommentsReader {
      * @param yaml yaml file
      * @return parsed yaml model tree
      */
-    public static YamlTree read(final File yaml) {
+    public static CmtTree read(final File yaml) {
         try {
             return readLines(Files.readAllLines(yaml.toPath(), StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public final class CommentsReader {
      * @param yaml yaml string
      * @return parsed yaml model tree
      */
-    public static YamlTree read(final String yaml) {
+    public static CmtTree read(final String yaml) {
         try {
             return readLines(Arrays.asList(yaml.split("\\r?\\n")));
         } catch (Exception e) {
@@ -57,10 +57,10 @@ public final class CommentsReader {
         }
     }
 
-    private static YamlTree readLines(final List<String> lines) {
+    private static CmtTree readLines(final List<String> lines) {
         final Context context = new Context();
         readNodes(new CountingIterator<>(lines.iterator()), context);
-        return new YamlTree(context.rootNodes);
+        return new CmtTree(context.rootNodes);
     }
 
     private static void readNodes(final CountingIterator<String> lines, final Context context) {
@@ -93,48 +93,56 @@ public final class CommentsReader {
                 // looking next line
                 context.comment(line);
             } else {
-                switch (chars.current()) {
-                    case '#':
-                        // commented line (stored as is)
-                        context.comment(line);
-                        break;
-                    case '-':
-                        // list value
-                        // if list contains sub-object, starting on the same line as tick then virtual node
-                        // created to store sub-object (in this case two objects would represent same line)
-                        // In case of empty dash, object incapsulated automatically
-
-                        // skip whitespace after dash
-                        while (chars.next() == ' ') ;
-
-                        // property-like structure might be quoted (simple string)
-                        Prop lprop = null;
-                        if (chars.current() != '\'' && chars.current() != '"') {
-                            lprop = parseProperty(chars, line);
-                        }
-                        if (lprop == null) {
-                            // not a property (simple value); take everything after dash
-                            lprop = new Prop(whitespace, null, line.substring(whitespace + 1));
-                        }
-                        // first property in list item or list constant
-                        context.listValue(whitespace, lprop);
-
-                        break;
-                    default:
-                        // flow multiline is when string value continues on new line without special markers
-                        if (!context.detectFlowMultiline(whitespace, line)) {
-                            // property
-                            final Prop prop = parseProperty(chars, line);
-                            if (prop == null) {
-                                throw new IllegalStateException("Property line expected, but no property found");
-                            }
-                            context.property(whitespace, prop);
-                        }
-                }
+                parseValue(line, context, chars, whitespace);
             }
         } catch (Exception ex) {
             throw new IllegalStateException("Error parsing line on position " + (chars.getIndex() + 1) + ": "
                     + visualizeError(line, chars), ex);
+        }
+    }
+
+    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement"})
+    private static void parseValue(final String line,
+                                   final Context context,
+                                   final CharacterIterator chars,
+                                   final int padding) {
+        switch (chars.current()) {
+            case '#':
+                // commented line (stored as is)
+                context.comment(line);
+                break;
+            case '-':
+                // list value
+                // if list contains sub-object, starting on the same line as tick then virtual node
+                // created to store sub-object (in this case two objects would represent same line)
+                // In case of empty dash, object encapsulated automatically
+
+                // skip whitespace after dash
+                while (chars.next() == ' ') ;
+
+                // property-like structure might be quoted (simple string)
+                Prop lprop = null;
+                if (chars.current() != '\'' && chars.current() != '"') {
+                    lprop = parseProperty(chars, line);
+                }
+                if (lprop == null) {
+                    // not a property (simple value); take everything after dash
+                    lprop = new Prop(padding, null, line.substring(padding + 1));
+                }
+                // first property in list item or list constant
+                context.listValue(padding, lprop);
+
+                break;
+            default:
+                // flow multiline is when string value continues on new line without special markers
+                if (!context.detectFlowMultiline(padding, line)) {
+                    // property
+                    final Prop prop = parseProperty(chars, line);
+                    if (prop == null) {
+                        throw new IllegalStateException("Property line expected, but no property found");
+                    }
+                    context.property(padding, prop);
+                }
         }
     }
 
@@ -192,8 +200,8 @@ public final class CommentsReader {
     private static class Context {
         int lineNum;
         // storing only root nodes, sub nodes only required in context
-        List<YamlNode> rootNodes = new ArrayList<>();
-        YamlNode current;
+        List<CmtNode> rootNodes = new ArrayList<>();
+        CmtNode current;
         // comments aggregator
         List<String> comments = new ArrayList<>();
         MultilineValue.Marker multiline;
@@ -218,8 +226,8 @@ public final class CommentsReader {
         }
 
         public void property(final int padding, final Prop prop) {
-            final YamlNode root = YamlModelUtils.findNextLineRoot(padding, current);
-            final YamlNode node = new YamlNode(root, padding, lineNum);
+            final CmtNode root = YamlModelUtils.findNextLineRoot(padding, current);
+            final CmtNode node = new CmtNode(root, padding, lineNum);
             // null in case of trailing comment node
             if (prop != null) {
                 if (prop.key != null) {
@@ -282,7 +290,7 @@ public final class CommentsReader {
             }
         }
 
-        private void flushComments(final YamlNode node) {
+        private void flushComments(final CmtNode node) {
             if (!comments.isEmpty()) {
                 node.getTopComment().addAll(comments);
                 comments.clear();

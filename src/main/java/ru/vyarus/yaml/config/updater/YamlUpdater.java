@@ -4,12 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter;
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlNode;
-import ru.vyarus.yaml.config.updater.parse.comments.model.YamlTree;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtNode;
+import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.config.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.config.updater.parse.struct.StructureReader;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStruct;
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode;
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree;
 import ru.vyarus.yaml.config.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.config.updater.update.EnvSupport;
 import ru.vyarus.yaml.config.updater.update.TreeMerger;
@@ -77,11 +77,11 @@ public class YamlUpdater {
     private final UpdateConfig config;
     // merge result until final validation (tmp file)
     private File work;
-    private YamlStructTree currentStructure;
-    private YamlTree currentTree;
+    private StructTree currentStructure;
+    private CmtTree currentTree;
 
-    private YamlStructTree updateStructure;
-    private YamlTree updateTree;
+    private StructTree updateStructure;
+    private CmtTree updateTree;
 
     YamlUpdater(final UpdateConfig config) {
         this.config = config;
@@ -168,18 +168,18 @@ public class YamlUpdater {
 
             // removing props
             for (String prop : config.getDeleteProps()) {
-                final YamlNode node = currentTree.find(prop);
+                final CmtNode node = currentTree.find(prop);
                 if (node != null) {
                     logger.info("Removing configuration property: {}", prop);
                     // for root level property, it would not point to tree object
-                    final TreeNode<YamlNode> root = node.getRoot() == null ? currentTree : node.getRoot();
+                    final TreeNode<CmtNode> root = node.getRoot() == null ? currentTree : node.getRoot();
                     root.getChildren().remove(node);
 
                     // remove in both trees because struct tree is used for result validation
-                    final YamlStruct str = currentStructure.find(prop);
+                    final StructNode str = currentStructure.find(prop);
                     // could be commented node in comments tree, not visible in struct tree
                     if (str != null) {
-                        final TreeNode<YamlStruct> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
+                        final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
                         rootStr.getChildren().remove(str);
                     }
                 }
@@ -214,7 +214,7 @@ public class YamlUpdater {
         logger.debug("Validating merged result");
         try {
             // make sure updated file is valid
-            final YamlStructTree updated = StructureReader.read(work);
+            final StructTree updated = StructureReader.read(work);
             if (config.isValidateResult()) {
                 UpdateResultValidator.validate(updated, currentStructure, updateStructure);
                 logger.info("Merged configuration correctness validated");

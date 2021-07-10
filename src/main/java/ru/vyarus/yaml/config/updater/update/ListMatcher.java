@@ -57,6 +57,7 @@ public final class ListMatcher {
      * @param <T>  structure type (works for both comments and snakeyaml structures)
      * @return matched item or null
      */
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity"})
     public static <T extends YamlLine<T>> T match(T node, List<T> list) {
         final List<T> cand = new ArrayList<>(list);
         // count items matched at least by one property (to filter completely different items)
@@ -109,46 +110,51 @@ public final class ListMatcher {
     }
 
     private static <T extends YamlLine<T>> boolean matches(final T a, final T b) {
+        final boolean res;
         if (a.hasListValue() && !a.getChildren().get(0).isObjectListItem()) {
             // special case: scalar lists are not merged and so should not be compared
             // but have assume this case as match
-            return true;
-        }
-        // subtree matching
-        if (a.hasChildren()) {
-            if (!b.hasChildren()) {
-                return false;
+            res = true;
+        } else {
+            // subtree matching
+            if (a.hasChildren()) {
+                // at least one property must match (and no different values detected)
+                res = b.hasChildren() && matchSubtrees(a, b) > 0;
+            } else {
+                // direct value matching
+                res = a.getIdentityValue().equals(b.getIdentityValue());
             }
-            int matches = 0;
-            // all props found in left subtree must match props in the right subtree
-            // (left prop may not be found on the right, but at least one property must match)
-            for (T aprop : a.getChildren()) {
-                if (!aprop.isProperty()) {
-                    continue;
-                }
-                boolean propFound = false;
-                boolean match = false;
-                for (T bprop : b.getChildren()) {
-                    if (aprop.getKey().equals(bprop.getKey())) {
-                        propFound = true;
-                        // could be deeper subtree check
-                        match = matches(aprop, bprop);
-                        if (!match) {
-                            break;
-                        } else {
-                            matches++;
-                        }
+        }
+        return res;
+    }
+
+    private static <T extends YamlLine<T>> Integer matchSubtrees(final T a, final T b) {
+        int matches = 0;
+        // all props found in left subtree must match props in the right subtree
+        // (left prop may not be found on the right, but at least one property must match)
+        for (T aprop : a.getChildren()) {
+            if (!aprop.isProperty()) {
+                continue;
+            }
+            boolean propFound = false;
+            boolean match = false;
+            for (T bprop : b.getChildren()) {
+                if (aprop.getKey().equals(bprop.getKey())) {
+                    propFound = true;
+                    // could be deeper subtree check
+                    match = matches(aprop, bprop);
+                    if (!match) {
+                        break;
+                    } else {
+                        matches++;
                     }
                 }
-                // found at least one not matched property (different value)
-                if (propFound && !match) {
-                    return false;
-                }
             }
-            // at least one property
-            return matches > 0;
+            // found at least one not matched property (different value)
+            if (propFound && !match) {
+                return 0;
+            }
         }
-        // direct value matching
-        return a.getIdentityValue().equals(b.getIdentityValue());
+        return matches;
     }
 }

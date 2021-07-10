@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * Universal tree-like structure. Required to unify both yaml lines tree and object, containing root nodes.
  *
+ * @param <T> child nodes type
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */

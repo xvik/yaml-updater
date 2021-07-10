@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.struct
 
 
-import ru.vyarus.yaml.config.updater.parse.struct.model.YamlStructTree
+import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree
 import spock.lang.Specification
 
 /**
@@ -13,7 +13,7 @@ class StructParseTest extends Specification {
     def "Check simple parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/sample.yml').toURI()))
         
         then: "ok"
         tree.children.size() == 3
@@ -29,7 +29,7 @@ prop3: '3'
     def "Check lists parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
 
         then: "ok"
         tree.children.size() == 6
@@ -76,7 +76,7 @@ sublist:
     def "Check multiline parse"() {
 
         when: "parsing"
-        YamlStructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
 
         then: "ok"
         tree.children.size() == 13

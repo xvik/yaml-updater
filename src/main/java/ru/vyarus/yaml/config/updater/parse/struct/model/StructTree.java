@@ -11,9 +11,9 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
-public class YamlStructTree extends TreeRoot<YamlStruct> {
+public class StructTree extends TreeRoot<StructNode> {
 
-    public YamlStructTree(final List<YamlStruct> nodes) {
+    public StructTree(final List<StructNode> nodes) {
         super(nodes);
     }
 
@@ -32,7 +32,7 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
-    private void renderNode(final YamlStruct node, final StringBuilder out, final boolean noPadding) {
+    private void renderNode(final StructNode node, final StringBuilder out, final boolean noPadding) {
         if (!noPadding) {
             out.append(TreeStringUtils.whitespace(node.getPadding()));
         }
@@ -57,7 +57,7 @@ public class YamlStructTree extends TreeRoot<YamlStruct> {
             out.append("\n");
         }
 
-        for (YamlStruct child : node.getChildren()) {
+        for (StructNode child : node.getChildren()) {
             // render dash and first item property as single line (when avoidPadding = true)
             renderNode(child, out, mergeLines);
             mergeLines = false;

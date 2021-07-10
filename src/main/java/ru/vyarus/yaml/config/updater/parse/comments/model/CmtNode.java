@@ -22,7 +22,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 22.04.2021
  */
-public class YamlNode extends YamlLine<YamlNode> {
+public class CmtNode extends YamlLine<CmtNode> {
 
     // key may be null for comment only block (could go last in file)
 
@@ -39,7 +39,7 @@ public class YamlNode extends YamlLine<YamlNode> {
     // this value is set from structure parser
     private String parsedValue;
 
-    public YamlNode(final YamlNode root, final int padding, final int lineNum) {
+    public CmtNode(final CmtNode root, final int padding, final int lineNum) {
         super(root, padding, lineNum);
     }
 
@@ -70,7 +70,7 @@ public class YamlNode extends YamlLine<YamlNode> {
     }
 
     /**
-     * TODO not supported now
+     * TODO not supported now.
      *
      * @return true for commented property
      */
@@ -156,10 +156,7 @@ public class YamlNode extends YamlLine<YamlNode> {
             return topComment.get(0);
         }
         final String value = hasValue() ? this.value.get(0) : "";
-        if (isListItem()) {
-            return "- " + value;
-        } else {
-            return getKey() + ": " + value;
-        }
+        return isListItem() ? "- " + value
+                : getKey() + ": " + value;
     }
 }
