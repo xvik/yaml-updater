@@ -88,6 +88,13 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     public abstract T find(String path);
 
     /**
+     * Note, for list items possible empty dash line is ignored (not a level in path).
+     *
+     * @return property path in yaml structure (like prop1/prop2[3]/sub) or null for tree root
+     */
+    public abstract String getYamlPath();
+
+    /**
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
     public abstract List<T> getTreeLeaves();

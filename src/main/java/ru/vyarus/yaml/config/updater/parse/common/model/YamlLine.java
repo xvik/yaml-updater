@@ -136,11 +136,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
      */
     public abstract String getIdentityValue();
 
-    /**
-     * Note, for list items possible empty dash line is ignored (not a level in path).
-     *
-     * @return property path in yaml structure (like prop1/prop2[3]/sub)
-     */
+    @Override
     public String getYamlPath() {
         final String rootPath = getRoot() != null ? getRoot().getYamlPath() : "";
         String path = rootPath;

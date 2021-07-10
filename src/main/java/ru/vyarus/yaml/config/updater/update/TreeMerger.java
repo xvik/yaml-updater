@@ -101,15 +101,12 @@ public final class TreeMerger {
     }
 
     private static boolean processList(final TreeNode<CmtNode> node, final TreeNode<CmtNode> from) {
+        final boolean isList = node.hasListValue();
         // node containing list items (node itself is not a list item)
-        if (node.hasListValue()) {
+        // and target node contains children (nothing to merge otherwise)
+        if (isList && from.hasChildren()) {
             final CmtNode cur = (CmtNode) node;
             final CmtNode upd = (CmtNode) from;
-
-            // nothing to merge
-            if (!upd.hasChildren()) {
-                return true;
-            }
 
             // first of all sync paddings (no matter if list is a scalar and would not be updated)
             final int pad = upd.getChildren().get(0).getPadding();
@@ -150,30 +147,34 @@ public final class TreeMerger {
             }
 
             // recover merged items structure
-            for (CmtNode item : curList) {
-                // re-mapping new nodes
-                item.setRoot(cur);
-                if (!cur.getChildren().contains(item)) {
-                    cur.getChildren().add(item);
-                }
-                item.getChildren().forEach(yamlNode -> yamlNode.setRoot(item));
+            updateListStructure(cur, curList, targetEmptyDash);
+        }
+        return isList;
+    }
 
-                if (item.isObjectListItem()) {
-                    // list style could change (empty dash -> single line or reverse)
-                    item.setListItemWithProperty(!targetEmptyDash);
+    private static void updateListStructure(final CmtNode cur,
+                                            final List<CmtNode> curList,
+                                            final boolean targetEmptyDash) {
+        for (CmtNode item : curList) {
+            // re-mapping new nodes
+            item.setRoot(cur);
+            if (!cur.getChildren().contains(item)) {
+                cur.getChildren().add(item);
+            }
+            item.getChildren().forEach(yamlNode -> yamlNode.setRoot(item));
 
-                    final CmtNode firstItemLine = item.getChildren().get(0);
-                    if (item.isListItemWithProperty() && firstItemLine.hasComment()) {
-                        // if first item contains comment need to move it before dash
-                        item.getTopComment().addAll(firstItemLine.getTopComment());
-                        firstItemLine.getTopComment().clear();
-                    }
+            if (item.isObjectListItem()) {
+                // list style could change (empty dash -> single line or reverse)
+                item.setListItemWithProperty(!targetEmptyDash);
+
+                final CmtNode firstItemLine = item.getChildren().get(0);
+                if (item.isListItemWithProperty() && firstItemLine.hasComment()) {
+                    // if first item contains comment need to move it before dash
+                    item.getTopComment().addAll(firstItemLine.getTopComment());
+                    firstItemLine.getTopComment().clear();
                 }
             }
-
-            return true;
         }
-        return false;
     }
 
     private static void shiftNode(final CmtNode node, final int shift) {
@@ -205,37 +206,40 @@ public final class TreeMerger {
                 }
                 node.setValue(res);
             }
-            if (node.hasComment()) {
-                // shifting comment
-                final List<String> cmt = new ArrayList<>();
-                for (String ln : node.getTopComment()) {
-                    String line = ln;
-                    // skip blank lines
-                    if (line.trim().isEmpty()) {
-                        cmt.add(line);
-                        continue;
-                    }
-
-                    if (increase) {
-                        // increase padding
-                        line = TreeStringUtils.shiftRight(line, shift);
-                    } else {
-                        // reduce padding (cut off whitespace)
-                        final int cmtStart = line.indexOf('#');
-                        // shift left, but only whitespace before comment
-                        line = line.substring(Math.min(-shift, cmtStart));
-                    }
-                    cmt.add(line);
-                }
-                node.getTopComment().clear();
-                node.getTopComment().addAll(cmt);
-            }
+            shiftComment(node, shift, increase);
             node.setPadding(node.getPadding() + shift);
 
             // important to shift entire subtree (otherwise list position could be flowed)
             for (CmtNode child : node.getChildren()) {
                 shiftNode(child, shift);
             }
+        }
+    }
+
+    private static void shiftComment(final CmtNode node, final int shift, final boolean increase) {
+        if (node.hasComment()) {
+            final List<String> cmt = new ArrayList<>();
+            for (String ln : node.getTopComment()) {
+                String line = ln;
+                // skip blank lines
+                if (line.trim().isEmpty()) {
+                    cmt.add(line);
+                    continue;
+                }
+
+                if (increase) {
+                    // increase padding
+                    line = TreeStringUtils.shiftRight(line, shift);
+                } else {
+                    // reduce padding (cut off whitespace)
+                    final int cmtStart = line.indexOf('#');
+                    // shift left, but only whitespace before comment
+                    line = line.substring(Math.min(-shift, cmtStart));
+                }
+                cmt.add(line);
+            }
+            node.getTopComment().clear();
+            node.getTopComment().addAll(cmt);
         }
     }
 }

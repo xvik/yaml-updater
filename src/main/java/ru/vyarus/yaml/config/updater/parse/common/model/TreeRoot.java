@@ -36,6 +36,11 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
     }
 
     @Override
+    public String getYamlPath() {
+        return null;
+    }
+
+    @Override
     public List<T> getTreeLeaves() {
         final List<T> res = new ArrayList<>();
         for (T child : getChildren()) {

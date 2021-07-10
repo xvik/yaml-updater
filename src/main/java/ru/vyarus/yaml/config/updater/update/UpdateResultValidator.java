@@ -33,14 +33,14 @@ public final class UpdateResultValidator {
         final Set<String> checked = new HashSet<>();
         // for list items it is important to cut off path before item and search by sub path only
         // (because items would be on different indexes and so paths would be different in trees)
-        final String rootPath = merged instanceof StructNode ? ((StructNode) merged).getYamlPath() : null;
+        final String rootPath = merged.getYamlPath();
         for (StructNode leaf : merged.getTreeLeaves()) {
             final String fullYamlPath = leaf.getYamlPath();
             final String yamlPath = fullYamlPath.substring(rootPath != null ? rootPath.length() + 1 : 0);
             // ignore list positions in path (for list items correct items already selected)
             checked.add(ListMatcher.unifyListItemPath(fullYamlPath));
 
-            // nulls could be when matching list items
+            // nulls could appear when matching list items
             final StructNode oldNode = old != null ? old.find(yamlPath) : null;
             final StructNode newNode = update != null ? update.find(yamlPath) : null;
 
@@ -48,28 +48,59 @@ public final class UpdateResultValidator {
                 validateList(leaf, oldNode, newNode);
                 continue;
             }
-            if (oldNode != null) {
-                // verify with old file (survived value)
-                if (!leaf.getValue().equals(oldNode.getValue())) {
-                    throw new IllegalStateException(String.format(
-                            "Invalid value on path '%s': '%s' when should remain from old file '%s'",
-                            fullYamlPath, leaf.getValue(), oldNode.getValue()));
-                }
-            } else {
-                // if not in old file, then it's a merged value from new file
-                if (newNode == null) {
-                    throw new IllegalStateException(String.format(
-                            "Value '%s' not found neither in old nor in new file: '%s'",
-                            fullYamlPath, leaf.getValue()));
-                }
-                if (!leaf.getValue().equals(newNode.getValue())) {
-                    throw new IllegalStateException(String.format(
-                            "Invalid value on path '%s': '%s' when should be from update file '%s'",
-                            fullYamlPath, leaf.getValue(), newNode.getValue()));
-                }
-            }
+            assertValue(leaf, fullYamlPath, oldNode, newNode);
         }
 
+        checkMissedValues(old, update, checked);
+    }
+
+    private static void validateList(final StructNode list,
+                                     final StructNode oldList,
+                                     final StructNode newList) {
+        for (StructNode item : list.getChildren()) {
+            if (!item.isObjectListItem()) {
+                // scalar lists not merged
+                continue;
+            }
+            final StructNode oldItem = ListMatcher.match(item, oldList.getChildren());
+            final StructNode newItem = ListMatcher.match(item, newList.getChildren());
+            if (oldItem == null && newItem == null) {
+                throw new IllegalStateException("Can't find reference list item neither in old nor in new file: "
+                        + item.getYamlPath());
+            }
+            validate(item, oldItem, newItem);
+        }
+    }
+
+    private static void assertValue(final StructNode leaf,
+                                    final String fullYamlPath,
+                                    final StructNode oldNode,
+                                    final StructNode newNode) {
+        if (oldNode != null) {
+            // verify with old file (survived value)
+            if (!leaf.getValue().equals(oldNode.getValue())) {
+                throw new IllegalStateException(String.format(
+                        "Invalid value on path '%s': '%s' when should remain from old file '%s'",
+                        fullYamlPath, leaf.getValue(), oldNode.getValue()));
+            }
+        } else {
+            // if not in old file, then it's a merged value from new file
+            if (newNode == null) {
+                throw new IllegalStateException(String.format(
+                        "Value '%s' not found neither in old nor in new file: '%s'",
+                        fullYamlPath, leaf.getValue()));
+            }
+            if (!leaf.getValue().equals(newNode.getValue())) {
+                throw new IllegalStateException(String.format(
+                        "Invalid value on path '%s': '%s' when should be from update file '%s'",
+                        fullYamlPath, leaf.getValue(), newNode.getValue()));
+            }
+        }
+    }
+
+    private static void checkMissedValues(final TreeNode<StructNode> old,
+                                          final TreeNode<StructNode> update,
+                                          final Set<String> checked) {
         // check for missed values (which should not be removed)
         if (old != null) {
             for (StructNode node : old.getTreeLeaves()) {
@@ -92,24 +123,6 @@ public final class UpdateResultValidator {
                             yamlPath, node.getValue()));
                 }
             }
-        }
-    }
-
-    private static void validateList(final StructNode list,
-                                     final StructNode oldList,
-                                     final StructNode newList) {
-        for (StructNode item : list.getChildren()) {
-            if (!item.isObjectListItem()) {
-                // scalar lists not merged
-                continue;
-            }
-            final StructNode oldItem = ListMatcher.match(item, oldList.getChildren());
-            final StructNode newItem = ListMatcher.match(item, newList.getChildren());
-            if (oldItem == null && newItem == null) {
-                throw new IllegalStateException("Can't find reference list item neither in old nor in new file: "
-                        + item.getYamlPath());
-            }
-            validate(item, oldItem, newItem);
         }
     }
 }
