@@ -39,6 +39,17 @@ public final class UpdateConfig {
     }
 
     /**
+     * Yaml updater configurator.
+     *
+     * @param current current configuration file
+     * @param update update file
+     * @return builder for config construction
+     */
+    public static Configurator configureUpdate(final File current, final InputStream update) {
+        return new Configurator(current, update);
+    }
+
+    /**
      * @return current config that must be updated
      */
     public File getCurrent() {
@@ -95,11 +106,11 @@ public final class UpdateConfig {
     /**
      * Updater configurator.
      */
-    public static class Builder {
-        private final Logger logger = LoggerFactory.getLogger(UpdateConfig.Builder.class);
+    public static final class Configurator {
+        private final Logger logger = LoggerFactory.getLogger(Configurator.class);
         private final UpdateConfig config = new UpdateConfig();
 
-        public Builder(final File current, final InputStream update) {
+        private Configurator(final File current, final InputStream update) {
             if (current == null) {
                 throw new IllegalArgumentException("Current config file not specified");
             }
@@ -119,7 +130,7 @@ public final class UpdateConfig {
          * @param backup true to do backup of configuration before update
          * @return builder instance for chained calls
          */
-        public Builder backup(final boolean backup) {
+        public Configurator backup(final boolean backup) {
             config.backup = backup;
             return this;
         }
@@ -140,7 +151,7 @@ public final class UpdateConfig {
          * @param deleteProps yaml paths to delete in old file (would be replaced with props from new file)
          * @return builder instance for chained calls
          */
-        public Builder deleteProps(final String... deleteProps) {
+        public Configurator deleteProps(final String... deleteProps) {
             config.deleteProps = Arrays.asList(deleteProps);
             return this;
         }
@@ -152,7 +163,7 @@ public final class UpdateConfig {
          *
          * @return builder instance for chained calls
          */
-        public Builder noResultValidation() {
+        public Configurator noResultValidation() {
             config.validateResult = false;
             return this;
         }
@@ -164,12 +175,15 @@ public final class UpdateConfig {
          * @param env variables to replace in updating file
          * @return builder instance for chained calls
          */
-        public Builder envVars(final Map<String, String> env) {
+        public Configurator envVars(final Map<String, String> env) {
             config.env = env;
             return this;
         }
 
-        public YamlUpdater build() {
+        /**
+         * @return configured yaml updater instance
+         */
+        public YamlUpdater create() {
             return new YamlUpdater(config);
         }
 

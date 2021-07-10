@@ -7,6 +7,7 @@ import ru.vyarus.yaml.config.updater.parse.common.TreeStringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +43,7 @@ public final class CommentsWriter {
      * @param tree comments model tree
      * @param file target file
      */
-    public static void write(final CmtTree tree, File file) {
+    public static void write(final CmtTree tree, final File file) {
         try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8.name())) {
             write(tree, out);
         } catch (Exception e) {
@@ -57,7 +58,7 @@ public final class CommentsWriter {
      * @param out  output stream
      */
     public static void write(final CmtTree tree, final OutputStream out) {
-        write(tree, new PrintWriter(out));
+        write(tree, new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
     }
 
     private static void write(final CmtTree tree, final PrintWriter writer) {
@@ -98,6 +99,7 @@ public final class CommentsWriter {
         }
     }
 
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     private static void writeValue(final CmtNode node, final PrintWriter out, final boolean listItemFirstLine) {
         String res = "";
         if (node.isListItem()) {

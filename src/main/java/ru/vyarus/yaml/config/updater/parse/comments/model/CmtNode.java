@@ -129,6 +129,7 @@ public class CmtNode extends YamlLine<CmtNode> {
     }
 
     @Override
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public String getIdentityValue() {
         // if possible use value from snakeyaml
         // (normally only this branch should work)
@@ -142,7 +143,7 @@ public class CmtNode extends YamlLine<CmtNode> {
                 continue;
             }
             res += line.trim();
-            final int cmt = res.indexOf("#");
+            final int cmt = res.indexOf('#');
             if (cmt > 0) {
                 res = res.substring(0, cmt).trim();
             }

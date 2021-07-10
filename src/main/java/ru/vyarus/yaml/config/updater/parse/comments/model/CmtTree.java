@@ -38,9 +38,9 @@ public class CmtTree extends TreeRoot<CmtNode> {
         if (!node.getTopComment().isEmpty()) {
             out.append(padding).append("# comment");
             if (node.getTopComment().size() > 1) {
-                out.append(" ").append(node.getTopComment().size()).append(" lines");
+                out.append(' ').append(node.getTopComment().size()).append(" lines");
             }
-            out.append("\n");
+            out.append('\n');
 
             if (node.isCommentOnly()) {
                 return;
@@ -51,7 +51,7 @@ public class CmtTree extends TreeRoot<CmtNode> {
         // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
         boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
         if (!mergeLines) {
-            out.append("\n");
+            out.append('\n');
         }
 
         for (CmtNode child : node.getChildren()) {
@@ -73,7 +73,7 @@ public class CmtTree extends TreeRoot<CmtNode> {
         if (!node.getValue().isEmpty()) {
             if (node.getValue().size() == 1) {
                 // for batter navigation show simple values
-                out.append("'").append(node.getValue().get(0).trim()).append("'");
+                out.append('\'').append(node.getValue().get(0).trim()).append('\'');
             } else {
                 out.append("value ").append(node.getValue().size()).append(" lines");
             }

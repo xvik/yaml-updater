@@ -11,10 +11,11 @@ import ru.vyarus.yaml.config.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.config.updater.parse.struct.model.StructTree;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public final class StructureReader {
     public static StructTree read(final File file) {
         // comments parser does not support multiple yaml documents because this is not common for configs
         // so parsing only the first document, ignoring anything else
-        try (FileInputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return read(new InputStreamReader(in, StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml file: " + file.getAbsolutePath(), e);
@@ -82,35 +83,39 @@ public final class StructureReader {
                 }
             }
         } else if (node instanceof SequenceNode) {
-            // list value
-            for (Node seq : ((SequenceNode) node).getValue()) {
-                // need position of dash, which is absent here, so just assuming -2 shift from value
-                final int listPad = seq.getStartMark().getColumn() - 2;
-
-                context.lineNum = seq.getStartMark().getLine() + 1;
-                if (seq instanceof ScalarNode) {
-                    // simple value
-                    context.listValue(listPad, ((ScalarNode) seq).getValue());
-                } else {
-                    final boolean tickSameLine = seq.getStartMark().get_snippet().trim().startsWith("-");
-                    if (!tickSameLine) {
-                        // case when properties start after empty dash (next line)
-                        // and hierarchically it must be reproduced (unification with comments parser)
-                        context.listValue(listPad, null);
-                    } else {
-                        // sub object: use virtual node (indicating dash) to group sub-object properties
-                        context.virtualListItemNode(listPad);
-                    }
-
-                    processNode(seq, context);
-                }
-            }
+            processSequence((SequenceNode) node, context);
         } else {
             throw new IllegalStateException("Unsupported node type: " + node);
         }
     }
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
+    private static void processSequence(final SequenceNode node, final Context context) {
+        // list value
+        for (Node seq : node.getValue()) {
+            // need position of dash, which is absent here, so just assuming -2 shift from value
+            final int listPad = seq.getStartMark().getColumn() - 2;
+
+            context.lineNum = seq.getStartMark().getLine() + 1;
+            if (seq instanceof ScalarNode) {
+                // simple value
+                context.listValue(listPad, ((ScalarNode) seq).getValue());
+            } else {
+                final boolean tickSameLine = seq.getStartMark().get_snippet().trim().charAt(0) == '-';
+                if (!tickSameLine) {
+                    // case when properties start after empty dash (next line)
+                    // and hierarchically it must be reproduced (unification with comments parser)
+                    context.listValue(listPad, null);
+                } else {
+                    // sub object: use virtual node (indicating dash) to group sub-object properties
+                    context.virtualListItemNode(listPad);
+                }
+
+                processNode(seq, context);
+            }
+        }
+    }
+
+    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
     private static class Context {
         int lineNum;
         List<StructNode> rootNodes = new ArrayList<>();

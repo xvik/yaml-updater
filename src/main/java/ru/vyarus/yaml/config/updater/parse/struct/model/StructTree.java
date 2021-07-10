@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class StructTree extends TreeRoot<StructNode> {
 
+    private static final int MAX_VAL_LENGTH = 80;
+
     public StructTree(final List<StructNode> nodes) {
         super(nodes);
     }
@@ -45,16 +47,16 @@ public class StructTree extends TreeRoot<StructNode> {
         if (node.getValue() != null) {
             // identify multiline values (and avoid visual ambiguity)
             String val = "'" + node.getValue().replace("\n", "\\n");
-            if (val.length() > 80) {
-                val = val.substring(0, 80) + "...";
+            if (val.length() > MAX_VAL_LENGTH) {
+                val = val.substring(0, MAX_VAL_LENGTH) + "...";
             }
             // value identified with quotes to avoid umbiquity whe value looks like property
-            out.append(val + "'");
+            out.append(val).append('\'');
         }
         // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)
         boolean mergeLines = node.isListItem() && node.isListItemWithProperty();
         if (!mergeLines) {
-            out.append("\n");
+            out.append('\n');
         }
 
         for (StructNode child : node.getChildren()) {

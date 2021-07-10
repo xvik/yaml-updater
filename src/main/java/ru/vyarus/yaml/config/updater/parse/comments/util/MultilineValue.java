@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.config.updater.parse.comments.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +33,7 @@ public final class MultilineValue {
      * @param line line to check
      * @return marker descriptor or null if not found
      */
+    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static Marker detect(final String line) {
         // cut off possible inline comment (prop: | # some comment)
         final String source = cutComment(line);

@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater
 
-import ru.vyarus.yaml.config.updater.YamlUpdater
+
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -21,7 +21,7 @@ class UpdateWithVarsTest extends Specification {
         Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).envVars(['var': '4']).build().execute()
+        YamlUpdater.configure(current, update).backup(false).envVars(['var': '4']).create().execute()
 
         then: "updated"
         current.text == """# something

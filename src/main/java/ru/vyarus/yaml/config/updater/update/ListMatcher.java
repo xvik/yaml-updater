@@ -36,7 +36,7 @@ public final class ListMatcher {
      * @param path yaml path
      * @return yaml path with unified list positions
      */
-    public static String unifyListItemPath(String path) {
+    public static String unifyListItemPath(final String path) {
         return path.replaceAll("\\[\\d+]", "[*]");
     }
 
@@ -57,8 +57,9 @@ public final class ListMatcher {
      * @param <T>  structure type (works for both comments and snakeyaml structures)
      * @return matched item or null
      */
-    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity"})
-    public static <T extends YamlLine<T>> T match(T node, List<T> list) {
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity",
+            "PMD.CyclomaticComplexity"})
+    public static <T extends YamlLine<T>> T match(final T node, final List<T> list) {
         final List<T> cand = new ArrayList<>(list);
         // count items matched at least by one property (to filter completely different items)
         // line num is unique identity for line item

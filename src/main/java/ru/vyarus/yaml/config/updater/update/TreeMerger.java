@@ -26,6 +26,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
+@SuppressWarnings("PMD.InefficientEmptyStringCheck")
 public final class TreeMerger {
 
     private TreeMerger() {

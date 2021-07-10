@@ -18,7 +18,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     public static final String PATH_SEPARATOR = "/";
 
     // line number, counting from 1
-    private int lineNum;
+    private final int lineNum;
     private int padding;
     // property name, if property line
     private String key;
@@ -59,6 +59,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     /**
      * @return yaml line number in file (counting from 1)
      */
+    @Override
     public int getLineNum() {
         return lineNum;
     }
@@ -104,7 +105,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     /**
      * @param listItemWithProperty indicate first object property must start on the same line with dash
      */
-    public void setListItemWithProperty(boolean listItemWithProperty) {
+    public void setListItemWithProperty(final boolean listItemWithProperty) {
         this.listItemWithProperty = listItemWithProperty;
     }
 
@@ -137,6 +138,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     public abstract String getIdentityValue();
 
     @Override
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public String getYamlPath() {
         final String rootPath = getRoot() != null ? getRoot().getYamlPath() : "";
         String path = rootPath;

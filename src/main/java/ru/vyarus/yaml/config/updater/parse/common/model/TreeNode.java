@@ -16,7 +16,7 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     private T root;
     private final List<T> children = new ArrayList<>();
 
-    public TreeNode(T root) {
+    public TreeNode(final T root) {
         this.root = root;
     }
 
@@ -73,20 +73,6 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
         return hasChildren() && getChildren().get(0).isListItem();
     }
 
-    @Override
-    public int getLineNum() {
-        return 0;
-    }
-
-    /**
-     * Search for yaml node by path. For list items path should include exact item number (e.g. list[1]), wildcard
-     * search not supported.
-     *
-     * @param path yaml path (with '/' as separator)
-     * @return found node or null
-     */
-    public abstract T find(String path);
-
     /**
      * Note, for list items possible empty dash line is ignored (not a level in path).
      *
@@ -98,4 +84,13 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
     public abstract List<T> getTreeLeaves();
+
+    /**
+     * Search for yaml node by path. For list items path should include exact item number (e.g. list[1]), wildcard
+     * search not supported.
+     *
+     * @param path yaml path (with '/' as separator)
+     * @return found node or null
+     */
+    public abstract T find(String path);
 }

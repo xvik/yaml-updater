@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.config.updater
 
-import ru.vyarus.yaml.config.updater.YamlUpdater
+
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -21,7 +21,7 @@ class PropDelTest extends Specification {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).deleteProps('prop2/list').build().execute()
+        YamlUpdater.configure(current, update).backup(false).deleteProps('prop2/list').create().execute()
 
         then: "list replaced"
         current.text == """# something

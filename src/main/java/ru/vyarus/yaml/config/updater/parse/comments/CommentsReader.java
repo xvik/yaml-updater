@@ -76,7 +76,8 @@ public final class CommentsReader {
         context.finish();
     }
 
-    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement", "checkstyle:MultipleStringLiterals"})
+    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement", "checkstyle:MultipleStringLiterals",
+            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces"})
     private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
@@ -101,7 +102,8 @@ public final class CommentsReader {
         }
     }
 
-    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement"})
+    @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement",
+            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces"})
     private static void parseValue(final String line,
                                    final Context context,
                                    final CharacterIterator chars,
@@ -164,7 +166,7 @@ public final class CommentsReader {
         return res;
     }
 
-    @SuppressWarnings("checkstyle:MultipleStringLiterals")
+    @SuppressWarnings({"checkstyle:MultipleStringLiterals", "PMD.UseStringBufferForStringAppends"})
     private static String visualizeError(final String line, final CharacterIterator chars) {
         String demo = "\n\t" + line + "\n\t";
         final int index = chars.getIndex();
@@ -177,7 +179,7 @@ public final class CommentsReader {
         return demo;
     }
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
+    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
     private static class Prop {
         final int padding;
         final String key;
@@ -196,7 +198,7 @@ public final class CommentsReader {
         }
     }
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
+    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
     private static class Context {
         int lineNum;
         // storing only root nodes, sub nodes only required in context
@@ -262,6 +264,7 @@ public final class CommentsReader {
             return false;
         }
 
+        @SuppressWarnings("PMD.CollapsibleIfStatements")
         public boolean detectFlowMultiline(final int padding, final String line) {
             if (current != null) {
                 // will go there only once for multiline value as after this multiline would be already detected,

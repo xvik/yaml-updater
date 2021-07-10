@@ -10,11 +10,31 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 30.05.2021
  */
+@SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
 public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
     public TreeRoot(final List<T> nodes) {
         super(null);
         getChildren().addAll(nodes);
+    }
+
+    @Override
+    public String getYamlPath() {
+        return null;
+    }
+
+    @Override
+    public int getLineNum() {
+        return 0;
+    }
+
+    @Override
+    public List<T> getTreeLeaves() {
+        final List<T> res = new ArrayList<>();
+        for (T child : getChildren()) {
+            res.addAll(child.getTreeLeaves());
+        }
+        return res;
     }
 
     @Override
@@ -31,20 +51,6 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
             if (res != null) {
                 break;
             }
-        }
-        return res;
-    }
-
-    @Override
-    public String getYamlPath() {
-        return null;
-    }
-
-    @Override
-    public List<T> getTreeLeaves() {
-        final List<T> res = new ArrayList<>();
-        for (T child : getChildren()) {
-            res.addAll(child.getTreeLeaves());
         }
         return res;
     }

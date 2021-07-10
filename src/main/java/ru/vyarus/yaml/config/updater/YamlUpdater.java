@@ -16,8 +16,6 @@ import ru.vyarus.yaml.config.updater.update.TreeMerger;
 import ru.vyarus.yaml.config.updater.update.UpdateResultValidator;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -29,6 +27,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Yaml configuration merger preserving comments. Use two yaml parsers: snakeyaml for self-validation and
@@ -88,32 +87,32 @@ public class YamlUpdater {
     }
 
     /**
-     * Shortcut for {@link #create(File, InputStream)}.
+     * Shortcut for {@link #configure(File, InputStream)}.
      *
      * @param current config file to be updated
      * @param update  update file
      * @return builder instance for chained calls
      */
-    public static UpdateConfig.Builder create(final File current, final File update) {
+    public static UpdateConfig.Configurator configure(final File current, final File update) {
         try {
-            return create(current, new FileInputStream(update));
-        } catch (FileNotFoundException e) {
+            return configure(current, Files.newInputStream(update.toPath()));
+        } catch (Exception e) {
             throw new IllegalArgumentException("Update file '" + update.getAbsolutePath() + "' not found", e);
         }
     }
 
     /**
-     * Creates updater. Update file might be physical file, classpath resource, remote url or whatever else.
+     * Builds updater configurator. Update file might be physical file, classpath resource, remote url or whatever else.
      * <p>
      * Stream closed after content reading.
      *
      * @param current config file to be updated
      * @param update  update file content
      * @return builder instance for chained calls
-     * @see #create(File, File) shortcut for direct file case (most common)
+     * @see #configure(File, File) shortcut for direct file case (most common)
      */
-    public static UpdateConfig.Builder create(final File current, final InputStream update) {
-        return new UpdateConfig.Builder(current, update);
+    public static UpdateConfig.Configurator configure(final File current, final InputStream update) {
+        return UpdateConfig.configureUpdate(current, update);
     }
 
     public void execute() {
@@ -230,7 +229,7 @@ public class YamlUpdater {
                 for (String line : lines) {
                     res.append(String.format("%4s| ", i++)).append(line);
                     if (i <= lines.size()) {
-                        res.append("\n");
+                        res.append('\n');
                     }
                 }
                 yamlContent = res.toString();
@@ -247,7 +246,7 @@ public class YamlUpdater {
         final File current = config.getCurrent();
         if (config.isBackup() && current.exists()) {
             final Path backup = Paths.get(current.getAbsolutePath()
-                    + "." + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()));
+                    + "." + new SimpleDateFormat("yyyyMMddHHmm", Locale.ENGLISH).format(new Date()));
             Files.copy(current.toPath(), backup);
             logger.info("Backup created: {}", backup);
         }
