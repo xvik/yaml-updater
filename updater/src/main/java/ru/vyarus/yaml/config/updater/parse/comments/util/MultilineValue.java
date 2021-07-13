@@ -42,10 +42,10 @@ public final class MultilineValue {
         if (match.find()) {
             res = new Marker();
             // > or |
-            res.keep = match.group(1).equals("|");
+            res.keep = "|".equals(match.group(1));
             if (match.group(2) != null) {
                 // + or -
-                res.ending = match.group(2).equals("+") ? 1 : -1;
+                res.ending = "+".equals(match.group(2)) ? 1 : -1;
             }
             if (match.group(3) != null) {
                 // number

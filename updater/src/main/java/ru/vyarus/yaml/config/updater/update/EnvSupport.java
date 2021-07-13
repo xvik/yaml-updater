@@ -77,6 +77,7 @@ public final class EnvSupport {
         return replace(text, prefix, postfix, env);
     }
 
+    @SuppressWarnings("checkstyle:IllegalIdentifierName")
     private static String replace(final String text,
                                   final String prefix,
                                   final String postfix,

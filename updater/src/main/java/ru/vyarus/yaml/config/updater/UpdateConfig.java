@@ -187,6 +187,7 @@ public final class UpdateConfig {
             return new YamlUpdater(config);
         }
 
+        @SuppressWarnings("PMD.UseTryWithResources")
         private String read(final InputStream in) {
             try {
                 return new BufferedReader(
