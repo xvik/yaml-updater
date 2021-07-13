@@ -1,8 +1,6 @@
 package ru.vyarus.yaml.config.updater
 
 
-import spock.lang.Specification
-
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -10,7 +8,7 @@ import java.nio.file.StandardCopyOption
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
-class UpdateWithVarsTest extends Specification {
+class UpdateWithVarsTest extends AbstractTest {
 
     def "Check simple merge"() {
 
@@ -24,7 +22,7 @@ class UpdateWithVarsTest extends Specification {
         YamlUpdater.configure(current, update).backup(false).envVars(['var': '4']).create().execute()
 
         then: "updated"
-        current.text == """# something
+        unifyString(current.text) == """# something
 
 # something 2
 prop1:

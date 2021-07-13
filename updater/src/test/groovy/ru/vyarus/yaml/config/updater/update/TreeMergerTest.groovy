@@ -1,16 +1,15 @@
 package ru.vyarus.yaml.config.updater.update
 
-
+import ru.vyarus.yaml.config.updater.AbstractTest
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsReader
 import ru.vyarus.yaml.config.updater.parse.comments.CommentsWriter
 import ru.vyarus.yaml.config.updater.parse.comments.model.CmtTree
-import spock.lang.Specification
 
 /**
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-class TreeMergerTest extends Specification {
+class TreeMergerTest extends AbstractTest {
 
     def "Check simple merge"() {
 
@@ -20,7 +19,7 @@ class TreeMergerTest extends Specification {
         TreeMerger.merge(tree, upd)
 
         then: "merged"
-        CommentsWriter.write(tree) == """# something
+        unifyString(CommentsWriter.write(tree)) == """# something
 
 # something 2
 prop1:
@@ -68,7 +67,7 @@ prop3:
         TreeMerger.merge(tree, upd)
 
         then: "merged"
-        CommentsWriter.write(tree) == """# something
+        unifyString(CommentsWriter.write(tree)) == """# something
 
 # something 2
 prop1:
@@ -116,7 +115,7 @@ prop3:
         TreeMerger.merge(tree, upd)
 
         then: "merged"
-        CommentsWriter.write(tree) == """# something
+        unifyString(CommentsWriter.write(tree)) == """# something
 
 # something 2
 prop1:
@@ -168,7 +167,7 @@ prop3:
         TreeMerger.merge(tree, upd)
 
         then: "merged"
-        CommentsWriter.write(tree) == """object:
+        unifyString(CommentsWriter.write(tree)) == """object:
     simple: value with
       multiple lines (flow)
 
@@ -199,7 +198,7 @@ prop3:
         TreeMerger.merge(tree, upd)
 
         then: "merged"
-        CommentsWriter.write(tree) == """object:
+        unifyString(CommentsWriter.write(tree)) == """object:
   simple: value with
       multiple lines (flow)
 

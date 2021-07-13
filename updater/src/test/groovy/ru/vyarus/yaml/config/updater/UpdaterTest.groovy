@@ -1,6 +1,5 @@
 package ru.vyarus.yaml.config.updater
 
-import spock.lang.Specification
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -9,7 +8,7 @@ import java.nio.file.StandardCopyOption
  * @author Vyacheslav Rusakov
  * @since 11.05.2021
  */
-class UpdaterTest extends Specification {
+class UpdaterTest extends AbstractTest {
 
     def "Check simple merge"() {
 
@@ -23,7 +22,7 @@ class UpdaterTest extends Specification {
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """# something
+        unifyString(current.text) == """# something
 
 # something 2
 prop1:
@@ -79,7 +78,7 @@ prop3:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """# something
+        unifyString(current.text) == """# something
 
 # something 2
 prop1:
@@ -135,7 +134,7 @@ prop3:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """# something
+        unifyString(current.text) == """# something
 
 # something 2
 prop1:
@@ -195,7 +194,7 @@ prop3:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """object:
+        unifyString(current.text) == """object:
     simple: value with
       multiple lines (flow)
 
@@ -232,7 +231,7 @@ prop3:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """object:
+        unifyString(current.text) == """object:
   simple: value with
       multiple lines (flow)
 
@@ -270,7 +269,7 @@ prop3:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """# explicitly shifted lines
+        unifyString(current.text) == """# explicitly shifted lines
 
 simple_list:
   - one
@@ -345,7 +344,7 @@ sublist:
         YamlUpdater.configure(current, update).backup(false).create().execute()
 
         then: "updated"
-        current.text == """# explicitly shifted lines
+        unifyString(current.text) == """# explicitly shifted lines
 
 simple_list:
   - one

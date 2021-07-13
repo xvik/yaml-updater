@@ -1,84 +1,98 @@
 plugins {
-    id 'com.gradle.build-scan' version '3.0'
-    id 'groovy'
-    id 'jacoco'
-    id 'project-report'
-    id 'ru.vyarus.java-lib' version '2.1.0'
-    id 'ru.vyarus.github-info' version '1.2.0'
-    id 'ru.vyarus.quality' version '4.0.0'
-    id 'net.researchgate.release' version '2.8.1'
-    id 'com.github.ben-manes.versions' version '0.27.0'}
+    id 'ru.vyarus.github-info' version '1.3.0' apply false
+    id 'ru.vyarus.quality' version '4.6.0' apply false
 
-sourceCompatibility = 1.8
+    id 'base'
+    id 'jacoco'
+    id 'ru.vyarus.java-lib' version '2.2.1'
+    id 'net.researchgate.release' version '2.8.1'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
+}
 
 wrapper {
-    gradleVersion = '5.6.4'
+    gradleVersion = '6.9'
 }
 
-repositories { mavenCentral(); mavenLocal() }
-dependencies {
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.2'
-
-    implementation 'org.slf4j:slf4j-api:1.7.31'
-    implementation 'org.yaml:snakeyaml:1.26'
-
-    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.31'
+javaLib {
+    // aggregated test and coverage reports
+    aggregateReports()
 }
 
-group = 'ru.vyarus'
-description = 'Merges current yaml config with a new version to add missed properties'
+subprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'jacoco'
+    apply plugin: 'project-report'
+    apply plugin: 'signing'
+    apply plugin: 'ru.vyarus.java-lib'
+    apply plugin: 'ru.vyarus.quality'
+    apply plugin: 'ru.vyarus.github-info'
+    apply plugin: 'com.github.ben-manes.versions'
 
-github {
-    user = 'xvik'
-    license = 'MIT'
+    group = 'ru.vyarus'
+    sourceCompatibility = 1.8
+
+    repositories { mavenLocal(); mavenCentral() }
+    dependencies {
+        testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+        testImplementation 'org.slf4j:slf4j-simple:1.7.31'
+    }
+
+    github {
+        user = 'xvik'
+        license = 'MIT'
+    }
+
+    pom {
+        developers {
+            developer {
+                id 'xvik'
+                name 'Vyacheslav Rusakov'
+                email 'vyarus@gmail.com'
+            }
+        }
+    }
+
+    javaLib {
+        // java 9 auto module name
+        autoModuleName = "$rootProject.group.${project.name.replace('-', '.')}"
+        // don't publish gradle metadata artifact
+        withoutGradleMetadata()
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events 'skipped', 'failed'
+            exceptionFormat 'full'
+        }
+        maxHeapSize = '512m'
+    }
+
+    dependencyUpdates.revision = 'release'
 }
 
-pom {
-    developers {
-        developer {
-            id 'xvik'
-            name 'Vyacheslav Rusakov'
-            email 'vyarus@gmail.com'
+// dependency on all subprojects required for release validation
+check.dependsOn subprojects.check
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = findProperty('sonatypeUser')
+            password = findProperty('sonatypePassword')
         }
     }
 }
 
-// java 11 auto module name
-jar {
-    manifest {
-        attributes 'Automatic-Module-Name': "$project.group.$project.name"
-    }
-}
+// Required signing properties for release: signing.keyId, signing.password and signing.secretKeyRingFile
+// (https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials)
 
+// release manages only root project (subprojects will be checked and released implicitly)
 afterReleaseBuild {
-    dependsOn = [publish]
+    dependsOn = ['publishToSonatype',
+                 'closeAndReleaseSonatypeStagingRepository']
     doLast {
         logger.warn "RELEASED $project.group:$project.name:$project.version"
     }
 }
 
-test {
-    testLogging {
-        events 'skipped', 'failed'
-        exceptionFormat 'full'
-    }
-    maxHeapSize = '512m'
-}
-
-dependencyUpdates.revision = 'release'
-jacocoTestReport.reports.xml.enabled = true
-
-
-task showDependenciesTree(dependsOn: 'htmlDependencyReport', group: 'help', description:
-        'Generates dependencies tree report and opens it in browser') {
-    doLast {
-        java.awt.Desktop.getDesktop().open(file('build/reports/project/dependencies/root.html'))
-    }
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-//    publishOnFailure()
-}

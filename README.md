@@ -1,6 +1,6 @@
 # yaml-config-updater
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/travis/xvik/yaml-config-updater.svg?style=flat&branch=master)](https://travis-ci.org/xvik/yaml-config-updater)
+[![Build Status](https://travis-ci.com/xvik/yaml-config-updater.svg?branch=master)](https://travis-ci.com/xvik/yaml-config-updater)
 [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-config-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-config-updater)
 [![codecov](https://codecov.io/gh/xvik/yaml-config-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-config-updater)
 
@@ -14,11 +14,7 @@ Features:
 * Feature 2
 
 ### Setup
- 
-Releases are published to [bintray jcenter](https://bintray.com/vyarus/xvik/yaml-config-updater/) and 
-[maven central](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater) 
 
-[![JCenter](https://img.shields.io/bintray/v/vyarus/xvik/yaml-config-updater.svg?label=jcenter)](https://bintray.com/vyarus/xvik/yaml-config-updater/_latestVersion)
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
 
 Maven:

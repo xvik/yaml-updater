@@ -1,0 +1,8 @@
+description = "Merges current yaml config with a new version to add missed properties"
+
+dependencies {
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.2'
+
+    implementation 'org.slf4j:slf4j-api:1.7.31'
+    implementation 'org.yaml:snakeyaml:1.26'
+}

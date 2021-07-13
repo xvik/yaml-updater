@@ -1,2 +1,25 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+plugins {
+    id "com.gradle.enterprise" version "3.2.1"
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+        //publishOnFailure()
+    }
+}
+
 rootProject.name = 'yaml-config-updater'
 
+include 'updater',
+        'updater-cli',
+        'updater-dropwizard'
+
+rootProject.children.each {it.name = it.name.replace('updater', 'yaml-config-updater')}
