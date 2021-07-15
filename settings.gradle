@@ -18,8 +18,6 @@ gradleEnterprise {
 
 rootProject.name = 'yaml-config-updater'
 
-include 'updater',
-        'updater-cli',
-        'updater-dropwizard'
-
-rootProject.children.each {it.name = it.name.replace('updater', 'yaml-config-updater')}
+include 'yaml-config-updater',
+        'yaml-config-updater-cli',
+        'dropwizard-config-updater'
