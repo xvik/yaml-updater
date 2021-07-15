@@ -1,0 +1,6 @@
+description = "Yaml config updater integration for dropwizard"
+
+dependencies {
+    implementation project(':yaml-config-updater')
+    implementation 'io.dropwizard:dropwizard-core:2.0.23'
+}
