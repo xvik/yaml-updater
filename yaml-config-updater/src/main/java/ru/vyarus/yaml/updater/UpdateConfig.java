@@ -42,7 +42,7 @@ public final class UpdateConfig {
      * Yaml updater configurator.
      *
      * @param current current configuration file
-     * @param update update file
+     * @param update  update file
      * @return builder for config construction
      */
     public static Configurator configureUpdate(final File current, final InputStream update) {
@@ -148,23 +148,27 @@ public final class UpdateConfig {
          *        bar: 2
          * </pre>
          *
-         * @param deleteProps yaml paths to delete in old file (would be replaced with props from new file)
+         * @param deleteProps yaml paths to delete in the old file (would be replaced with props from new file;
+         *                    null ignored)
          * @return builder instance for chained calls
          */
         public Configurator deleteProps(final String... deleteProps) {
-            config.deleteProps = Arrays.asList(deleteProps);
+            if (deleteProps != null) {
+                config.deleteProps = Arrays.asList(deleteProps);
+            }
             return this;
         }
 
         /**
-         * Disables merged file validation (checks that all old values remains and new values added). This might be
-         * useful only in case of bugs in validation logic (comparing yaml trees). When validation is disabled, merged
+         * Merged file validation (checks that all old values remains and new values added). Disabling might be
+         * only useful in case of bugs in validation logic (comparing yaml trees). When validation is disabled, merged
          * file is still parsed with snakeyaml to make sure it's readable.
          *
+         * @param validate true to enable validation
          * @return builder instance for chained calls
          */
-        public Configurator noResultValidation() {
-            config.validateResult = false;
+        public Configurator validateResult(final boolean validate) {
+            config.validateResult = validate;
             return this;
         }
 
@@ -172,19 +176,21 @@ public final class UpdateConfig {
          * Variables use special syntax {@code #{name}} because with it yaml file still remains valid (variable treated
          * as comment).
          *
-         * @param env variables to replace in updating file
+         * @param env variables to replace in updating file (null ignored)
          * @return builder instance for chained calls
          */
         public Configurator envVars(final Map<String, String> env) {
-            config.env = env;
+            if (env != null) {
+                config.env = env;
+            }
             return this;
         }
 
         /**
          * @return configured yaml updater instance
          */
-        public YamlUpdater create() {
-            return new YamlUpdater(config);
+        public void update() {
+            new YamlUpdater(config).execute();
         }
 
         @SuppressWarnings("PMD.UseTryWithResources")

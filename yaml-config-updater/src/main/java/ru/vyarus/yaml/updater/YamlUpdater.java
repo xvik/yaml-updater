@@ -87,15 +87,15 @@ public class YamlUpdater {
     }
 
     /**
-     * Shortcut for {@link #configure(File, InputStream)}.
+     * Shortcut for {@link #create(File, InputStream)}.
      *
      * @param current config file to be updated
      * @param update  update file
      * @return builder instance for chained calls
      */
-    public static UpdateConfig.Configurator configure(final File current, final File update) {
+    public static UpdateConfig.Configurator create(final File current, final File update) {
         try {
-            return configure(current, Files.newInputStream(update.toPath()));
+            return create(current, Files.newInputStream(update.toPath()));
         } catch (Exception e) {
             throw new IllegalArgumentException("Update file '" + update.getAbsolutePath() + "' not found", e);
         }
@@ -109,9 +109,9 @@ public class YamlUpdater {
      * @param current config file to be updated
      * @param update  update file content
      * @return builder instance for chained calls
-     * @see #configure(File, File) shortcut for direct file case (most common)
+     * @see #create(File, File) shortcut for direct file case (most common)
      */
-    public static UpdateConfig.Configurator configure(final File current, final InputStream update) {
+    public static UpdateConfig.Configurator create(final File current, final InputStream update) {
         return UpdateConfig.configureUpdate(current, update);
     }
 

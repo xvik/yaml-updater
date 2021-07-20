@@ -19,7 +19,7 @@ class PropDelTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).deleteProps('prop2/list').create().execute()
+        YamlUpdater.create(current, update).backup(false).deleteProps('prop2/list').update()
 
         then: "list replaced"
         unifyString(current.text) == """# something

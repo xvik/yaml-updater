@@ -19,7 +19,7 @@ class UpdaterTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -75,7 +75,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -131,7 +131,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -191,7 +191,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """object:
@@ -228,7 +228,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """object:
@@ -266,7 +266,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# explicitly shifted lines
@@ -341,7 +341,7 @@ sublist:
         Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.configure(current, update).backup(false).create().execute()
+        YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# explicitly shifted lines
