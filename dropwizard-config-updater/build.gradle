@@ -1,6 +1,9 @@
 description = "Yaml config updater integration for dropwizard"
 
 dependencies {
-    implementation project(':yaml-config-updater')
+    implementation (project(':yaml-config-updater')) {
+        // dropwizard-provided versions must be used instead
+        transitive = false
+    }
     implementation 'io.dropwizard:dropwizard-core:2.0.23'
 }

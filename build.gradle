@@ -35,7 +35,6 @@ subprojects {
     repositories { mavenLocal(); mavenCentral() }
     dependencies {
         testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
-        testImplementation 'org.slf4j:slf4j-simple:1.7.31'
     }
 
     github {

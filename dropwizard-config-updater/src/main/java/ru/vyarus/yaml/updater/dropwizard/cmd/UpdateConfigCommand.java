@@ -1,6 +1,9 @@
-package ru.vyarus.yaml.updater.dropwizard;
+package ru.vyarus.yaml.updater.dropwizard.cmd;
 
+import ch.qos.logback.classic.Level;
 import io.dropwizard.cli.Command;
+import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -32,13 +35,11 @@ public class UpdateConfigCommand extends Command {
     @Override
     public void configure(final Subparser subparser) {
         subparser.addArgument("file")
-                .nargs(1)
                 .required(true)
                 .type(Arguments.fileType())
                 .help("Path to updating configuration file");
 
         subparser.addArgument("update")
-                .nargs(1)
                 .required(true)
                 .help("Path to new configuration file. Could also be a classpath path.");
 
@@ -46,9 +47,9 @@ public class UpdateConfigCommand extends Command {
                 .dest("backup")
                 .action(Arguments.storeFalse())
                 .setDefault(true)
-                .help("Create backup before configuration update");
+                .help("Don't create backup before configuration update");
 
-        subparser.addArgument("-d", "--delete-paths")
+        subparser.addArgument("-r", "--remove-paths")
                 .dest("delete")
                 .nargs("+")
                 .help("Delete properties from the current config before update");
@@ -63,7 +64,13 @@ public class UpdateConfigCommand extends Command {
                 .dest("validate")
                 .action(Arguments.storeFalse())
                 .setDefault(true)
-                .help("Validate the resulted configuration");
+                .help("Don't validate the resulted configuration");
+
+        subparser.addArgument("-i", "--verbose")
+                .dest("verbose")
+                .action(Arguments.storeTrue())
+                .setDefault(false)
+                .help("Show debug logs");
     }
 
     @Override
@@ -74,13 +81,25 @@ public class UpdateConfigCommand extends Command {
         final boolean validate = namespace.get("validate");
         final List<String> delete = namespace.getList("delete");
         final Map<String, String> env = prepareEnv(namespace.get("env"));
+        final boolean verbose = namespace.get("verbose");
+
+        // logging is not configured
+        System.out.println("Updating configuration: " + current.getAbsolutePath());
+
+        if (verbose) {
+            BootstrapLogging.bootstrap(Level.DEBUG); // bootstrap set threshold filter!
+            LoggingUtil.getLoggerContext().getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).setLevel(Level.WARN);
+            LoggingUtil.getLoggerContext().getLogger(YamlUpdater.class.getPackage().getName()).setLevel(Level.DEBUG);
+        }
 
         YamlUpdater.create(current, update)
                 .backup(backup)
-                .deleteProps(delete.toArray(new String[]{}))
+                .deleteProps(delete != null ? delete.toArray(new String[]{}) : null)
                 .validateResult(validate)
                 .envVars(env)
                 .update();
+
+        System.out.println("Configuration successfully updated");
     }
 
     private InputStream prepareTargetFile(final String path) {
