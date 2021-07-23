@@ -181,6 +181,8 @@ public class YamlUpdater {
                         final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
                         rootStr.getChildren().remove(str);
                     }
+                } else {
+                    logger.warn("Property not removed on path '{}': not found", prop);
                 }
                 // trees are equal (validated) so can't have different branches
             }

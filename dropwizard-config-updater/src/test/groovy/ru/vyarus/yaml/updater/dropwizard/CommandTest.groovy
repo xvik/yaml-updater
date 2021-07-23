@@ -56,8 +56,8 @@ prop3:
     def "Check props remove"() {
 
         when: "perform merge with props remove"
-        def res = run("src/test/resources/simple.yml", "src/test/resources/simple_upd.yml", "-i",
-        "-r", "prop1", "prop2.list")
+        def res = run("src/test/resources/simple.yml", "src/test/resources/simple_upd.yml",
+        "-r", "prop1", "prop2/list")
 
         then: "merged"
         res == """# something

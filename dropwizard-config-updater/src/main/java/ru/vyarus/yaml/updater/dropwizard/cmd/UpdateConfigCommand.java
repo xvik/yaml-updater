@@ -1,8 +1,8 @@
 package ru.vyarus.yaml.updater.dropwizard.cmd;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import io.dropwizard.cli.Command;
-import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.LoggingUtil;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -29,7 +29,7 @@ import java.util.Properties;
 public class UpdateConfigCommand extends Command {
 
     public UpdateConfigCommand() {
-        super("update-config", "Update configuration file from the new file");
+        super("update-config", "Update configuration file from new file");
     }
 
     @Override
@@ -83,13 +83,11 @@ public class UpdateConfigCommand extends Command {
         final Map<String, String> env = prepareEnv(namespace.get("env"));
         final boolean verbose = namespace.get("verbose");
 
-        // logging is not configured
+        // logging is configured to WARN level by default, use direct output instead
         System.out.println("Updating configuration: " + current.getAbsolutePath());
 
         if (verbose) {
-            BootstrapLogging.bootstrap(Level.DEBUG); // bootstrap set threshold filter!
-            LoggingUtil.getLoggerContext().getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).setLevel(Level.WARN);
-            LoggingUtil.getLoggerContext().getLogger(YamlUpdater.class.getPackage().getName()).setLevel(Level.DEBUG);
+            enableDebugLogs();
         }
 
         YamlUpdater.create(current, update)
@@ -99,7 +97,7 @@ public class UpdateConfigCommand extends Command {
                 .envVars(env)
                 .update();
 
-        System.out.println("Configuration successfully updated");
+        System.out.println("\nConfiguration successfully updated");
     }
 
     private InputStream prepareTargetFile(final String path) {
@@ -149,5 +147,15 @@ public class UpdateConfigCommand extends Command {
             // try to resolve in classpath
             return UpdateConfigCommand.class.getResourceAsStream(path);
         }
+    }
+
+    private void enableDebugLogs() {
+        // re-configure default logging
+        final Logger root = LoggingUtil.getLoggerContext().getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        // by default bootstrap would set threshold filter for WARN, see
+        // io.dropwizard.logging.BootstrapLogging.bootstrap(..)
+        root.iteratorForAppenders().next().clearAllFilters();
+        root.setLevel(Level.WARN);
+        LoggingUtil.getLoggerContext().getLogger(YamlUpdater.class.getPackage().getName()).setLevel(Level.DEBUG);
     }
 }
