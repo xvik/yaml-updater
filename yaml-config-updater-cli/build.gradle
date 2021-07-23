@@ -2,5 +2,11 @@ description = "Command line executor for yaml config updater"
 
 dependencies {
     implementation project(':yaml-config-updater')
-    implementation 'io.dropwizard:dropwizard-core:2.0.23'
+    implementation 'info.picocli:picocli:4.6.1'
+
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
+}
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
