@@ -7,6 +7,7 @@ import ru.vyarus.yaml.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtNode;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.updater.parse.common.model.TreeNode;
+import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
@@ -167,24 +168,15 @@ public class YamlUpdater {
 
             // removing props
             for (String prop : config.getDeleteProps()) {
-                final CmtNode node = currentTree.find(prop);
-                if (node != null) {
-                    logger.info("Removing configuration property: {}", prop);
-                    // for root level property, it would not point to tree object
-                    final TreeNode<CmtNode> root = node.getRoot() == null ? currentTree : node.getRoot();
-                    root.getChildren().remove(node);
-
-                    // remove in both trees because struct tree is used for result validation
-                    final StructNode str = currentStructure.find(prop);
-                    // could be commented node in comments tree, not visible in struct tree
-                    if (str != null) {
-                        final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
-                        rootStr.getChildren().remove(str);
-                    }
-                } else {
+                boolean done = removeProperty(prop);
+                if (!done) {
+                    // it would be a very common error to use dot as a separator, so trying to replace dots
+                    // with real separator and try again (it's highly unlikely to have collisions)
+                    done = removeProperty(prop.replace('.', YamlLine.PATH_SEPARATOR));
+                }
+                if (!done) {
                     logger.warn("Property not removed on path '{}': not found", prop);
                 }
-                // trees are equal (validated) so can't have different branches
             }
             logger.info("New configuration parsed ({})", currentCfg.getAbsolutePath());
         } else {
@@ -193,6 +185,26 @@ public class YamlUpdater {
 
         // tmp file used to catch possible writing errors and only then override old file
         work = File.createTempFile("merge-result", ".yml");
+    }
+
+    private boolean removeProperty(final String prop) {
+        final CmtNode node = currentTree.find(prop);
+        if (node != null) {
+            logger.info("Removing configuration property: {}", prop);
+            // for root level property, it would not point to tree object
+            final TreeNode<CmtNode> root = node.getRoot() == null ? currentTree : node.getRoot();
+            root.getChildren().remove(node);
+
+            // remove in both trees because struct tree is used for result validation
+            // (trees are equal (validated) so can't have different branches)
+            final StructNode str = currentStructure.find(prop);
+            // could be commented node in comments tree, not visible in struct tree
+            if (str != null) {
+                final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
+                rootStr.getChildren().remove(str);
+            }
+        }
+        return node != null;
     }
 
     private void merge() {

@@ -136,8 +136,8 @@ public final class UpdateConfig {
         }
 
         /**
-         * IMPORTANT: properties must be separated with "/" and not "."! This is important because dot is allowed
-         * character in property name!
+         * IMPORTANT: yaml property names could contain '.' and so '/' used as property separator. But, as it would
+         * be a common point of confusion merger will try both: property as is and with replaced dots (fallback).
          * <p>
          * Yaml path may include list values with syntax: prop/sublist[0]/foo. It would match first item of list
          * prop/sublist and select foo item property.
