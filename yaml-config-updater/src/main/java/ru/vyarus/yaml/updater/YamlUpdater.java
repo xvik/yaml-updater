@@ -178,7 +178,7 @@ public class YamlUpdater {
                     logger.warn("Property not removed on path '{}': not found", prop);
                 }
             }
-            logger.info("New configuration parsed ({})", currentCfg.getAbsolutePath());
+            logger.info("Current configuration parsed ({})", currentCfg.getAbsolutePath());
         } else {
             logger.info("Current configuration doesn't exist: {}", currentCfg.getAbsolutePath());
         }
