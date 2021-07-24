@@ -56,9 +56,9 @@ public class UpdateConfigCommand extends Command {
 
         subparser.addArgument("-e", "--env")
                 .dest("env")
-                .nargs(1)
-                .help("Properties file with variables for substitution in the updating file. " +
-                        "Could also be a classpath path.");
+                .nargs("+")
+                .help("Variables to replace (name=value) or path(s) to properties file with variables " +
+                        "(could also be a classpath path)");
 
         subparser.addArgument("-v", "--no-validate")
                 .dest("validate")
@@ -80,7 +80,7 @@ public class UpdateConfigCommand extends Command {
         final boolean backup = namespace.get("backup");
         final boolean validate = namespace.get("validate");
         final List<String> delete = namespace.getList("delete");
-        final Map<String, String> env = prepareEnv(namespace.get("env"));
+        final Map<String, String> env = prepareEnv(namespace.getList("env"));
         final boolean verbose = namespace.get("verbose");
 
         // logging is configured to WARN level by default, use direct output instead
@@ -108,12 +108,32 @@ public class UpdateConfigCommand extends Command {
         return in;
     }
 
-    private Map<String, String> prepareEnv(final String envFile) {
+    private Map<String, String> prepareEnv(final List<String> envList) {
         // always included environment vars
         final Map<String, String> res = new HashMap<>(System.getenv());
 
-        // if provided, load variables file
-        final InputStream in = findFile(envFile);
+        if (envList != null) {
+            for (String env : envList) {
+                final int idx = env.indexOf('=');
+                if (idx > 0) {
+                    // direct variable
+                    final String name = env.substring(0, idx).trim();
+                    if (name.isEmpty()) {
+                        throw new IllegalArgumentException("Invalid variable declaration: " + env);
+                    }
+                    final String value = env.substring(idx + 1).trim();
+                    res.put(name, value);
+                } else {
+                    // properties file
+                    loadVarsFile(env, res);
+                }
+            }
+        }
+        return res;
+    }
+
+    private void loadVarsFile(final String path, final Map<String, String> res) {
+        final InputStream in = findFile(path);
         if (in != null) {
             try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                 final Properties props = new Properties();
@@ -125,10 +145,11 @@ public class UpdateConfigCommand extends Command {
                     res.put(name, value == null ? "" : value);
                 }
             } catch (Exception ex) {
-                throw new IllegalStateException("Failed to read variables from: " + envFile, ex);
+                throw new IllegalStateException("Failed to read variables from: " + path, ex);
             }
+        } else {
+            throw new IllegalArgumentException("Variables file not found: " + path);
         }
-        return res;
     }
 
     private InputStream findFile(String path) {

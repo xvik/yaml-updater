@@ -18,8 +18,6 @@ class AbstractTest extends Specification {
 
         def text = new File(scrFile).text
         cfg.text = text
-        println "SOURCE FILE:\n---------------------------------\n$text\n---------------------------------\n"
-        println "UPDATE FILE:\n---------------------------------\n${new File(updFile).text}\n---------------------------------\n"
 
         def arg = ["update-config", cfg.absolutePath, updFile]
         arg.addAll(args)
