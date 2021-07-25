@@ -20,8 +20,8 @@ prop1:
   prop1.1: 1.1
 
   prop1.2: 1.2
-  prop2: pp
-  prop3: tt
+  prop2: tt
+  prop3: pp
   prop4: #{var3}
 
 # in the middle
@@ -67,8 +67,8 @@ prop1:
   prop1.1: 1.1
 
   prop1.2: 1.2
-  prop2: pp
-  prop3: tt
+  prop2: tt
+  prop3: pp
   prop4: #{var3}
 
 # in the middle
@@ -114,8 +114,8 @@ prop1:
   prop1.1: 1.1
 
   prop1.2: 1.2
-  prop2: pp
-  prop3: tt
+  prop2: tt
+  prop3: pp
   prop4: test
 
 # in the middle

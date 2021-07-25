@@ -46,7 +46,7 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     /**
      * Note there might be comment-only nodes in case of comments parser and these are not included.
      *
-     * @return map of root properties
+     * @return map of root properties (preserving order)
      */
     public Map<String, T> getRootProperties() {
         final Map<String, T> res = new LinkedHashMap<>();

@@ -48,8 +48,8 @@ public final class TreeMerger {
             return;
         }
 
-        // updating file structure taken and only existing nodes replaced by current values
-        // nodes not found in new config would be also inserted
+        // updating file structure based on updating file nodes, replacing values present in current file
+        // nodes not found in new config would be inserted (in case of multiple nodes in the same order)
 
         final Map<String, CmtNode> newProps = from.getRootProperties();
 
@@ -91,6 +91,8 @@ public final class TreeMerger {
             if (prevNodeIdx < 0) {
                 // first node will also go first
                 updated.add(0, curr);
+                // if multiple properties from current file absent in new file, they must go in the same order
+                prevNodeIdx = 0;
             } else {
                 // insert it after old previous element (in the new list)
                 updated.add(++prevNodeIdx, curr);
