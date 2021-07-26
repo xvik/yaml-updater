@@ -49,7 +49,7 @@ public class UpdateConfigCommand extends Command {
                 .setDefault(true)
                 .help("Don't create backup before configuration update");
 
-        subparser.addArgument("-r", "--remove-paths")
+        subparser.addArgument("-d", "--delete-paths")
                 .dest("delete")
                 .nargs("+")
                 .help("Delete properties from the current config before update");
