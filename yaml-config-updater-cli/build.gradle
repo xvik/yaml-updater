@@ -1,3 +1,11 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+quality {
+    strict = false
+}
+
 description = "Command line executor for yaml config updater"
 
 dependencies {
@@ -11,3 +19,9 @@ dependencies {
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
+
+jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
+
+publishing.publications.maven.artifact shadowJar
+
+assemble.dependsOn = [shadowJar]

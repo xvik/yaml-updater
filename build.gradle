@@ -54,7 +54,7 @@ subprojects {
 
     javaLib {
         // java 9 auto module name
-        autoModuleName = "$rootProject.group.${project.name.replace('-', '.')}"
+        autoModuleName = "$group.${project.name.replace('-', '.')}"
         // don't publish gradle metadata artifact
         withoutGradleMetadata()
     }

@@ -28,39 +28,40 @@ import java.util.concurrent.Callable;
  * @since 20.07.2021
  */
 @Command(name = "update-config", mixinStandardHelpOptions = true,
-        description = "Update yaml configuration file from new file")
+        description = "Update yaml configuration file from new file",
+        versionProvider = ManifestVersionProvider.class)
 public class UpdateConfigCli implements Callable<Void> {
 
     @Parameters(index = "0", paramLabel = "CONFIG",
             description = "Path to updating configuration file")
-    File current;
+    private File current;
 
     @Parameters(index = "1", paramLabel = "UPDATE",
             description = "Path to new configuration file or any URL")
-    String update;
+    private String update;
 
     @Option(names = {"-b", "--no-backup"}, paramLabel = "BACKUP",
             description = "Don't create backup before configuration update")
-    boolean backup;
+    private boolean backup;
 
     @Option(names = {"-d", "--delete-paths"}, arity = "1..*", paramLabel = "DELETE",
             description = "Delete properties from the current config before update")
-    List<String> removePaths;
+    private List<String> removePaths;
 
     @Option(names = {"-e", "--env"}, arity = "1..*", paramLabel = "ENV",
             description = "Variables to replace (name=value) or path(s) to properties file with variables")
-    List<String> env;
+    private List<String> env;
 
     @Option(names = {"-v", "--no-validate"}, paramLabel = "VALID",
             description = "Don't validate the resulted configuration")
-    boolean valid;
+    private boolean valid;
 
     @Option(names = {"-i", "--verbose"}, paramLabel = "VERBOSE",
             description = "Show debug logs")
-    boolean verbose;
+    private boolean verbose;
 
     @Spec
-    CommandSpec spec;
+    private CommandSpec spec;
 
     @Override
     public Void call() throws Exception {
@@ -87,7 +88,7 @@ public class UpdateConfigCli implements Callable<Void> {
         new CommandLine(new UpdateConfigCli()).execute(args);
     }
 
-    private InputStream resoleFile(String name, String desc) {
+    private InputStream resoleFile(final String name, final String desc) {
         if (name.contains(":")) {
             // url
             try {
