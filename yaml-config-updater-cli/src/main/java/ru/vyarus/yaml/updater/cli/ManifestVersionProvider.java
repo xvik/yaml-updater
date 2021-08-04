@@ -8,12 +8,16 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
+ * Reads version from the bundled manifest file.
+ *
  * @author Vyacheslav Rusakov
  * @since 04.08.2021
  */
 public class ManifestVersionProvider implements CommandLine.IVersionProvider {
 
+    @Override
     public String[] getVersion() throws Exception {
+        String[] res;
         final URL url = CommandLine.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
         if (url != null) {
             try {
@@ -23,12 +27,14 @@ public class ManifestVersionProvider implements CommandLine.IVersionProvider {
                 if (version == null) {
                     version = "unknown";
                 }
-                return new String[]{"yaml-config-updater version " + version};
+                res = new String[]{"yaml-config-updater version " + version};
             } catch (IOException ex) {
-                return new String[]{"Unable to read from " + url + ": " + ex};
+                res = new String[]{"Unable to read from " + url + ": " + ex};
             }
+        } else {
+            res = new String[]{"manifest not found"};
         }
-        return new String[]{"manifest not found"};
+        return res;
     }
 
     private static String get(final Attributes attributes, final String key) {

@@ -23,9 +23,13 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Update config dropwizard command. It is required to specify complete or relative path to application configuration
+ * and absolute path or relative path or classpath path for updating file.
+ *
  * @author Vyacheslav Rusakov
  * @since 17.07.2021
  */
+@SuppressWarnings("checkstyle:MultipleStringLiterals")
 public class UpdateConfigCommand extends Command {
 
     public UpdateConfigCommand() {
@@ -57,8 +61,8 @@ public class UpdateConfigCommand extends Command {
         subparser.addArgument("-e", "--env")
                 .dest("env")
                 .nargs("+")
-                .help("Variables to replace (name=value) or path(s) to properties file with variables " +
-                        "(could also be a classpath path)");
+                .help("Variables to replace (name=value) or path(s) to properties file with variables "
+                        + "(could also be a classpath path)");
 
         subparser.addArgument("-v", "--no-validate")
                 .dest("validate")
@@ -74,6 +78,7 @@ public class UpdateConfigCommand extends Command {
     }
 
     @Override
+    @SuppressWarnings("PMD.SystemPrintln")
     public void run(final Bootstrap<?> bootstrap, final Namespace namespace) throws Exception {
         final File current = namespace.get("file");
         final InputStream update = prepareTargetFile(namespace.get("update"));
@@ -152,22 +157,24 @@ public class UpdateConfigCommand extends Command {
         }
     }
 
-    private InputStream findFile(String path) {
+    private InputStream findFile(final String path) {
         if (path == null || path.isEmpty()) {
             return null;
         }
+        final InputStream res;
         // first check direct file
         final File file = new File(path);
         if (file.exists()) {
             try {
-                return Files.newInputStream(file.toPath());
+                res = Files.newInputStream(file.toPath());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to read file: " + path, e);
             }
         } else {
             // try to resolve in classpath
-            return UpdateConfigCommand.class.getResourceAsStream(path);
+            res = UpdateConfigCommand.class.getResourceAsStream(path);
         }
+        return res;
     }
 
     private void enableDebugLogs() {

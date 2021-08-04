@@ -64,6 +64,7 @@ public class UpdateConfigCli implements Callable<Void> {
     private CommandSpec spec;
 
     @Override
+    @SuppressWarnings("PMD.SystemPrintln")
     public Void call() throws Exception {
         final InputStream target = resoleFile(update, "update");
         final Map<String, String> env = prepareEnv();
@@ -88,6 +89,7 @@ public class UpdateConfigCli implements Callable<Void> {
         new CommandLine(new UpdateConfigCli()).execute(args);
     }
 
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     private InputStream resoleFile(final String name, final String desc) {
         if (name.contains(":")) {
             // url
@@ -95,7 +97,7 @@ public class UpdateConfigCli implements Callable<Void> {
                 return new URL(name).openStream();
             } catch (IOException e) {
                 throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file url: " + name
-                        + " (" + e.getMessage() + ")");
+                        + " (" + e.getMessage() + ")", e);
             }
         }
         final File file = new File(name);
