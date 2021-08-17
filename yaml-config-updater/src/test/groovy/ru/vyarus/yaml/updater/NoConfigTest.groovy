@@ -1,7 +1,4 @@
-package ru.vyarus.yaml.updater.update
-
-import ru.vyarus.yaml.updater.AbstractTest
-import ru.vyarus.yaml.updater.YamlUpdater
+package ru.vyarus.yaml.updater
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
