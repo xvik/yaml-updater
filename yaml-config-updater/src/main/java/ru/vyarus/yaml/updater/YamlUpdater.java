@@ -228,11 +228,14 @@ public class YamlUpdater {
         try {
             // make sure updated file is valid
             final StructTree updated = StructureReader.read(work);
-            if (config.isValidateResult()) {
-                UpdateResultValidator.validate(updated, currentStructure, updateStructure);
-                logger.info("Merged configuration correctness validated");
-            } else {
-                logger.warn("Result validation skipped");
+            // if not initial copying (current tree can't be used here as it's already replaced by new config)
+            if (currentStructure != null) {
+                if (config.isValidateResult()) {
+                    UpdateResultValidator.validate(updated, currentStructure, updateStructure);
+                    logger.info("Merged configuration correctness validated");
+                } else {
+                    logger.warn("Result validation skipped");
+                }
             }
         } catch (Exception ex) {
             String yamlContent;
