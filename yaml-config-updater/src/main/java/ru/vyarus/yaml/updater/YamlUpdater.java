@@ -148,7 +148,9 @@ public class YamlUpdater {
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to parse new configuration", ex);
         }
+
         logger.info("New configuration parsed");
+        config.getListener().updateConfigParsed(updateTree, updateStructure);
     }
 
     private void prepareCurrentConfig() throws Exception {
@@ -180,6 +182,7 @@ public class YamlUpdater {
                 }
             }
             logger.info("Current configuration parsed ({})", currentCfg.getAbsolutePath());
+            config.getListener().currentConfigParsed(updateTree, updateStructure);
         } else {
             logger.info("Current configuration doesn't exist: {}", currentCfg.getAbsolutePath());
         }
@@ -219,6 +222,7 @@ public class YamlUpdater {
             TreeMerger.merge(currentTree, updateTree);
             logger.info("Configuration merged");
         }
+        config.getListener().merged(currentTree);
         // write merged result
         CommentsWriter.write(currentTree, work);
     }
@@ -267,6 +271,7 @@ public class YamlUpdater {
                     + "." + new SimpleDateFormat("yyyyMMddHHmm", Locale.ENGLISH).format(new Date()));
             Files.copy(current.toPath(), backup);
             logger.info("Backup created: {}", backup);
+            config.getListener().backupCreated(backup.toFile());
         }
 
         Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);

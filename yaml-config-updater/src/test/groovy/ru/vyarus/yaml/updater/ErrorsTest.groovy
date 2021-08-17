@@ -2,9 +2,6 @@ package ru.vyarus.yaml.updater
 
 import spock.lang.TempDir
 
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
-
 /**
  * @author Vyacheslav Rusakov
  * @since 17.08.2021
@@ -62,6 +59,22 @@ class ErrorsTest extends AbstractTest {
         then: "error"
         def ex = thrown(IllegalStateException)
         ex.message.startsWith('Error updating from file')
+    }
+
+    def "Check invalid update file"() {
+
+        setup: "prepare files"
+        File current = new File(dir, "config.yml")
+        current << "some:"
+        File update = new File(dir, "update.yml")
+        update << "invalid"
+
+        when: "updating"
+        YamlUpdater.create(current, update).backup(false).update()
+
+        then: "error"
+        def ex = thrown(IllegalStateException)
+        ex.message.startsWith('Failed to update: original configuration remains')
     }
 
     def "Check incorrect configuration"() {

@@ -2,6 +2,8 @@ package ru.vyarus.yaml.updater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.yaml.updater.listen.UpdateListener;
+import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,12 +30,13 @@ public final class UpdateConfig {
 
     private File current;
     private boolean backup;
-    // not file to allow loading from classpath (jar) or any other location
+    // not File type to allow loading from classpath (jar) or any other location
     private String update;
     private List<String> deleteProps = Collections.emptyList();
     // variables to apply to fresh config placeholders (adopt config to exact environment)
     private Map<String, String> env = Collections.emptyMap();
     private boolean validateResult = true;
+    private UpdateListener listener;
 
     private UpdateConfig() {
     }
@@ -102,6 +105,12 @@ public final class UpdateConfig {
         return validateResult;
     }
 
+    /**
+     * @return configured listener (might be dummy adapter if nothing configured)
+     */
+    public UpdateListener getListener() {
+        return listener;
+    }
 
     /**
      * Updater configurator.
@@ -187,9 +196,29 @@ public final class UpdateConfig {
         }
 
         /**
+         * Register listener for accessing internal files model during merge process. Mainly used for testing.
+         * <p>
+         * Only one listener allowed.
+         *
+         * @param listener merge process stages listener (null ignored)
+         * @return builder instance for chained calls
+         */
+        public Configurator listen(final UpdateListener listener) {
+            if (listener != null) {
+                config.listener = listener;
+            }
+            return this;
+        }
+
+        /**
          * @return configured yaml updater instance
          */
         public void update() {
+            if (config.listener == null) {
+                // to avoid null checks everywhere
+                config.listener = new UpdateListenerAdapter();
+            }
+            config.listener.configured(config);
             new YamlUpdater(config).execute();
         }
 
