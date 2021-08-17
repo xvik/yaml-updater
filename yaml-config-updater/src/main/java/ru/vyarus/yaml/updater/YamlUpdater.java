@@ -96,9 +96,10 @@ public class YamlUpdater {
      */
     public static UpdateConfig.Configurator create(final File current, final File update) {
         try {
-            return create(current, Files.newInputStream(update.toPath()));
+            return create(current, update != null ? Files.newInputStream(update.toPath()) : null);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Update file '" + update.getAbsolutePath() + "' not found", e);
+            throw new IllegalStateException("Error updating from file '"
+                    + (update != null ? update.getAbsolutePath() : "unknown") + "'", e);
         }
     }
 
