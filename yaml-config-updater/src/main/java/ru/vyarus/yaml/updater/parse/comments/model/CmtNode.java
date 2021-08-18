@@ -158,6 +158,6 @@ public class CmtNode extends YamlLine<CmtNode> {
         }
         final String value = hasValue() ? this.value.get(0) : "";
         return isListItem() ? "- " + value
-                : getKey() + ": " + value;
+                : getKey() + ":" + value;
     }
 }

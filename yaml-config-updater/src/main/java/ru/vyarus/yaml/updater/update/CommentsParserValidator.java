@@ -47,7 +47,7 @@ public final class CommentsParserValidator {
         if (children.size() < childrenStruct.size()) {
             throw new IllegalStateException("Comments parser validation problem on line " + comments.getLineNum()
                     + ": " + children.size() + " child nodes found but should be at least " + childrenStruct.size()
-                    + "(this is parser a bug, please report it!)\n" + debugTees(comments, struct));
+                    + " (this is a parser bug, please report it!)\n" + debugTees(comments, struct));
         }
 
         final Iterator<CmtNode> cmtIt = children.iterator();
@@ -63,7 +63,7 @@ public final class CommentsParserValidator {
             if (!strIt.hasNext()) {
                 throw new IllegalStateException("Comments parser validation problem on line "
                         + line.getLineNum() + ": line should not exist (this is a parser bug, please report it!)\n"
-                        + debugTees(comments, struct));
+                        + debugTees(line, null));
             }
             final StructNode match = strIt.next();
 
@@ -71,7 +71,7 @@ public final class CommentsParserValidator {
                 if (!line.getKey().equals(match.getKey())) {
                     throw new IllegalStateException("Comments parser validation problem on line "
                             + line.getLineNum()
-                            + ": line should be different: " + match + " (this is a parser bug, please report it!)\n"
+                            + ": line should be different: \"" + match + "\" (this is a parser bug, please report it!)\n"
                             + debugTees(comments, struct));
                 }
 
@@ -97,7 +97,7 @@ public final class CommentsParserValidator {
         if (struct != null) {
             res.add("Comments parser subtree:");
         }
-        res.addAll(cmtTree.getLines());
+        res.addAll(cmtTree.lines);
 
         if (struct != null) {
             final ReportLines strTree = debugTree(struct);
@@ -116,8 +116,8 @@ public final class CommentsParserValidator {
 
             res.clear();
             res.add(merge[0] + "Structure parser subtree:");
-            for (int j = 1; j < strTree.getLines().size() + 1; j++) {
-                res.add(merge[j] + strTree.getLines().get(j - 1));
+            for (int j = 1; j < strTree.lines.size() + 1; j++) {
+                res.add(merge[j] + strTree.lines.get(j - 1));
             }
         }
 
@@ -134,6 +134,11 @@ public final class CommentsParserValidator {
         final ReportLines lines = new ReportLines();
         if (node instanceof YamlLine) {
             debugTreeLeaf(lines, (T) node, 0);
+        } else {
+            // for tree root print entire tree
+            for(T child: node.getChildren()) {
+                debugTreeLeaf(lines, child, 0);
+            }
         }
         return lines;
     }
@@ -158,14 +163,6 @@ public final class CommentsParserValidator {
         public void add(final String line) {
             length = Math.max(length, line.length());
             lines.add(line);
-        }
-
-        public List<String> getLines() {
-            return lines;
-        }
-
-        public int getLength() {
-            return length;
         }
     }
 }

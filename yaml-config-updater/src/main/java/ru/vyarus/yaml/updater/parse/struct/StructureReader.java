@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -45,6 +46,14 @@ public final class StructureReader {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml file: " + file.getAbsolutePath(), e);
         }
+    }
+
+    /**
+     * @param file yaml file as string
+     * @return parsed yaml model tree
+     */
+    public static StructTree read(final String file) {
+        return read(new StringReader(file));
     }
 
     /**

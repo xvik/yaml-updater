@@ -19,7 +19,6 @@ import ru.vyarus.yaml.updater.update.UpdateResultValidator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -140,14 +139,14 @@ public class YamlUpdater {
         }
 
         // read structure first to validate correctness!
-        updateStructure = StructureReader.read(new StringReader(source));
+        updateStructure = StructureReader.read(source);
         updateTree = CommentsReader.read(source);
         try {
             // validate comments parser correctness using snakeyaml result
             CommentsParserValidator.validate(updateTree, updateStructure);
         } catch (Exception ex) {
-            throw new IllegalStateException("Model validation fail: comments parser tree does not match snakeyaml's " +
-                    "parse tree for update config", ex);
+            throw new IllegalStateException("Model validation fail: comments parser tree does not match snakeyaml's "
+                    + "parse tree for update config", ex);
         }
 
         logger.info("New configuration parsed");
@@ -166,8 +165,8 @@ public class YamlUpdater {
                 // validate comments parser correctness using snakeyaml result
                 CommentsParserValidator.validate(currentTree, currentStructure);
             } catch (Exception ex) {
-                throw new IllegalStateException("Model validation fail: comments parser tree does not match " +
-                        "snakeyaml's parse tree for current config: " + currentCfg.getAbsolutePath(), ex);
+                throw new IllegalStateException("Model validation fail: comments parser tree does not match "
+                        + "snakeyaml's parse tree for current config: " + currentCfg.getAbsolutePath(), ex);
             }
 
             // removing props
