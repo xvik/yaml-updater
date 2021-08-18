@@ -87,7 +87,7 @@ public final class UpdateResultValidator {
             // if not in old file, then it's a merged value from new file
             if (newNode == null) {
                 throw new IllegalStateException(String.format(
-                        "Value '%s' not found neither in old nor in new file: '%s'",
+                        "Property '%s' not found neither in old nor in new file: '%s'",
                         fullYamlPath, leaf.getValue()));
             }
             if (!leaf.getValue().equals(newNode.getValue())) {

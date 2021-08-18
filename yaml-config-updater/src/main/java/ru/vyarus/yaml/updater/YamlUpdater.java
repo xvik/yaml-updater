@@ -146,7 +146,8 @@ public class YamlUpdater {
             // validate comments parser correctness using snakeyaml result
             CommentsParserValidator.validate(updateTree, updateStructure);
         } catch (Exception ex) {
-            throw new IllegalStateException("Failed to parse new configuration", ex);
+            throw new IllegalStateException("Model validation fail: comments parser tree does not match snakeyaml's " +
+                    "parse tree for update config", ex);
         }
 
         logger.info("New configuration parsed");
@@ -165,8 +166,8 @@ public class YamlUpdater {
                 // validate comments parser correctness using snakeyaml result
                 CommentsParserValidator.validate(currentTree, currentStructure);
             } catch (Exception ex) {
-                throw new IllegalStateException("Failed to parse current config: "
-                        + currentCfg.getAbsolutePath(), ex);
+                throw new IllegalStateException("Model validation fail: comments parser tree does not match " +
+                        "snakeyaml's parse tree for current config: " + currentCfg.getAbsolutePath(), ex);
             }
 
             // removing props
