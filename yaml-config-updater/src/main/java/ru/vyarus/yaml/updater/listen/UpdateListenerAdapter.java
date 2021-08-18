@@ -36,6 +36,11 @@ public class UpdateListenerAdapter implements UpdateListener {
     }
 
     @Override
+    public void validated(final StructTree result) {
+        // default no action
+    }
+
+    @Override
     public void backupCreated(final File backup) {
         // default no action
     }

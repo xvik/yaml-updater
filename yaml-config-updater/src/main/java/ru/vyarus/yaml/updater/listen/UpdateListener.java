@@ -69,6 +69,16 @@ public interface UpdateListener {
     void merged(CmtTree result);
 
     /**
+     * Called after result validation. Not called if validation disabled.
+     * <p>
+     * At this point merged file was already saved. Passed model is a read of just merged file for validation.
+     * Any changes to this model will not take any effect. Method may be used for additional validations.
+     *
+     * @param result parsed merged file (with snakeyaml)
+     */
+    void validated(StructTree result);
+
+    /**
      * Called after backup file creation (only if required).
      *
      * @param backup created backup file for current configuration

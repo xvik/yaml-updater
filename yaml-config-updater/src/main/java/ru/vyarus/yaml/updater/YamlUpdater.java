@@ -238,6 +238,7 @@ public class YamlUpdater {
                 if (config.isValidateResult()) {
                     UpdateResultValidator.validate(updated, currentStructure, updateStructure);
                     logger.info("Merged configuration correctness validated");
+                    config.getListener().validated(updated);
                 } else {
                     logger.warn("Result validation skipped");
                 }
