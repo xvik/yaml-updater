@@ -56,7 +56,7 @@ public final class YamlModelUtils {
      */
     public static <T extends YamlLine<T>> void virtualListItem(final T node) {
         if (node.getKey() != null) {
-            throw new IllegalStateException("Incorrect usage: property node can't be marked as virtual list node: "
+            throw new IllegalArgumentException("Incorrect usage: property node can't be marked as virtual list node: "
                     + node);
         }
         node.setListItem(true);

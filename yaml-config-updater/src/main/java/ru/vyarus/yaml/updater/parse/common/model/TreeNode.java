@@ -74,6 +74,33 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     }
 
     /**
+     * Properly attached node into this node (removing node from previous root).
+     *
+     * @param node node to add as child
+     */
+    @SuppressWarnings("unchecked")
+    public void add(T node) {
+        // detach from old root
+        if (node.getRoot()!= null) {
+            node.getRoot().getChildren().remove(node);
+        }
+        // attach to new root
+        node.setRoot((T) this);
+        getChildren().add(node);
+    }
+
+    /**
+     * Attaches provided nodes to current.
+     *
+     * @param nodes nodes to add as child
+     */
+    public void addAll(T... nodes) {
+        for(T node: nodes) {
+            add(node);
+        }
+    }
+
+    /**
      * Note, for list items possible empty dash line is ignored (not a level in path).
      *
      * @return property path in yaml structure (like prop1/prop2[3]/sub) or null for tree root

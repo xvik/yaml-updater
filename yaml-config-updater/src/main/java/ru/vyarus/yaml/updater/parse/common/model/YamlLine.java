@@ -23,7 +23,8 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     // property name, if property line
     private String key;
 
-    // indicate list item: for object item all properties would be as children, for scalar items - in this object
+    // indicate list item: for object item all properties would be children (wrapping node),
+    // for scalar items - in this object
     private boolean listItem;
     // used for list items to identify if sub-object starts on the same line as dash
     // (in this case this virtual dash object used as sub-hierarchy grouping node)
@@ -35,6 +36,18 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
         this.padding = padding;
         this.lineNum = lineNum;
         if (root != null) {
+            if (root.getPadding() >= padding) {
+                throw new IllegalArgumentException(String.format(
+                        "Child node padding (%s) can't be smaller then parent (%s) padding %s",
+                        padding, root, root.getPadding()));
+            }
+            // line numbers could be the same in case of virtualized list object item nodes (when dash on the same
+            // line as first property)
+            if (root.getLineNum() > lineNum) {
+                throw new IllegalArgumentException(String.format(
+                        "Child node line number (%s) can't be smaller then parent (%s) line number %s",
+                        lineNum, root, root.getLineNum()));
+            }
             root.getChildren().add((T) this);
         }
     }
@@ -127,7 +140,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
      * @return true when list item starts from new line and current line contains only dash
      */
     public boolean isEmptyDash() {
-        return isListItem() && !isListItemWithProperty();
+        return isObjectListItem() && !isListItemWithProperty();
     }
 
     /**

@@ -1,7 +1,7 @@
 package ru.vyarus.yaml.updater
 
 import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter
-import ru.vyarus.yaml.updater.parse.comments.model.CmtNode
+import ru.vyarus.yaml.updater.parse.comments.model.CmtNodeFactory
 import ru.vyarus.yaml.updater.parse.comments.model.CmtTree
 import spock.lang.TempDir
 
@@ -61,11 +61,7 @@ list:
     def "Check unknown value appears"() {
 
         when: "add additional node"
-        exec({
-            def node = new CmtNode(null, 0, 3)
-            node.key = 'other'
-            node.value = [' 12']
-            it.children.add(node)})
+        exec({it.children.add(CmtNodeFactory.createProperty(null, 0, 3, 'other', ' 12'))})
 
         then: "detected"
         def ex = thrown(IllegalStateException)

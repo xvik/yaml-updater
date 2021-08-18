@@ -217,7 +217,6 @@ public final class CommentsReader {
                 // scalar list value or sub object starts on new line (empty dash)
                 property(padding, prop);
                 YamlModelUtils.listItem(current);
-                current.setListItem(true);
             } else {
                 // sub object starts from dash: using virtual list node to group object
                 property(padding, null);

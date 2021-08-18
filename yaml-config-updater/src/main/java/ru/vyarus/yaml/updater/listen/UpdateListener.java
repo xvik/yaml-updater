@@ -32,9 +32,13 @@ public interface UpdateListener {
      * Environment variables already applied.
      * <p>
      * Passed structure tree would be used later for the final result validation, so be careful with modifications.
+     * <p>
+     * If you going to modify tree then modify both trees accordingly (otherwise final validation would fail)
      *
      * @param tree   comments tree
      * @param struct structure tree
+     * @see ru.vyarus.yaml.updater.parse.comments.model.CmtNodeFactory for creating new comment nodes
+     * @see ru.vyarus.yaml.updater.parse.struct.model.StructNodeFactory for creating new struct nodes
      */
     void updateConfigParsed(CmtTree tree, StructTree struct);
 
@@ -50,9 +54,13 @@ public interface UpdateListener {
      * <p>
      * NOTE: The same {@link ru.vyarus.yaml.updater.parse.comments.model.CmtTree} instance used for updates and
      * would be written to file after merge.
+     * <p>
+     * If you going to modify tree then modify both trees accordingly (otherwise final validation would fail)
      *
      * @param tree   comments tree
      * @param struct structure tree
+     * @see ru.vyarus.yaml.updater.parse.comments.model.CmtNodeFactory for creating new comment nodes
+     * @see ru.vyarus.yaml.updater.parse.struct.model.StructNodeFactory for creating new struct nodes
      */
     void currentConfigParsed(CmtTree tree, StructTree struct);
 
@@ -65,6 +73,7 @@ public interface UpdateListener {
      * correct, but would not compare with old/new files).
      *
      * @param result merge result
+     * @see ru.vyarus.yaml.updater.parse.comments.model.CmtNodeFactory for creating new comment nodes
      */
     void merged(CmtTree result);
 
