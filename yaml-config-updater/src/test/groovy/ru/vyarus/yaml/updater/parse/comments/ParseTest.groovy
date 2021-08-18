@@ -114,4 +114,30 @@ sublist: ''
     two: '2'
 """
     }
+
+    def "Check parse error"() {
+        when: "parsing file"
+        CommentsReader.read("""
+one: 1
+impossible
+two: 2    
+""")
+
+        then: "parse error"
+        def ex = thrown(IllegalStateException)
+        ex.message == "Failed to read yaml string"
+    }
+
+    def "Check parse error 2"() {
+        when: "parsing file"
+        CommentsReader.read("""
+one:
+    two: 2 
+    impossible    
+""")
+
+        then: "parse error"
+        def ex = thrown(IllegalStateException)
+        ex.message == "Failed to read yaml string"
+    }
 }
