@@ -121,15 +121,13 @@ public final class TreeMerger {
             // Processing required only for lists with object nodes (assuming new properties might be added to object)
             // For both scalar and object lists new list items are not added
 
-            // use wrapper objects to simplify matching
-            final List<CmtNode> curList = cur.getChildren();
             final List<CmtNode> updList = new ArrayList<>(upd.getChildren());
 
             // all items should be unified with the new file structure (e.g. empty dash -> normal dash)
             // remembering target structure
             final boolean targetEmptyDash = updList.get(0).isEmptyDash();
 
-            for (CmtNode item : curList) {
+            for (CmtNode item : cur.getChildren()) {
                 // nothing to sync in scalar items
                 if (!item.isObjectListItem()) {
                     continue;
@@ -150,20 +148,13 @@ public final class TreeMerger {
             }
 
             // recover merged items structure
-            updateListStructure(cur, curList, targetEmptyDash);
+            updateListStructure(cur, targetEmptyDash);
         }
         return isList;
     }
 
-    private static void updateListStructure(final CmtNode cur,
-                                            final List<CmtNode> curList,
-                                            final boolean targetEmptyDash) {
-        for (CmtNode item : curList) {
-            // re-mapping new nodes
-            item.setRoot(cur);
-            if (!cur.getChildren().contains(item)) {
-                cur.getChildren().add(item);
-            }
+    private static void updateListStructure(final CmtNode cur, final boolean targetEmptyDash) {
+        for (CmtNode item : cur.getChildren()) {
             item.getChildren().forEach(yamlNode -> yamlNode.setRoot(item));
 
             if (item.isObjectListItem()) {
