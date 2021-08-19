@@ -136,7 +136,7 @@ public class CmtNode extends YamlLine<CmtNode> {
         if (parsedValue != null) {
             return parsedValue;
         }
-        // collect value from parsed liens, excluding whitespace and comments
+        // collect value from parsed lines, excluding whitespace and comments
         String res = "";
         for (String line : value) {
             if (line == null) {

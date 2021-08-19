@@ -40,7 +40,7 @@ public class StructNode extends YamlLine<StructNode> {
         if (isListItem()) {
             return "- " + value;
         } else {
-            return getKey() + ": " + value;
+            return getKey() + ":" + (value.isEmpty() ? "" : (" " + value));
         }
     }
 }

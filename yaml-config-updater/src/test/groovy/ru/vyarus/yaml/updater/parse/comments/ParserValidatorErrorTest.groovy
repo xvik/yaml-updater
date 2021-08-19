@@ -62,7 +62,7 @@ two: 2
         def ex = thrown(IllegalStateException)
         ex.message == """Comments parser validation problem on line 0: 1 child nodes found but should be at least 2 (this is a parser bug, please report it!)
       Comments parser subtree:    Structure parser subtree:
-         2| one:                     2| one: 
+         2| one:                     2| one:
          3|   sub: s                 3|   sub: s
                                      4| two: 2
 """
