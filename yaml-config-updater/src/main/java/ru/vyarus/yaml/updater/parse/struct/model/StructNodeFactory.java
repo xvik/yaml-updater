@@ -13,7 +13,10 @@ import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
  * @author Vyacheslav Rusakov
  * @since 18.08.2021
  */
-public class StructNodeFactory {
+public final class StructNodeFactory {
+
+    private StructNodeFactory() {
+    }
 
     /**
      * Could be used to create any node type: with both key and value it would be property, without value -
@@ -31,7 +34,7 @@ public class StructNodeFactory {
                                             final int lineNum,
                                             final String key,
                                             final String value) {
-        StructNode node = new StructNode(root, padding, lineNum);
+        final StructNode node = new StructNode(root, padding, lineNum);
         node.setKey(key);
         node.setValue(value);
         return node;

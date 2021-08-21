@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater.parse.common.model;
 
+import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +11,9 @@ import java.util.List;
  * (and so sometimes two structure lines should be rendered as a single line: special marker in list item used
  * to indicate this).
  *
+ * @param <T> child nodes type
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
- * @param <T> child nodes type
  */
 public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implements LineNumberAware {
 
@@ -156,38 +158,54 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     @Override
     @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public String getYamlPath() {
-        final String rootPath = getRoot() != null ? getRoot().getYamlPath() : "";
-        String path = rootPath;
+        final String elt = getYamlPathElement();
+        String path;
+        if (getRoot() == null) {
+            path = elt;
+        } else {
+            path = getRoot().getYamlPath();
+            if (!elt.isEmpty() && elt.charAt(0) != '[') {
+                path += PATH_SEPARATOR;
+            }
+            path += elt;
+        }
+        return path;
+    }
+
+    @Override
+    public String getYamlPathElement() {
+        String path = "";
         if (isListItem()) {
-            path += "[" + getRoot().getChildren().indexOf(this) + "]";
+            path = "[" + getRoot().getChildren().indexOf(this) + "]";
         }
         if (isProperty()) {
-            path += (path.isEmpty() ? "" : PATH_SEPARATOR) + getKey();
+            path = getKey();
         }
         return path;
     }
 
     @Override
     public T find(final String path) {
-        // need to build full path to compare
-        final String target = (getRoot() == null ? "" : (getYamlPath() + PATH_SEPARATOR)) + path;
+        T res = null;
         for (T child : getChildren()) {
-            final String cpath = child.getYamlPath();
-            T res = null;
+            final String cpath = child.getYamlPathElement();
+            if (cpath.isEmpty()) {
+                // skip comment-only node
+                continue;
+            }
             // compared paths are full paths (from root)
-            if (target.equals(cpath)) {
+            if (path.equals(cpath)) {
                 // found
                 res = child;
-            } else if (target.startsWith(cpath)) {
+            } else if (path.startsWith(cpath)) {
                 // if child fits, searching deeper
-                res = child.find(path.substring(path.lastIndexOf(PATH_SEPARATOR) + 1));
+                res = child.find(YamlModelUtils.removeLeadingPath(cpath, path));
             }
-            // if not fond checking other possibilities
             if (res != null) {
-                return res;
+                break;
             }
         }
-        return null;
+        return res;
     }
 
     /**

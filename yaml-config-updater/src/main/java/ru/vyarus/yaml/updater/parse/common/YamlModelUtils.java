@@ -62,4 +62,28 @@ public final class YamlModelUtils {
         node.setListItem(true);
         node.setListItemWithProperty(true);
     }
+
+    /**
+     * Removes leading part of the path (specified). Cuts off separator after specified path if required.
+     *
+     * @param element leading element to remove from path
+     * @param path complete path
+     * @return remaining path
+     */
+    public static String removeLeadingPath(final String element, final String path) {
+        String res = path;
+        if (element == null || element.isEmpty()) {
+            return res;
+        }
+        if (!path.startsWith(element)) {
+            throw new IllegalArgumentException("Path '" + path + "' not starting with '" + element + "'");
+        }
+        // cut off element
+        res = res.substring(element.length());
+        if (!res.isEmpty() && (res.charAt(0) == YamlLine.PATH_SEPARATOR)) {
+            // cut off next element separator
+            res = res.substring(1);
+        }
+        return res;
+    }
 }

@@ -20,7 +20,10 @@ import java.util.Arrays;
  * @author Vyacheslav Rusakov
  * @since 18.08.2021
  */
-public class CmtNodeFactory {
+public final class CmtNodeFactory {
+
+    private CmtNodeFactory() {
+    }
 
     /**
      * Could be used to create any node type: with both key and value it would be property, without value -
@@ -40,7 +43,7 @@ public class CmtNodeFactory {
                                          final int lineNum,
                                          final String key,
                                          final String... value) {
-        CmtNode node = new CmtNode(root, padding, lineNum);
+        final CmtNode node = new CmtNode(root, padding, lineNum);
         node.setKey(key);
         if (value != null && value.length > 0) {
             node.getValue().addAll(Arrays.asList(value));

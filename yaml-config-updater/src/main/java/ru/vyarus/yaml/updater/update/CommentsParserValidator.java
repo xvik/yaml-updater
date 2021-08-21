@@ -34,7 +34,7 @@ public final class CommentsParserValidator {
      * works perfectly).
      *
      * @param comments comments parser result
-     * @param struct snakeyaml result
+     * @param struct   snakeyaml result
      */
     public static void validate(final CmtTree comments, final StructTree struct) {
         validateSubtrees(comments, struct);
@@ -71,7 +71,8 @@ public final class CommentsParserValidator {
                 if (!line.getKey().equals(match.getKey())) {
                     throw new IllegalStateException("Comments parser validation problem on line "
                             + line.getLineNum()
-                            + ": line should be different: \"" + match + "\" (this is a parser bug, please report it!)\n"
+                            + ": line should be different: \"" + match
+                            + "\" (this is a parser bug, please report it!)\n"
                             + debugTees(comments, struct));
                 }
 
@@ -88,7 +89,7 @@ public final class CommentsParserValidator {
      * Prints comments model tree nearby snakeyaml model tree to visually see the difference.
      *
      * @param comments comments subtree
-     * @param struct snakeyaml subtree
+     * @param struct   snakeyaml subtree
      * @return rendered trees string
      */
     private static String debugTees(final TreeNode<CmtNode> comments, final TreeNode<StructNode> struct) {
@@ -136,7 +137,7 @@ public final class CommentsParserValidator {
             debugTreeLeaf(lines, (T) node, 0);
         } else {
             // for tree root print entire tree
-            for(T child: node.getChildren()) {
+            for (T child : node.getChildren()) {
                 debugTreeLeaf(lines, child, 0);
             }
         }

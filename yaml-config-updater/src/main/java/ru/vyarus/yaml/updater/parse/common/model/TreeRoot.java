@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater.parse.common.model;
 
+import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,11 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
     }
 
     @Override
+    public String getYamlPathElement() {
+        return null;
+    }
+
+    @Override
     public int getLineNum() {
         return 0;
     }
@@ -41,13 +48,12 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
     public T find(final String path) {
         T res = null;
         for (T child : getChildren()) {
-            // root level property
-            if (path.equals(child.getKey())) {
+            final String elt = child.getYamlPathElement();
+            if (path.equals(elt)) {
                 res = child;
-                break;
+            } else if (path.startsWith(elt)) {
+                res = child.find(YamlModelUtils.removeLeadingPath(elt, path));
             }
-            // multiple levels property
-            res = child.find(path);
             if (res != null) {
                 break;
             }

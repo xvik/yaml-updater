@@ -79,9 +79,9 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
      * @param node node to add as child
      */
     @SuppressWarnings("unchecked")
-    public void add(T node) {
+    public void add(final T node) {
         // detach from old root
-        if (node.getRoot()!= null) {
+        if (node.getRoot() != null) {
             node.getRoot().getChildren().remove(node);
         }
         // attach to new root
@@ -94,8 +94,9 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
      *
      * @param nodes nodes to add as child
      */
-    public void addAll(T... nodes) {
-        for(T node: nodes) {
+    @SafeVarargs
+    public final void addAll(final T... nodes) {
+        for (T node : nodes) {
             add(node);
         }
     }
@@ -108,6 +109,17 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     public abstract String getYamlPath();
 
     /**
+     * Cases:
+     * - for property or object (or list) root:  "name"
+     * - for list item: "[n]" (where n number from 0). Note that scalar value will be contained in the same node
+     * and for object item it would be "empty" wrapper containing object properties as children.
+     * - for comment only node: empty string (no identity)
+     *
+     * @return yaml path element represented by this node.
+     */
+    public abstract String getYamlPathElement();
+
+    /**
      * @return all scalar properties and properties with list values (not looking inside list values!)
      */
     public abstract List<T> getTreeLeaves();
@@ -115,6 +127,8 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
     /**
      * Search for yaml node by path. For list items path should include exact item number (e.g. list[1]), wildcard
      * search not supported.
+     * <p>
+     * IMPORTANT: path must NOT include node itself (node from where search started)
      *
      * @param path yaml path (with '/' as separator)
      * @return found node or null
