@@ -2,6 +2,8 @@ package ru.vyarus.yaml.updater.parse.struct.model;
 
 import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
 
+import java.util.Arrays;
+
 /**
  * Helper factory class for creating correct node objects. It is not used by main code and exists only for tests
  * and to simplify manual tree modifications in custom {@link ru.vyarus.yaml.updater.listen.UpdateListener}
@@ -55,7 +57,7 @@ public final class StructNodeFactory {
                                               final StructNode... props) {
         final StructNode node = createProperty(root, padding, lineNum, null, null);
         YamlModelUtils.virtualListItem(node);
-        node.addAll(props);
+        node.addAll(Arrays.asList(props));
         return node;
     }
 

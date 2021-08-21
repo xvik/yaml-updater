@@ -100,7 +100,7 @@ public final class TreeMerger {
         }
 
         node.getChildren().clear();
-        node.getChildren().addAll(updated);
+        node.addAll(updated);
     }
 
     private static boolean processList(final TreeNode<CmtNode> node, final TreeNode<CmtNode> from) {

@@ -84,8 +84,11 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
         if (node.getRoot() != null) {
             node.getRoot().getChildren().remove(node);
         }
-        // attach to new root
-        node.setRoot((T) this);
+        // TreeRoot can't be used as root (virtual node)
+        if (!(this instanceof TreeRoot)) {
+            // attach to new root
+            node.setRoot((T) this);
+        }
         getChildren().add(node);
     }
 
@@ -94,8 +97,7 @@ public abstract class TreeNode<T extends YamlLine<T>> implements LineNumberAware
      *
      * @param nodes nodes to add as child
      */
-    @SafeVarargs
-    public final void addAll(final T... nodes) {
+    public void addAll(final Iterable<T> nodes) {
         for (T node : nodes) {
             add(node);
         }

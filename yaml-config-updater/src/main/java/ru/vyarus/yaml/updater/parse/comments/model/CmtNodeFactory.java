@@ -66,7 +66,7 @@ public final class CmtNodeFactory {
                                            final CmtNode... props) {
         final CmtNode node = createProperty(root, padding, lineNum, null);
         YamlModelUtils.virtualListItem(node);
-        node.addAll(props);
+        node.addAll(Arrays.asList(props));
         return node;
     }
 
