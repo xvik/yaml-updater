@@ -15,6 +15,9 @@ import java.util.List;
  */
 public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implements LineNumberAware {
 
+    /**
+     * Separator character for yaml paths. Not dot because yaml property could have dot in name.
+     */
     public static final char PATH_SEPARATOR = '/';
 
     // line number, counting from 1
