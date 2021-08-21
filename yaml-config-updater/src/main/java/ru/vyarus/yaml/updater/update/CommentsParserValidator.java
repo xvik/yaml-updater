@@ -55,8 +55,8 @@ public final class CommentsParserValidator {
         while (cmtIt.hasNext()) {
             final CmtNode line = cmtIt.next();
 
-            if (line.isCommented() || line.isCommentOnly()) {
-                // structure parser can't see commented lines and so can't validate correctness
+            if (line.isCommentOnly()) {
+                // "fake" node in comments parser for preserving trailing comment
                 continue;
             }
 

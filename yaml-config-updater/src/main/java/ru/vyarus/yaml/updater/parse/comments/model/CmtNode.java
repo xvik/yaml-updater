@@ -32,9 +32,6 @@ public class CmtNode extends YamlLine<CmtNode> {
     // node comment is everything above before previous node
     // using list to avoid dealing with line separators
     private final List<String> topComment = new ArrayList<>();
-    // property commented (commented properties are searched by updating file structure, which is assuming to contain
-    // all possible properties)
-    private boolean commented;
 
     // this value is set from structure parser
     private String parsedValue;
@@ -67,25 +64,6 @@ public class CmtNode extends YamlLine<CmtNode> {
      */
     public List<String> getTopComment() {
         return topComment;
-    }
-
-    /**
-     * TODO not supported now.
-     *
-     * @return true for commented property
-     */
-    public boolean isCommented() {
-        return commented;
-    }
-
-    /**
-     * Mark property as commented. It is important to recognize such properties to not append already present, but
-     * commented property on merge.
-     *
-     * @param commented commented property marker
-     */
-    public void setCommented(final boolean commented) {
-        this.commented = commented;
     }
 
     /**
