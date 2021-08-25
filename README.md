@@ -5,43 +5,540 @@
 [![codecov](https://codecov.io/gh/xvik/yaml-config-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-config-updater)
 
 
+**PLEASE**: Report all found merge issues: there are too many possible cases to cover everything at once.
+
 ### About
 
-Merges current yaml config with a new version to add missed properties
+Merges yaml configuration files, preserving comments and whitespaces. Assumed to be used for microservice configuration
+updates.
 
-Features:
-* Feature 1
-* Feature 2
+Comments preserved using custom (simple) yaml parser. [Snakeyaml](https://bitbucket.org/asomov/snakeyaml/wiki/Documentation) 
+parser used for source files validation and, comments parser self-validation (compares parse trees)
+and result validation.
+
+Merged file is guaranteed to be correct (due to complete validation).
+
+Supports:
+
+* Multiline values (all [syntax variations](https://yaml-multiline.info))
+* Reformatting (changed paddings in new config)
+* Properties reordering according to new config
+* Variables replacement in new config before merge (environment-specific config adoption)
+* Current values remove (deprecated or replacing)
+* Object list items update (lists not merged, but new properties could be added to list items)
+* Backup current configuration
+
+### Example
+
+Original config:
+
+```yaml
+# top comment
+
+# something
+prop:
+  one: 1
+
+  two: 2
+
+lists:
+
+  # sub comment
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+
+large: multi-line
+  value
+
+# trailing comment
+```
+
+Update file:
+
+```yaml
+# changed comment
+
+# something else
+prop:
+  one: 3
+  two: 3
+  three: 3                              # new property
+
+lists:
+
+  # changed sub comment
+  list:                                 # padding changed
+    - two                             # order changed (ignored)
+    - one
+    - three                           # new value ignored
+
+  obj:
+    - two: 2
+      one: 1
+      three: 3                        # new value
+
+# changed trailing comment
+```
+
+Merge result:
+
+```yaml
+# changed comment
+
+# something else
+prop:
+  one: 1
+
+  two: 2
+  three: 3                              # new property
+
+lists:
+
+  # changed sub comment
+  list:
+    - one
+    - two
+
+  obj:
+    - two: 2
+      one: 1
+      three: 3                        # new value
+
+large: multi-line
+  value
+
+# changed trailing comment
+```
 
 ### Setup
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
 
-Maven:
+Could be used as:
 
-```xml
-<dependency>
-  <groupId>ru.vyarus</groupId>
-  <artifactId>yaml-config-updater</artifactId>
-  <version>1.0.0</version>
-</dependency>
+* [library](yaml-config-updater) through API
+* [command line util](yaml-config-updater-cli) (jar)
+* [dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
+
+Read exact module's readme for setup instructions.
+
+### Merge rules
+
+* All values from current configuration preserved 
+* All new properties added
+* Order of properties from update file used (current config properties could be re-ordered)
+* For existing values, top comments updated from new config (if property exists in new config).
+  - If new property does not contain any comment - old comment is preserved
+  - In-line comments (after value) not updated (and so may be used for persistent marks)
+  - Trailing comment at the end of the file is preserved as-is (not updated)
+* Padding used from update file (original config could be re-formatted)
+  - Padding change works in both directions (reduce or enlarge)
+* Lists not merged
+  - Object list items could be updated with new properties (if matched item found)
+
+<table>
+<tr>
+<th>Case</th>
+<th>Current config</th>
+<th>Update file</th>
+<th>Merge result</th>
+</tr>
+<tr>
+<td>
+New properties added
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 3
+two: 3
+three: 3
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 1
+two: 2
+three: 3
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+Order changed
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+three: 3
+two: 3
+one: 3
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+three: 3
+two: 2
+one: 1
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+Padding changed
+</td>
+<td>
+   <pre lang="yaml">
+one: 
+  two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 
+    two: 3
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 
+    two: 2
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+Comment updated
+</td>
+<td>
+   <pre lang="yaml">
+one: 
+  # Old comment
+  two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 
+    # New comment
+    two: 3
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 
+    # New comment
+    two: 2
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+List not merged, but padding updated
+</td>
+<td>
+   <pre lang="yaml">
+list: 
+  - one
+  - two
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+    - one
+    - three
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+    - one
+    - two
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+Object list item updated
+</td>
+<td>
+   <pre lang="yaml">
+list: 
+  - one: 1
+    two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+  - one: 1
+    two: 2
+    three: 3
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+  - one: 1
+    two: 2
+    three: 3
+  </pre>
+</td>
+</table>
+
+### Lists matching logic
+
+Object list items updated because in some cases lists could be quite complex and contain 
+updatable configuration blocks.
+
+Items match is searched by "the most similarity": selects item containing
+more properties with the same value.
+
+* Item containing property with different value would never match
+* If item contains sub-lists then at least one list item in current list must match
+    - Scalar list values ignored (only object lists counted)
+* Only exact match counts: if multiple items match with the same amount of matched properties
+  then no item would be updated (avoid guessing, work only on exact matches)
+
+<table>
+<tr>
+<th>Case</th>
+<th>List item</th>
+<th>Candidates</th>
+<th>Match</th>
+</tr>
+<tr>
+<td>
+Match by value
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+- one: 1
+  two: 3
+- one: 1
+  two: 2
+  </pre>
+</td>
+<td>
+ Item 2
+</td>
+</tr>
+
+<tr>
+<td>
+Match by "weight"
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+- one: 1
+  three: 3
+- one: 1
+  two: 2
+  three: 3
+  </pre>
+</td>
+<td>
+ Item 2 (technically both matches, but first item with one and second item with 2 props)
+</td>
+</tr>
+
+<tr>
+<td>
+Multiple matches
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+- one: 1
+  two: 3
+- one: 1
+  two: 2
+  </pre>
+</td>
+<td>
+ No
+</td>
+</tr>
+
+<tr>
+<td>
+Scalar list ignored
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+sub:
+    - a
+    - b
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+- one: 1
+  sub:
+    - c
+    - d
+- one: 1
+  sub:
+    - e
+    - f
+  </pre>
+</td>
+<td>
+ No (both matches, scalar list values ignored)
+</td>
+</tr>
+
+<tr>
+<td>
+Sub list (one sub list element matched)
+</td>
+<td>
+   <pre lang="yaml">
+one: 1
+sub:
+    - a: 1
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+- one: 1
+  sub:
+    - a: 2
+    - a: 1
+- one: 1
+  sub:
+    - b: 1
+    - b: 2
+  </pre>
+</td>
+<td>
+ Item 1 (sub list has (at least) one match) 
+</td>
+</tr>
+</table>
+
+### Variables
+
+Update config could contain variables with syntax: `#{name}`.
+Such syntax used instead of more common `${..}` because:
+
+- Config may rely on environment variables and so will collide with replacing variables
+- Such syntax recognized as comment and so not processed value would be empty value after parsing.
+
+```yaml
+obj:
+  some: #{name}
 ```
 
-Gradle:
+IMPORTANT: only known placeholders would be replaced (unknown variables will remain unprocessed)
 
-```groovy
-implementation 'ru.vyarus:yaml-config-updater:1.0.0'
+Feature supposed to be used to "adopt" config for current environment before processing.
+Cli modules would automatically use environment variables.
+
+### General workflow
+
+* Read update config
+  - replace variables
+  - parse with snakeyaml (validation)
+  - parse with comments parser
+  - compare trees (self-validation)
+* Read current config
+  - if not exists, simply copy update file
+  - parse with snakeyaml and comments parsers and compare trees
+* Perform merge
+* Write to tmp file
+* Read merged result with snakeyaml (validate file correctness)
+* Check all new properties added and current values preserved (validation)
+* Backup current config (in the same folder)
+* Replace config
+
+### Comments parser specifics
+ 
+Parser assume everything above property as property comment (even empty lines):
+
+```yaml
+# Large comment
+
+# With empty lines
+prop: 1
 ```
 
-##### Snapshots
+Exactly because of this comment is always replaced from new file.
 
-You can use snapshot versions through [JitPack](https://jitpack.io):
+For example, assume reordering case:
 
-* Go to [JitPack project page](https://jitpack.io/#xvik/yaml-config-updater)
-* Select `Commits` section and click `Get it` on commit you want to use (top one - the most recent)
-* Follow displayed instruction: add repository and change dependency (NOTE: due to JitPack convention artifact group will be different)
+Original config:
 
-### Usage
+```yaml
+# Large header
+
+# property comment
+prop1: 1
+prop2: 2
+```
+
+New config:
+
+```yaml
+# Large header
+
+prop2: 2
+# property comment
+prop1: 1
+```
+
+Without using comments from new file, entire header would be moved below the first property,
+but with comments update header would remain untouched.
+
+But still, some edge cases possible (with removed properties).
+
+#### Values
+
+Parser stores property values as everything after colon (including possible in-line comments).
+The same for multi-line values. 
+
+This way, current value could be restored *exactly* the same as it was in the original file
+(to avoid re-formatting).
+
+And because of this in-line comments are not recognized and so could "survive" update.
 
 ---
 [![java lib generator](http://img.shields.io/badge/Powered%20by-%20Java%20lib%20generator-green.svg?style=flat-square)](https://github.com/xvik/generator-lib-java)
