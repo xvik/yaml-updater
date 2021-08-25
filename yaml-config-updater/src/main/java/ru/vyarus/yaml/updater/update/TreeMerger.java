@@ -155,7 +155,6 @@ public final class TreeMerger {
                 if (match != null) {
                     // actual items merge (padding is already synced so no additional shift will appear)
                     mergeLevel(item, match);
-                    LOGGER.debug("List item {} merged from {}", item.getYamlPath(), match.getYamlPath());
 
                     // avoid one node matches for multiple nodes
                     updList.remove(match);

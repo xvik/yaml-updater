@@ -119,8 +119,20 @@ public final class ListMatcher {
 
         filterCandidates(node, cand, matchedItems);
 
+        T res = null;
         // search for EXACT match
-        return cand.size() == 1 ? cand.get(0) : null;
+        if (cand.size() == 1) {
+            res = cand.get(0);
+            LOGGER.debug("List item {} match found: {} (by {} matches)", node.getYamlPath(), res.getYamlPath(),
+                    matchedItems.get(res.getLineNum()));
+        } else {
+            LOGGER.debug("No exact list item {} matches multiple items: {}", node.getYamlPath(),
+                    cand.stream()
+                            .map(t -> t.getYamlPath() + " ("+ matchedItems.get(t.getLineNum())+" matches)")
+                            .collect(Collectors
+                                    .joining(", ")));
+        }
+        return res;
     }
 
     private static <T extends YamlLine<T>> void filterCandidates(final T node,

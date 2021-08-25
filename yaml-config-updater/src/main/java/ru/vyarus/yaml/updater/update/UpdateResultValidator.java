@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater.update;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.updater.parse.common.model.TreeNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 
@@ -16,6 +18,7 @@ import java.util.Set;
  * @since 17.05.2021
  */
 public final class UpdateResultValidator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateResultValidator.class);
 
     private UpdateResultValidator() {
     }
@@ -62,7 +65,9 @@ public final class UpdateResultValidator {
                 // scalar lists not merged
                 continue;
             }
+            LOGGER.debug("Searching list item {} in current file", item.getYamlPath());
             final StructNode oldItem = ListMatcher.match(item, oldList.getChildren());
+            LOGGER.debug("Searching list item {} in update file", item.getYamlPath());
             final StructNode newItem = ListMatcher.match(item, newList.getChildren());
             if (oldItem == null && newItem == null) {
                 throw new IllegalStateException("Can't find reference list item neither in old nor in new file: "
