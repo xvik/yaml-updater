@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater.update;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtNode;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtTree;
 import ru.vyarus.yaml.updater.parse.common.TreeStringUtils;
@@ -28,6 +30,7 @@ import java.util.Map;
  */
 @SuppressWarnings("PMD.InefficientEmptyStringCheck")
 public final class TreeMerger {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TreeMerger.class);
 
     private TreeMerger() {
     }
@@ -40,6 +43,21 @@ public final class TreeMerger {
      */
     public static void merge(final CmtTree node, final CmtTree from) {
         mergeLevel(node, from);
+
+        // if both files contain trailing comment, they both would merge
+        // (trailing comments impossible on deeper levels)
+        int trailing = 0;
+        for (CmtNode child : node.getChildren()) {
+            if (child.isCommentOnly()) {
+                trailing++;
+            }
+        }
+        // could only be 2
+        if (trailing > 1) {
+            // new trailing comment will go last
+            node.getChildren().remove(node.getChildren().size() - 2);
+            LOGGER.debug("Trailing comment replaced");
+        }
     }
 
     private static void mergeLevel(final TreeNode<CmtNode> node, final TreeNode<CmtNode> from) {
@@ -111,7 +129,7 @@ public final class TreeMerger {
             final CmtNode cur = (CmtNode) node;
             final CmtNode upd = (CmtNode) from;
 
-            // first of all sync paddings (no matter if list is a scalar and would not be updated)
+            // first of all, sync paddings (no matter if list is a scalar and would not be updated)
             final int pad = upd.getChildren().get(0).getPadding();
             for (CmtNode child : cur.getChildren()) {
                 // important to shift list node itself before continuing (otherwise subtree could be shifted)
@@ -137,6 +155,7 @@ public final class TreeMerger {
                 if (match != null) {
                     // actual items merge (padding is already synced so no additional shift will appear)
                     mergeLevel(item, match);
+                    LOGGER.debug("List item {} merged from {}", item.getYamlPath(), match.getYamlPath());
 
                     // avoid one node matches for multiple nodes
                     updList.remove(match);
