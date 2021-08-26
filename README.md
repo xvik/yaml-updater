@@ -1,6 +1,6 @@
 # Yaml config updater
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.com/xvik/yaml-config-updater.svg?branch=master)](https://travis-ci.com/xvik/yaml-config-updater)
+[![Build Status](https://app.travis-ci.com/xvik/yaml-config-updater.svg?branch=master)](https://app.travis-ci.com/xvik/yaml-config-updater)
 [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-config-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-config-updater)
 [![codecov](https://codecov.io/gh/xvik/yaml-config-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-config-updater)
 
