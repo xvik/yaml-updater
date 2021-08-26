@@ -54,7 +54,7 @@ public class UpdateConfigCommand extends Command {
                 .setDefault(true)
                 .help("Don't create backup before configuration update");
 
-        subparser.addArgument("-d", "--delete-paths")
+        subparser.addArgument("-d", "--delete-path")
                 .dest("delete")
                 .nargs("+")
                 .help("Delete properties from the current config before update");
@@ -174,9 +174,9 @@ public class UpdateConfigCommand extends Command {
         } else if (path.indexOf(':') > 0) {
             // url
             try {
-                return new URL(path).openStream();
+                res = new URL(path).openStream();
             } catch (IOException e) {
-                throw new IllegalStateException("Failed to load update file from url: " + path, e);
+                throw new IllegalStateException("Failed to load file from url: " + path, e);
             }
         } else {
             // try to resolve in classpath

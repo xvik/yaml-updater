@@ -63,7 +63,7 @@ positional arguments:
 named arguments:
   -b, --no-backup        Don't create  backup  before  configuration update
                          (default: true)
-  -d DELETE [DELETE ...], --delete-paths DELETE [DELETE ...]
+  -d DELETE [DELETE ...], --delete-path DELETE [DELETE ...]
                          Delete properties from  the  current config before
                          update
   -e ENV [ENV ...], --env ENV [ENV ...]
@@ -96,7 +96,7 @@ java -jar yourApp.jar update-config -d prop1.list prop2 config.yml update.yml
 For full flag name:
 
 ```
-java -jar yourApp.jar update-config --delete-path=prop1.list --delete-path=prop2 config.yml update.yml
+java -jar yourApp.jar update-config --delete-path prop1.list prop2 config.yml update.yml
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -132,7 +132,7 @@ java -jar yourApp.jar update-config -e name=foo var2=other config.yml update.yml
 Other syntax:
 
 ```
-java -jar yourApp.jar update-config --env=name=foo --env=var2=other config.yml update.yml
+java -jar yourApp.jar update-config --env name=foo var2=other config.yml update.yml
 ```
 
 ##### Defaults
