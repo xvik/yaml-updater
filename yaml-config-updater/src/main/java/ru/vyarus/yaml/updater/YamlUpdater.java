@@ -269,7 +269,7 @@ public class YamlUpdater {
         final File current = config.getCurrent();
         if (config.isBackup() && current.exists()) {
             final Path backup = Paths.get(current.getAbsolutePath()
-                    + "." + new SimpleDateFormat("yyyyMMddHHmm", Locale.ENGLISH).format(new Date()));
+                    + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
             Files.copy(current.toPath(), backup);
             logger.info("Backup created: {}", backup);
             config.getListener().backupCreated(backup.toFile());
