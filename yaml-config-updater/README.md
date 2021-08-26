@@ -29,32 +29,6 @@ Gradle:
 implementation 'ru.vyarus:yaml-config-updater:1.0.0'
 ```
 
-##### Snapshots
-
-<details>
-      <summary>Snapshots may be used through JitPack</summary>
-
-* Go to [JitPack project page](https://jitpack.io/#xvik/yaml-config-updater)
-* Select `Commits` section and click `Get it` on commit you want to use (top one - the most recent)
-* Follow displayed instruction: add repository and change dependency (NOTE: due to JitPack convention artifact group will be different)
-
-
-For gradle use `buildscript` block with required commit hash as version:
-
-```groovy
-buildscript {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-    dependencies {
-        classpath 'ru.vyarus:yaml-config-updater:master-SNAPSHOT'
-    }
-}
-apply plugin: 'ru.vyarus.quality'
-```
-
-</details>
-
 ### Usage
 
 ```java

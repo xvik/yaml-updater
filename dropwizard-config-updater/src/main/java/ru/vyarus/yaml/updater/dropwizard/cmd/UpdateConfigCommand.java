@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class UpdateConfigCommand extends Command {
 
         subparser.addArgument("update")
                 .required(true)
-                .help("Path to new configuration file. Could also be a classpath path.");
+                .help("Path to new configuration file. Could also be a classpath path or any URL.");
 
         subparser.addArgument("-b", "--no-backup")
                 .dest("backup")
@@ -62,7 +63,7 @@ public class UpdateConfigCommand extends Command {
                 .dest("env")
                 .nargs("+")
                 .help("Variables to replace (name=value) or path(s) to properties file with variables "
-                        + "(could also be a classpath path)");
+                        + "(could also be a classpath path or any URL)");
 
         subparser.addArgument("-v", "--no-validate")
                 .dest("validate")
@@ -169,6 +170,13 @@ public class UpdateConfigCommand extends Command {
                 res = Files.newInputStream(file.toPath());
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to read file: " + path, e);
+            }
+        } else if (path.indexOf(':') > 0) {
+            // url
+            try {
+                return new URL(path).openStream();
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to load update file from url: " + path, e);
             }
         } else {
             // try to resolve in classpath

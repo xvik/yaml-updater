@@ -4,7 +4,9 @@ Command line interface for updating yaml configuration.
 
 ### Setup
 
-[Download jar from maven central](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater) (with `all` classifier)
+[![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
+
+[Download jar from maven central](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater) (classifier `all`)
 
 It will include all required dependencies (shadowjar).
 
@@ -27,9 +29,9 @@ java -jar yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 This will merge update.yml into config.yml file (creating backup of original file). 
-Config.yml may not exist (initial installation case).
+*Config.yml may not exist* (initial installation case).
 
-Update file may a local file or any [URL](https://docs.oracle.com/javase/7/docs/api/java/net/URL.html)
+Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/docs/api/java/net/URL.html)
 (e.g. to load new config from remote server).
 
 #### Options
@@ -50,6 +52,9 @@ Update yaml configuration file from new file
   -V, --version       Print version information and exit.
 ```
 
+Two notions of options supported: short flags and full names. 
+short flags might be aggregated (`-bv` == `-b -v`).
+
 #### Delete props
 
 To [delete deprecated property or replace property value](../yaml-config-updater#delete-props)
@@ -58,19 +63,19 @@ use `-d` flag (or `--delete-path=`).
 For example, to remove `list` sub-tree under `prop1`:
 
 ```
-java -jar -d prop1.list yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -d prop1.list config.yml update.yml
 ```
 
 You can specify multiple properties:
 
 ```
-java -jar -d prop1.list prop2 yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -d prop1.list prop2 config.yml update.yml
 ```
 
 For full flag name:
 
 ```
-java -jar --delete-path=prop1.list --delete-path=prop2 yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar --delete-path=prop1.list --delete-path=prop2 config.yml update.yml
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -80,7 +85,7 @@ NOTE: you can use both '.' and '/' as level separator ('/' is useful when proper
 To [specify environment variables](../yaml-config-updater#env-vars) use `-e` (or `--env=`):
 
 ```
-java -jar -e name=foo yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -e name=foo config.yml update.yml
 ```
 
 If update.yaml contains:
@@ -100,13 +105,13 @@ NOTE: not specified variables are not replaced!
 Multiple variables:
 
 ```
-java -jar -e name=foo var2=other yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -e name=foo var2=other config.yml update.yml
 ```
 
 Other syntax:
 
 ```
-java -jar --env=name=foo --env=var2=other yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar --env=name=foo --env=var2=other config.yml update.yml
 ```
 
 ##### Defaults
@@ -126,17 +131,17 @@ var2=other
 ```
 
 ```
-java -jar -e vars.properties yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -e vars.properties config.yml update.yml
 ```
 
 Multiple files could be declared. Files and direct variables declaration could be mixed:
 
 ```
-java -jar -e vars.properties custom=name yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -e vars.properties custom=name config.yml update.yml
 ```
 
 Variables file could be an url (same as with update file):
 
 ```
-java -jar -e http://mydomian.com/vars.properties yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar -e http://mydomian.com/vars.properties config.yml update.yml
 ```
