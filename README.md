@@ -1,11 +1,9 @@
-# yaml-config-updater
+# Yaml config updater
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/xvik/yaml-config-updater.svg?branch=master)](https://travis-ci.com/xvik/yaml-config-updater)
 [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-config-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-config-updater)
 [![codecov](https://codecov.io/gh/xvik/yaml-config-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-config-updater)
 
-
-**PLEASE**: Report all found merge issues: there are too many possible cases to cover everything at once.
 
 ### About
 
@@ -13,18 +11,18 @@ Merges yaml configuration files, preserving comments and whitespaces. Assumed to
 updates.
 
 Comments preserved using custom (simple) yaml parser. [Snakeyaml](https://bitbucket.org/asomov/snakeyaml/wiki/Documentation) 
-parser used for source files validation and, comments parser self-validation (compares parse trees)
+parser used for source files validation, comments parser self-validation (compares parse trees)
 and result validation.
 
-Merged file is guaranteed to be correct (due to complete validation).
+Due to complete validation, merged file correctness is guaranteed.
 
 Supports:
 
 * Multiline values (all [syntax variations](https://yaml-multiline.info))
-* Reformatting (changed paddings in new config)
+* Reformatting (changed paddings in new config in both directions)
 * Properties reordering according to new config
 * Variables replacement in new config before merge (environment-specific config adoption)
-* Current values remove (deprecated or replacing)
+* Current values remove (e.g. deprecated values or for value replacement)
 * Object list items update (lists not merged, but new properties could be added to list items)
 * Backup current configuration
 
@@ -81,6 +79,9 @@ lists:
     - two: 2
       one: 1
       three: 3                        # new value
+
+large: multi-line
+  value
 
 # changed trailing comment
 ```
@@ -539,6 +540,45 @@ This way, current value could be restored *exactly* the same as it was in the or
 (to avoid re-formatting).
 
 And because of this in-line comments are not recognized and so could "survive" update.
+
+#### Multi-line values
+
+It might be not obvious, but in most cases multi-line value includes empty line
+after last value line. In some situation this might lead to confusion:
+
+Source config:
+
+```yaml
+some: 1
+
+prop: multi-line
+  value
+```
+
+Update config:
+
+```yaml
+some: 1
+
+other: 1
+```
+
+Merge result would be:
+
+```yaml
+some: 1
+
+prop: multi-line
+  value
+
+
+other: 1
+```
+
+Note double empty lines at the end: first line appeared as part of multi-line value
+and other line is `other` property "comment" (empty line preserved as comments to preserve file structure).
+
+Such cases may confuse, but it's correct behaviour.
 
 ---
 [![java lib generator](http://img.shields.io/badge/Powered%20by-%20Java%20lib%20generator-green.svg?style=flat-square)](https://github.com/xvik/generator-lib-java)
