@@ -117,27 +117,12 @@ public final class ListMatcher {
             }
         }
 
-        filterCandidates(node, cand, matchedItems);
-
-        T res = null;
-        // search for EXACT match
-        if (cand.size() == 1) {
-            res = cand.get(0);
-            LOGGER.debug("List item {} match found: {} (by {} matches)", node.getYamlPath(), res.getYamlPath(),
-                    matchedItems.get(res.getLineNum()));
-        } else {
-            LOGGER.debug("No exact list item {} matches multiple items: {}", node.getYamlPath(),
-                    cand.stream()
-                            .map(t -> t.getYamlPath() + " ("+ matchedItems.get(t.getLineNum())+" matches)")
-                            .collect(Collectors
-                                    .joining(", ")));
-        }
-        return res;
+        return filterCandidates(node, cand, matchedItems);
     }
 
-    private static <T extends YamlLine<T>> void filterCandidates(final T node,
-                                                                 final List<T> cand,
-                                                                 final Map<Integer, Integer> matchedItems) {
+    private static <T extends YamlLine<T>> T filterCandidates(final T node,
+                                                              final List<T> cand,
+                                                              final Map<Integer, Integer> matchedItems) {
         // filter candidates without any match (to avoid false matching for totally different lists)
         cand.removeIf(candNode -> !matchedItems.containsKey(candNode.getLineNum()));
 
@@ -151,6 +136,21 @@ public final class ListMatcher {
             LOGGER.trace("{} matched items found for {}: {}", cand.size(), node.getYamlPath(),
                     cand.stream().map(YamlLine::getYamlPath).collect(Collectors.toList()));
         }
+
+        // search for EXACT match, otherwise - assuming not found
+        T res = null;
+        if (cand.size() == 1) {
+            res = cand.get(0);
+            LOGGER.debug("List item {} match found: {} (by {} matches)", node.getYamlPath(), res.getYamlPath(),
+                    matchedItems.get(res.getLineNum()));
+        } else {
+            LOGGER.debug("No exact list item {} matches multiple items: {}", node.getYamlPath(),
+                    cand.stream()
+                            .map(t -> t.getYamlPath() + " (" + matchedItems.get(t.getLineNum()) + " matches)")
+                            .collect(Collectors
+                                    .joining(", ")));
+        }
+        return res;
     }
 
     private static <T extends YamlLine<T>> boolean matches(final T a, final T b) {

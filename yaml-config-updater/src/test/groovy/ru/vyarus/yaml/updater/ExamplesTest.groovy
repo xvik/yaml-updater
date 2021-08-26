@@ -61,6 +61,9 @@ lists:
         one: 1
         three: 3                        # new value
 
+large: multi-line
+  value
+
 # changed trailing comment
 """) == """
 # changed comment
