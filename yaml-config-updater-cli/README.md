@@ -23,7 +23,7 @@ Use it for required packaging.
 You will need java installed on target environment.
 
 ```
-java -jar update-config yaml-config-updater-cli.jar config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 This will merge update.yml into config.yml file (creating backup of original file). 
@@ -35,7 +35,7 @@ Update file may a local file or any [URL](https://docs.oracle.com/javase/7/docs/
 #### Options
 
 ```
-Usage: update-config [-bhivV] [-d=DELETE...]... [-e=ENV...]... CONFIG UPDATE
+Usage: [-bhivV] [-d=DELETE...]... [-e=ENV...]... CONFIG UPDATE
 Update yaml configuration file from new file
       CONFIG          Path to updating configuration file
       UPDATE          Path to new configuration file or any URL
@@ -58,19 +58,19 @@ use `-d` flag (or `--delete-path=`).
 For example, to remove `list` sub-tree under `prop1`:
 
 ```
-java -jar update-config -d prop1.list yaml-config-updater-cli.jar config.yml update.yml
+java -jar -d prop1.list yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 You can specify multiple properties:
 
 ```
-java -jar update-config -d prop1.list prop2 yaml-config-updater-cli.jar config.yml update.yml
+java -jar -d prop1.list prop2 yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 For full flag name:
 
 ```
-java -jar update-config --delete-path=prop1.list --delete-path=prop2 yaml-config-updater-cli.jar config.yml update.yml
+java -jar --delete-path=prop1.list --delete-path=prop2 yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -80,7 +80,7 @@ NOTE: you can use both '.' and '/' as level separator ('/' is useful when proper
 To [specify environment variables](../yaml-config-updater#env-vars) use `-e` (or `--env=`):
 
 ```
-java -jar update-config -e name=foo yaml-config-updater-cli.jar config.yml update.yml
+java -jar -e name=foo yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 If update.yaml contains:
@@ -100,13 +100,13 @@ NOTE: not specified variables are not replaced!
 Multiple variables:
 
 ```
-java -jar update-config -e name=foo var2=other yaml-config-updater-cli.jar config.yml update.yml
+java -jar -e name=foo var2=other yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 Other syntax:
 
 ```
-java -jar update-config --env=name=foo --env=var2=other yaml-config-updater-cli.jar config.yml update.yml
+java -jar --env=name=foo --env=var2=other yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 ##### Defaults
@@ -126,17 +126,17 @@ var2=other
 ```
 
 ```
-java -jar update-config -e vars.properties yaml-config-updater-cli.jar config.yml update.yml
+java -jar -e vars.properties yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 Multiple files could be declared. Files and direct variables declaration could be mixed:
 
 ```
-java -jar update-config -e vars.properties custom=name yaml-config-updater-cli.jar config.yml update.yml
+java -jar -e vars.properties custom=name yaml-config-updater-cli.jar config.yml update.yml
 ```
 
 Variables file could be an url (same as with update file):
 
 ```
-java -jar update-config -e http://mydomian.com/vars.properties yaml-config-updater-cli.jar config.yml update.yml
+java -jar -e http://mydomian.com/vars.properties yaml-config-updater-cli.jar config.yml update.yml
 ```
