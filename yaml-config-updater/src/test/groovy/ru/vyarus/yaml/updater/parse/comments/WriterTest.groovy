@@ -1,14 +1,13 @@
 package ru.vyarus.yaml.updater.parse.comments
 
-
+import ru.vyarus.yaml.updater.AbstractTest
 import ru.vyarus.yaml.updater.parse.comments.model.CmtTree
-import spock.lang.Specification
 
 /**
  * @author Vyacheslav Rusakov
  * @since 03.05.2021
  */
-class WriterTest extends Specification {
+class WriterTest extends AbstractTest {
 
     def "Check read-write"() {
 
@@ -21,7 +20,7 @@ class WriterTest extends Specification {
         String result = CommentsWriter.write(tree)
 
         then: "not changed"
-        result == original
+        unifyString(result) == unifyString(original)
 
         where:
         file            | _
