@@ -150,7 +150,7 @@ prop3:
 
         when: "perform merge with props remove"
         def res = run("src/test/resources/simple.yml", "src/test/resources/simple_upd.yml",
-                "--delete-paths=prop1", "--delete-paths=prop2/list")
+                "--delete-path=prop1", "--delete-path=prop2/list")
 
 
         then: "merged"
