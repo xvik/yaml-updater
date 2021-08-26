@@ -235,3 +235,5 @@ would be applied.
 Don't forget to disable validation (as your changes most likley produce validation errors).
 Even with disabled validation, written file would be read with snakeyaml to guarantee
 yaml correctness.
+
+See project tests for usage examples.

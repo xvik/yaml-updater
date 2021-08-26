@@ -26,6 +26,9 @@ Supports:
 * Object list items update (lists not merged, but new properties could be added to list items)
 * Backup current configuration
 
+IMPORTANT: this is not a general-purpose yaml merge tool because yaml features like multiple documents in
+one file and object references are not supported (only common subset of features, used in configs)
+
 ### Example
 
 Original config:

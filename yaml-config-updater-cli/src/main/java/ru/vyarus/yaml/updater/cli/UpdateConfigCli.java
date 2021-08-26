@@ -44,7 +44,7 @@ public class UpdateConfigCli implements Callable<Void> {
             description = "Don't create backup before configuration update")
     private boolean backup;
 
-    @Option(names = {"-d", "--delete-paths"}, arity = "1..*", paramLabel = "DELETE",
+    @Option(names = {"-d", "--delete-path"}, arity = "1..*", paramLabel = "DELETE",
             description = "Delete properties from the current config before update")
     private List<String> removePaths;
 

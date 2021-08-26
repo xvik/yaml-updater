@@ -53,6 +53,54 @@ prop3:
 """
     }
 
+    def "Check direct variables 2"() {
+
+        when: "perform merge"
+        def res = run("src/test/resources/simple.yml", "src/test/resources/simple_vars.yml",
+                "--env=var1=tt", "--env=var2=pp")
+
+        then: "merged"
+        res == """# something
+
+# something 2
+prop1:
+  prop1.1: 1.1
+
+  prop1.2: 1.2
+  prop2: tt
+  prop3: pp
+  prop4: #{var3}
+
+# in the middle
+prop11:
+  prop11.1: 11.1
+
+prop2:
+
+  # sub comment
+  prop2.1: 2.1
+
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+      three: 3
+
+# comment changed
+pppp: some
+
+# complex
+
+# comment
+prop3:
+  prop3.1: 3.1
+"""
+    }
+
+
     def "Check variables from file"() {
 
         when: "perform merge"
