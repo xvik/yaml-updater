@@ -18,6 +18,4 @@ compileJava {
 
 jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
 
-publishing.publications.maven.artifact shadowJar
-
 assemble.dependsOn = [shadowJar]

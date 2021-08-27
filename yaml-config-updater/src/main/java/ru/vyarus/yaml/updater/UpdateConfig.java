@@ -211,7 +211,7 @@ public final class UpdateConfig {
         }
 
         /**
-         * @return configured yaml updater instance
+         * Performs configuration migration.
          */
         public void update() {
             if (config.listener == null) {
