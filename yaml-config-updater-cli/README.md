@@ -36,6 +36,12 @@ This will merge update.yml into config.yml file (creating backup of original fil
 Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/docs/api/java/net/URL.html)
 (e.g. to load new config from remote server).
 
+NOTE: longer version with command name will also work (as shown in help):
+
+```
+java -jar yaml-config-updater-cli.jar update-config config.yml update.yml
+```
+
 #### Options
 
 ```

@@ -20,7 +20,7 @@ class AbstractTest extends Specification {
         def text = new File(scrFile).text
         cfg.text = text
 
-        def arg = [cfg.absolutePath, updFile]
+        def arg = [UpdateConfigCli.CMD_NAME, cfg.absolutePath, updFile]
         arg.addAll(args)
         println "Args: $arg";
         UpdateConfigCli.main(arg as String[])

@@ -27,10 +27,12 @@ import java.util.concurrent.Callable;
  * @author Vyacheslav Rusakov
  * @since 20.07.2021
  */
-@Command(name = "update-config", mixinStandardHelpOptions = true,
+@Command(name = UpdateConfigCli.CMD_NAME, mixinStandardHelpOptions = true,
         description = "Update yaml configuration file from new file",
         versionProvider = ManifestVersionProvider.class)
 public class UpdateConfigCli implements Callable<Void> {
+
+    public static final String CMD_NAME = "update-config";
 
     @Parameters(index = "0", paramLabel = "CONFIG",
             description = "Path to updating configuration file (might not exist)")
@@ -86,7 +88,13 @@ public class UpdateConfigCli implements Callable<Void> {
     }
 
     public static void main(final String[] args) {
-        new CommandLine(new UpdateConfigCli()).execute(args);
+        String[] arg = args;
+        // support usage like in help message to avoid errors
+        if (arg.length > 0 && CMD_NAME.equals(arg[0])) {
+            arg = new String[args.length - 1];
+            System.arraycopy(args, 1, arg, 0, arg.length);
+        }
+        new CommandLine(new UpdateConfigCli()).execute(arg);
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
