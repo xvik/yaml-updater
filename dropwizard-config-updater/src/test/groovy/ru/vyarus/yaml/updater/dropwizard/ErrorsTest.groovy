@@ -9,8 +9,9 @@ class ErrorsTest extends AbstractTest {
     def "Check invalid file url"() {
 
         expect: "invalid file url"
-        runWithError("config.yml", "http://localhost/file.yml")
-                .contains("Update file not found: http://localhost/file.yml")
+        def res = runWithError("config.yml", "http://localhost/file.yml")
+        // different on lin and win
+        res.contains("Update file not found: http://localhost/file.yml") || res.contains("Failed to load file from url: http://localhost/file.yml")
 
     }
 
