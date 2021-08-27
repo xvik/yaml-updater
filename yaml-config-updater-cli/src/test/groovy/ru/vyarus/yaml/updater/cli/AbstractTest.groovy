@@ -1,6 +1,6 @@
 package ru.vyarus.yaml.updater.cli
 
-
+import picocli.CommandLine
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -38,5 +38,32 @@ class AbstractTest extends Specification {
         return input
         // cleanup win line break for simpler comparisons
                 .replace("\r", '')
+    }
+
+    protected String runWithOutput(String... args) {
+        CommandLine cmd = new CommandLine(new UpdateConfigCli())
+        StringWriter sw = new StringWriter();
+        StringWriter err = new StringWriter();
+        cmd.setOut(new PrintWriter(sw));
+        cmd.setErr(new PrintWriter(err))
+        cmd.execute(args)
+        def out = sw.toString()
+        println out
+        println err.toString()
+
+        return out
+    }
+
+    protected String runWithError(String... args) {
+        CommandLine cmd = new CommandLine(new UpdateConfigCli())
+        StringWriter sw = new StringWriter();
+        StringWriter out = new StringWriter();
+        cmd.setOut(new PrintWriter(out))
+        cmd.setErr(new PrintWriter(sw));
+        cmd.execute(args)
+        def err = sw.toString()
+        println err
+        println out
+        return err
     }
 }

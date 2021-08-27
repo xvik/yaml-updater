@@ -148,7 +148,7 @@ prop3:
 """
     }
 
-    def "Check variables from classpath"() {
+    def "Check variables from URL"() {
 
         when: "perform merge"
         def res = run("src/test/resources/simple.yml", "src/test/resources/simple_vars.yml",

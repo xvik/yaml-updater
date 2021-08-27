@@ -199,6 +199,26 @@ list:
 """
     }
 
+    def "Check object list style changed"() {
+        expect:
+        merge("""
+list: 
+  - one: 1
+    two: 2
+""",
+                """
+list: 
+  - 
+    one: 1
+    two: 2
+""") == """
+list: 
+  -
+    one: 1
+    two: 2
+"""
+    }
+
     private String merge(String source, String update) {
         File current = new File(dir, "config.yml")
         current << source.trim()

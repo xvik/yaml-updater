@@ -74,9 +74,9 @@ lists:
 
   # changed sub comment
   list:                                 # padding changed
-    - two                             # order changed (ignored)
-    - one
-    - three                           # new value ignored
+      - two                             # order changed (ignored)
+      - one
+      - three                           # new value ignored
 
   obj:
     - two: 2
@@ -105,8 +105,8 @@ lists:
 
   # changed sub comment
   list:
-    - one
-    - two
+      - one
+      - two
 
   obj:
     - two: 2
@@ -139,11 +139,12 @@ Read exact module's readme for setup instructions.
 * For existing values, top comments updated from new config (if property exists in new config).
   - If new property does not contain any comment - old comment is preserved
   - In-line comments (after value) not updated (and so may be used for persistent marks)
-  - Trailing comment at the end of the file is preserved as-is (not updated)
-* Padding used from update file (original config could be re-formatted)
+  - Trailing comment at the end of file preserved as-is (not updated)
+* Paddings applied from update file (original config could be re-formatted)
   - Padding change works in both directions (reduce or enlarge)
 * Lists not merged
   - Object list items could be updated with new properties (if matched item found)
+  - Dash style for object item could change in both directions: empty dash (property on new line) or property on the same line with dash
 
 <table>
 <tr>
@@ -309,6 +310,36 @@ list:
     three: 3
   </pre>
 </td>
+</tr>
+
+<tr>
+<td>
+List declaration style could change
+</td>
+<td>
+   <pre lang="yaml">
+list: 
+  - one: 1
+    two: 2
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+  - 
+    one: 1
+    two: 2
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+list: 
+  - 
+    one: 1
+    two: 2
+  </pre>
+</td>
+</tr>
 </table>
 
 ### Lists matching logic

@@ -39,7 +39,7 @@ Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/do
 ```
 Usage: [-bhivV] [-d=DELETE...]... [-e=ENV...]... CONFIG UPDATE
 Update yaml configuration file from new file
-      CONFIG          Path to updating configuration file
+      CONFIG          Path to updating configuration file (might not exist)
       UPDATE          Path to new configuration file or any URL
   -b, --no-backup     Don't create backup before configuration update
   -d, --delete-path=DELETE...

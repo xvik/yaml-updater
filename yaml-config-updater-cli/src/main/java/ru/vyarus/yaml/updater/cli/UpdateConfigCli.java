@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
 public class UpdateConfigCli implements Callable<Void> {
 
     @Parameters(index = "0", paramLabel = "CONFIG",
-            description = "Path to updating configuration file")
+            description = "Path to updating configuration file (might not exist)")
     private File current;
 
     @Parameters(index = "1", paramLabel = "UPDATE",
@@ -96,13 +96,12 @@ public class UpdateConfigCli implements Callable<Void> {
             try {
                 return new URL(name).openStream();
             } catch (IOException e) {
-                throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file url: " + name
-                        + " (" + e.getMessage() + ")", e);
+                throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file url: " + name, e);
             }
         }
         final File file = new File(name);
         if (!file.exists()) {
-            throw new ParameterException(spec.commandLine(), desc + " file does not exists: " + name);
+            throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file (does not exists): " + name);
         }
         try {
             return Files.newInputStream(file.toPath());
@@ -118,11 +117,11 @@ public class UpdateConfigCli implements Callable<Void> {
         if (env != null) {
             for (String env : env) {
                 final int idx = env.indexOf('=');
-                if (idx > 0) {
+                if (idx >= 0) {
                     // direct variable
                     final String name = env.substring(0, idx).trim();
                     if (name.isEmpty()) {
-                        throw new IllegalArgumentException("Invalid variable declaration: " + env);
+                        throw new ParameterException(spec.commandLine(), "Invalid variable declaration: " + env);
                     }
                     final String value = env.substring(idx + 1).trim();
                     res.put(name, value);
@@ -137,21 +136,18 @@ public class UpdateConfigCli implements Callable<Void> {
 
     private void loadVarsFile(final String path, final Map<String, String> res) {
         final InputStream in = resoleFile(path, "variables");
-        if (in != null) {
-            try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                final Properties props = new Properties();
-                props.load(reader);
+        try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+            final Properties props = new Properties();
+            props.load(reader);
 
-                for (Object key : props.keySet()) {
-                    final String name = String.valueOf(key);
-                    final String value = props.getProperty(name);
-                    res.put(name, value == null ? "" : value);
-                }
-            } catch (Exception ex) {
-                throw new IllegalStateException("Failed to read variables from: " + path, ex);
+            for (Object key : props.keySet()) {
+                final String name = String.valueOf(key);
+                final String value = props.getProperty(name);
+                res.put(name, value == null ? "" : value);
             }
-        } else {
-            throw new IllegalArgumentException("Variables file not found: " + path);
+        } catch (Exception ex) {
+            throw new ParameterException(spec.commandLine(), "Invalid variables file: " + path + " ("
+                    + ex.getMessage() + ")", ex);
         }
     }
 
