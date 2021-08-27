@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.dropwizard
 
+import com.github.stefanbirkner.systemlambda.SystemLambda
 import ru.vyarus.yaml.updater.dropwizard.support.SampleApp
 import spock.lang.Specification
 import spock.lang.TempDir
@@ -37,5 +38,40 @@ class AbstractTest extends Specification {
         return input
         // cleanup win line break for simpler comparisons
                 .replace("\r", '')
+    }
+
+    protected String runWithOutput(String... args) {
+        return runSpecial(false, args)
+    }
+
+    protected String runWithError(String... args) {
+        return runSpecial(true, args)
+    }
+
+    private String runSpecial(boolean returnErrors, String... args) {
+        PrintStream sysOut = System.out
+        PrintStream sysErr = System.err
+
+        ByteArrayOutputStream sw = new ByteArrayOutputStream()
+        ByteArrayOutputStream err = new ByteArrayOutputStream()
+        try {
+            def arg = ["update-config"]
+            arg.addAll(args)
+            println "Args: $arg"
+
+            System.setOut(new PrintStream(sw))
+            System.setErr(new PrintStream(err))
+
+            SystemLambda.catchSystemExit({
+                new SampleApp().run(arg as String[])
+            })
+            return returnErrors ? err.toString(): sw.toString()
+        } finally {
+            System.setOut(sysOut)
+            System.setErr(sysErr)
+
+            println  sw.toString()
+            println  err.toString()
+        }
     }
 }

@@ -6,4 +6,6 @@ dependencies {
         transitive = false
     }
     implementation 'io.dropwizard:dropwizard-core:2.0.24'
+
+    testImplementation 'com.github.stefanbirkner:system-lambda:1.2.0'
 }

@@ -6,6 +6,8 @@ Might be used for merging configuration just after new application version insta
 Arguments and behaviour is almost equivalent to [cli module](../yaml-config-updater-cli)
 (full argument names works a bit differently). 
 
+For general workflow and update rules read [root readme](../).
+
 ### Setup
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
@@ -56,7 +58,7 @@ usage: java -jar project.jar update-config [-b] [-d DELETE [DELETE ...]]
 Update configuration file from new file
 
 positional arguments:
-  file                   Path to updating configuration file
+  file                   Path to updating configuration file (might not exist)
   update                 Path to new configuration  file.  Could  also be a
                          classpath path or any URL.
 

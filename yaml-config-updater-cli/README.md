@@ -1,6 +1,8 @@
 # Yaml config updater CLI
 
-Command line interface for updating yaml configuration.
+Command line interface for yaml configuration updater.
+
+For general workflow and update rules read [root readme](../).
 
 ### Setup
 

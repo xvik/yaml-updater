@@ -11,6 +11,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import ru.vyarus.yaml.updater.YamlUpdater;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,7 +43,7 @@ public class UpdateConfigCommand extends Command {
         subparser.addArgument("file")
                 .required(true)
                 .type(Arguments.fileType())
-                .help("Path to updating configuration file");
+                .help("Path to updating configuration file (might not exist)");
 
         subparser.addArgument("update")
                 .required(true)
@@ -109,7 +110,7 @@ public class UpdateConfigCommand extends Command {
     private InputStream prepareTargetFile(final String path) {
         final InputStream in = findFile(path);
         if (in == null) {
-            throw new IllegalArgumentException("Updating file not found on path: " + path);
+            throw new IllegalArgumentException("Update file not found: " + path);
         }
         return in;
     }
@@ -121,7 +122,7 @@ public class UpdateConfigCommand extends Command {
         if (envList != null) {
             for (String env : envList) {
                 final int idx = env.indexOf('=');
-                if (idx > 0) {
+                if (idx >= 0) {
                     // direct variable
                     final String name = env.substring(0, idx).trim();
                     if (name.isEmpty()) {
@@ -159,10 +160,7 @@ public class UpdateConfigCommand extends Command {
     }
 
     private InputStream findFile(final String path) {
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-        final InputStream res;
+        InputStream res;
         // first check direct file
         final File file = new File(path);
         if (file.exists()) {
@@ -175,6 +173,8 @@ public class UpdateConfigCommand extends Command {
             // url
             try {
                 res = new URL(path).openStream();
+            } catch (FileNotFoundException ex) {
+                res = null;
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to load file from url: " + path, e);
             }
