@@ -16,7 +16,8 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = 'yaml-config-updater'
+// short name is a workaround for https://github.com/researchgate/gradle-release/issues/330
+rootProject.name = 'yaml-updater'
 
 include 'yaml-config-updater',
         'yaml-config-updater-cli',
