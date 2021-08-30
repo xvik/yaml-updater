@@ -21,6 +21,8 @@ javaLib {
 
 allprojects {
     repositories { mavenLocal(); mavenCentral() }
+
+    group = 'ru.vyarus'
 }
 
 subprojects {
@@ -33,7 +35,6 @@ subprojects {
     apply plugin: 'ru.vyarus.github-info'
     apply plugin: 'com.github.ben-manes.versions'
 
-    group = 'ru.vyarus'
     sourceCompatibility = 1.8
 
     dependencies {
