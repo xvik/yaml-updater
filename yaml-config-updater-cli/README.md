@@ -6,9 +6,9 @@ For general workflow and update rules read [root readme](../../../).
 
 ### Setup
 
-[![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
+[![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-[Download jar from maven central](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater) (classifier `all`)
+[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.0.0/) (classifier `all`)
 
 It will include all required dependencies (shadowjar).
 
