@@ -1,8 +1,8 @@
 # Yaml config updater
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
-[![CI](https://github.com/xvik/yaml-config-updater/actions/workflows/CI.yml/badge.svg)](https://github.com/xvik/yaml-config-updater/actions/workflows/CI.yml)
-[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-config-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-config-updater)
-[![codecov](https://codecov.io/gh/xvik/yaml-config-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-config-updater)
+[![CI](https://github.com/xvik/yaml-updater/actions/workflows/CI.yml/badge.svg)](https://github.com/xvik/yaml-updater/actions/workflows/CI.yml)
+[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-updater)
+[![codecov](https://codecov.io/gh/xvik/yaml-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-updater)
 
 
 ### About
