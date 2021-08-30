@@ -7,6 +7,12 @@ import io.dropwizard.setup.Environment;
 import ru.vyarus.yaml.updater.dropwizard.cmd.UpdateConfigCommand;
 
 /**
+ * Registers {@link ru.vyarus.yaml.updater.dropwizard.cmd.UpdateConfigCommand}. Required to update application
+ * configuration from config in new delivery (add missed properties, update comments, reformat if required).
+ * <p>
+ * Default usage: {@code java -jar project.jar update-config current.yml new.yml}.
+ * Available options: {@code java -jar project.jar update-config -h}.
+ *
  * @author Vyacheslav Rusakov
  * @since 15.07.2021
  */
