@@ -7,7 +7,7 @@ In most cases it might be more convenient to use cli wrappers:
 - [cli](../yaml-config-updater-cli)
 - [dropwizard](../dropwizard-config-updater)
 
-For general workflow and update rules read [root readme](../).
+For general workflow and update rules read [root readme](../../../).
 
 ### Setup
 

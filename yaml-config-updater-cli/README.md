@@ -2,7 +2,7 @@
 
 Command line interface for yaml configuration updater.
 
-For general workflow and update rules read [root readme](../).
+For general workflow and update rules read [root readme](../../../).
 
 ### Setup
 
