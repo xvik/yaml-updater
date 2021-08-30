@@ -6,7 +6,7 @@ Might be used for merging configuration just after new application version insta
 Arguments and behaviour is almost equivalent to [cli module](../yaml-config-updater-cli)
 (full argument names works a bit differently). 
 
-For general workflow and update rules read [root readme](../).
+For general workflow and update rules read [root readme](../../../).
 
 ### Setup
 
