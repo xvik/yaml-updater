@@ -16,7 +16,7 @@ import ru.vyarus.yaml.updater.dropwizard.cmd.UpdateConfigCommand;
  * @author Vyacheslav Rusakov
  * @since 15.07.2021
  */
-public class ConfigUpdaterBundle implements ConfiguredBundle<Configuration> {
+public class UpdateConfigBundle implements ConfiguredBundle<Configuration> {
 
     @Override
     public void initialize(final Bootstrap<?> bootstrap) {

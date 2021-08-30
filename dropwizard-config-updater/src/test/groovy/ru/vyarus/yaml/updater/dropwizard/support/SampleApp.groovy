@@ -4,7 +4,7 @@ import io.dropwizard.Application
 import io.dropwizard.Configuration
 import io.dropwizard.setup.Bootstrap
 import io.dropwizard.setup.Environment
-import ru.vyarus.yaml.updater.dropwizard.ConfigUpdaterBundle
+import ru.vyarus.yaml.updater.dropwizard.UpdateConfigBundle
 
 /**
  * @author Vyacheslav Rusakov
@@ -14,7 +14,7 @@ class SampleApp extends Application<Configuration> {
 
     @Override
     void initialize(Bootstrap<Configuration> bootstrap) {
-        bootstrap.addBundle(new ConfigUpdaterBundle())
+        bootstrap.addBundle(new UpdateConfigBundle())
     }
 
     @Override
