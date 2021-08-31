@@ -1,8 +1,7 @@
 package ru.vyarus.yaml.updater
 
-import ru.vyarus.yaml.updater.listen.UpdateListener
+
 import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter
-import ru.vyarus.yaml.updater.report.ReportPrinter
 import spock.lang.TempDir
 
 import java.nio.file.Files
@@ -47,7 +46,7 @@ Resulted in 301 bytes, 36 lines
 
 \tBackup created: BACKUP
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
-        .replace("BACKUP", list.backup.name)
+                .replace("BACKUP", list.backup.name)
     }
 
     static class UpdLst extends UpdateListenerAdapter {

@@ -1,7 +1,5 @@
 package ru.vyarus.yaml.updater
 
-import ru.vyarus.yaml.updater.report.ReportPrinter
-
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 

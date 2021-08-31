@@ -1,6 +1,5 @@
 package ru.vyarus.yaml.updater
 
-import ru.vyarus.yaml.updater.report.ReportPrinter
 import spock.lang.TempDir
 
 /**
