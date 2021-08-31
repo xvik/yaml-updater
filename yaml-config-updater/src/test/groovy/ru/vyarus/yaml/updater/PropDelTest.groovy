@@ -15,6 +15,7 @@ class PropDelTest extends AbstractTest {
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -62,9 +63,9 @@ prop3:
 """
 
         and: "report correct"
-        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
 Updated from source of 385 bytes, 40 lines
-Resulted in 343 bytes, 37 lines
+Resulted in 301 bytes, 37 lines
 
 \tRemoved from old file:
 \t\tprop2/list                               14 | list:
@@ -88,6 +89,7 @@ Resulted in 343 bytes, 37 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -135,9 +137,9 @@ prop3:
 """
 
         and: "report correct"
-        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
 Updated from source of 385 bytes, 40 lines
-Resulted in 343 bytes, 37 lines
+Resulted in 301 bytes, 37 lines
 
 \tRemoved from old file:
 \t\tprop2/list                               14 | list:
@@ -161,6 +163,7 @@ Resulted in 343 bytes, 37 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -207,9 +210,9 @@ prop3:
 """
 
         and: "report correct"
-        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
 Updated from source of 385 bytes, 40 lines
-Resulted in 331 bytes, 36 lines
+Resulted in 301 bytes, 36 lines
 
 \tAdded from new file:
 \t\tprop1/prop1.3                            9  | prop1.3: 1.3

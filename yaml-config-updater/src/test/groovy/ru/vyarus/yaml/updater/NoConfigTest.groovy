@@ -66,9 +66,9 @@ prop3:
   prop3.1: 3.1
 """
         and: "report correct"
-        ReportPrinter.print(report) == """Not exising configuration: /tmp/CONFIG.yml
+        print(report, 111, current.size()) == """Not exising configuration: /tmp/CONFIG.yml
 Updated from source of 385 bytes, 40 lines
-Resulted in 386 bytes, 40 lines
+Resulted in 301 bytes, 40 lines
 
 \tNew configuration copied as-is
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())

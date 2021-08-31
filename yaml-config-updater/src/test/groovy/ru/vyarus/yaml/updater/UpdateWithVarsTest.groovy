@@ -16,6 +16,7 @@ class UpdateWithVarsTest extends AbstractTest {
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -62,9 +63,9 @@ prop3:
 """
 
         and: "report correct"
-        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
 Updated from source of 383 bytes, 40 lines
-Resulted in 329 bytes, 36 lines
+Resulted in 301 bytes, 36 lines
 
 \tApplied variables:
 \t\tvar                       = 4

@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
+import ru.vyarus.yaml.updater.report.UpdateReport
 import spock.lang.Specification
 
 /**
@@ -12,5 +14,12 @@ abstract class AbstractTest extends Specification {
         return input
         // cleanup win line break for simpler comparisons
                 .replace("\r", '')
+    }
+
+    protected String print(UpdateReport report, long srcSize, long size) {
+        return ReportPrinter.print(report)
+        // size is different on win and lin
+                .replaceAll("([^\\d])$srcSize ", '$1300 ')
+                .replaceAll("([^\\d])$size ", '$1301 ')
     }
 }
