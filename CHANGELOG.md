@@ -1,3 +1,7 @@
+* [api]
+  - Add update report object (returned after update call)
+  - Add report printer (for cli modules)
+  - Config not replaced if contents are identical after merge (avoid redundant backups)
 * [dropwizard]
   - Fix dropwizard 1.x compatibility
   - Make dropwizard dependency "provided" (to avoid version clashes)

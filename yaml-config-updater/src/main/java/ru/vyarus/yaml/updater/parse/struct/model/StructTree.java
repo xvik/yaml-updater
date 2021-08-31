@@ -15,8 +15,8 @@ public class StructTree extends TreeRoot<StructNode> {
 
     private static final int MAX_VAL_LENGTH = 80;
 
-    public StructTree(final List<StructNode> nodes) {
-        super(nodes);
+    public StructTree(final List<StructNode> nodes, final int linesCount) {
+        super(nodes, linesCount);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -18,7 +19,7 @@ class PropDelTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).deleteProps('prop2/list').update()
+        def report = YamlUpdater.create(current, update).backup(false).deleteProps('prop2/list').update()
 
         then: "list replaced"
         unifyString(current.text) == """# something
@@ -59,6 +60,22 @@ pppp: some
 prop3:
   prop3.1: 3.1
 """
+
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 385 bytes, 40 lines
+Resulted in 343 bytes, 37 lines
+
+\tRemoved from old file:
+\t\tprop2/list                               14 | list:
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 1.3
+\t\tprop11                                   12 | prop11:
+\t\tprop2/list                               20 | list:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()
@@ -75,7 +92,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "deleting property with dot as separator"
-        YamlUpdater.create(current, update).backup(false).deleteProps('prop2.list').update()
+        def report = YamlUpdater.create(current, update).backup(false).deleteProps('prop2.list').update()
 
         then: "list replaced"
         unifyString(current.text) == """# something
@@ -117,6 +134,22 @@ prop3:
   prop3.1: 3.1
 """
 
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 385 bytes, 40 lines
+Resulted in 343 bytes, 37 lines
+
+\tRemoved from old file:
+\t\tprop2/list                               14 | list:
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 1.3
+\t\tprop11                                   12 | prop11:
+\t\tprop2/list                               20 | list:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
+
         cleanup:
         current.delete()
         update.delete()
@@ -132,7 +165,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "deleting unknown property"
-        YamlUpdater.create(current, update).backup(false).deleteProps('prop23.list').update()
+        def report = YamlUpdater.create(current, update).backup(false).deleteProps('prop23.list').update()
 
         then: "list replaced"
         unifyString(current.text) == """# something
@@ -172,6 +205,18 @@ pppp: some
 prop3:
   prop3.1: 3.1
 """
+
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 385 bytes, 40 lines
+Resulted in 331 bytes, 36 lines
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 1.3
+\t\tprop11                                   12 | prop11:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()

@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
+
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -19,7 +21,7 @@ class NoConfigTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "updating not existing config"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "config copied"
         unifyString(current.text) == """# something
@@ -63,6 +65,13 @@ pppp: some
 prop3:
   prop3.1: 3.1
 """
+        and: "report correct"
+        ReportPrinter.print(report) == """Not exising configuration: /tmp/CONFIG.yml
+Updated from source of 385 bytes, 40 lines
+Resulted in 386 bytes, 40 lines
+
+\tNew configuration copied as-is
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()

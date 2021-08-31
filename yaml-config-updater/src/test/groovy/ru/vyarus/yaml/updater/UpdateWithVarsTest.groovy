@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -19,7 +20,7 @@ class UpdateWithVarsTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).envVars(['var': '4']).update()
+        def report= YamlUpdater.create(current, update).backup(false).envVars(['var': '4']).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -59,6 +60,21 @@ pppp: some
 prop3:
   prop3.1: 3.1
 """
+
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 383 bytes, 40 lines
+Resulted in 329 bytes, 36 lines
+
+\tApplied variables:
+\t\tvar                       = 4
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 4
+\t\tprop11                                   12 | prop11:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()

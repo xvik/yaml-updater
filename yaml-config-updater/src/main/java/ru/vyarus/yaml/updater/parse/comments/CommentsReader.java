@@ -60,7 +60,7 @@ public final class CommentsReader {
     private static CmtTree readLines(final List<String> lines) {
         final Context context = new Context();
         readNodes(new CountingIterator<>(lines.iterator()), context);
-        return new CmtTree(context.rootNodes);
+        return new CmtTree(context.rootNodes, lines.size());
     }
 
     private static void readNodes(final CountingIterator<String> lines, final Context context) {

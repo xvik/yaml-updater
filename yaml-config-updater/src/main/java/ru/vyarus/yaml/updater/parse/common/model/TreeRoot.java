@@ -15,24 +15,45 @@ import java.util.List;
 @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
 public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
-    public TreeRoot(final List<T> nodes) {
+    private final int linesCnt;
+
+    public TreeRoot(final List<T> nodes, final int linesCnt) {
         super(null);
         getChildren().addAll(nodes);
+        this.linesCnt = linesCnt;
     }
 
+    /**
+     * @return null as tree root does not have any yaml path
+     */
     @Override
     public String getYamlPath() {
         return null;
     }
 
+    /**
+     * @return null as tree root does not have any yaml path
+     */
     @Override
     public String getYamlPathElement() {
         return null;
     }
 
+    /**
+     * @return 0 as tree root is not represented with any line number
+     */
     @Override
     public int getLineNum() {
         return 0;
+    }
+
+    /**
+     * NOTE: numbers may be different for comments and structural parser as the later would ignore trailing comments.
+     *
+     * @return count of lines in yaml file (overall)
+     */
+    public int getLinesCnt() {
+        return linesCnt;
     }
 
     @Override

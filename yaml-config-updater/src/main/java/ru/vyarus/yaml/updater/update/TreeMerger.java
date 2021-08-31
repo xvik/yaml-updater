@@ -72,6 +72,8 @@ public final class TreeMerger {
         final Map<String, CmtNode> newProps = from.getRootProperties();
 
         final List<CmtNode> updated = new ArrayList<>(from.getChildren());
+        // mark all nodes as added by default (existing nodes would be replaced)
+        updated.forEach(cmtNode -> cmtNode.setAddedNode(true));
 
         // current file paddings must be unified with updating file or the resulting file become invalid
         final int padding = from.getChildren().get(0).getPadding();

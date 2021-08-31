@@ -12,19 +12,19 @@ class EnvSupportTest extends Specification {
     def "Check variables appliance"() {
 
         expect: "vars replaced"
-        EnvSupport.apply("""
+        new EnvSupport(['var1': '11', 'var2': '12']).apply("""
 sample #{var1} or
 another #{var2}
-""", ['var1': '11', 'var2': '12']) == """
+""") == """
 sample 11 or
 another 12
 """
 
         and: "unknown vars remain"
-        EnvSupport.apply("""
+        new EnvSupport(['var1': '11']).apply("""
 sample #{var1} or
 another #{var2}
-""", ['var1': '11']) == """
+""") == """
 sample 11 or
 another #{var2}
 """

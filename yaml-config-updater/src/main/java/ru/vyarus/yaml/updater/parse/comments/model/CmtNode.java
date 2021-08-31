@@ -36,6 +36,9 @@ public class CmtNode extends YamlLine<CmtNode> {
     // this value is set from structure parser
     private String parsedValue;
 
+    // special marker for added nodes during merge
+    private boolean addedNode;
+
     public CmtNode(final CmtNode root, final int padding, final int lineNum) {
         super(root, padding, lineNum);
     }
@@ -127,6 +130,22 @@ public class CmtNode extends YamlLine<CmtNode> {
             }
         }
         return res.isEmpty() ? null : res;
+    }
+
+    /**
+     * Mark node as added during merge process.
+     *
+     * @param addedNode true to mark node as added
+     */
+    public void setAddedNode(final boolean addedNode) {
+        this.addedNode = addedNode;
+    }
+
+    /**
+     * @return true indicates added node during merge process (including lists update)
+     */
+    public boolean isAddedNode() {
+        return addedNode;
     }
 
     @Override

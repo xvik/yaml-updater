@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.updater.listen.UpdateListener;
 import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter;
+import ru.vyarus.yaml.updater.report.UpdateReport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -212,14 +213,17 @@ public final class UpdateConfig {
 
         /**
          * Performs configuration migration.
+         *
+         * @return update report
+         * @see ru.vyarus.yaml.updater.report.ReportPrinter for default report formatter
          */
-        public void update() {
+        public UpdateReport update() {
             if (config.listener == null) {
                 // to avoid null checks everywhere
                 config.listener = new UpdateListenerAdapter();
             }
             config.listener.configured(config);
-            new YamlUpdater(config).execute();
+            return new YamlUpdater(config).execute();
         }
 
         @SuppressWarnings("PMD.UseTryWithResources")

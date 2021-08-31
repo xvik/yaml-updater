@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class CmtTree extends TreeRoot<CmtNode> {
 
-    public CmtTree(final List<CmtNode> nodes) {
-        super(nodes);
+    public CmtTree(final List<CmtNode> nodes, final int linesCnt) {
+        super(nodes, linesCnt);
     }
 
     @Override

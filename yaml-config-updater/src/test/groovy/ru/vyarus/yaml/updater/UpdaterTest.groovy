@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -19,7 +20,7 @@ class UpdaterTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -59,6 +60,17 @@ pppp: some
 prop3:
   prop3.1: 3.1
 """
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 385 bytes, 40 lines
+Resulted in 331 bytes, 36 lines
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 1.3
+\t\tprop11                                   12 | prop11:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()
@@ -75,7 +87,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -115,6 +127,17 @@ pppp: some
 prop3:
     prop3.1: 3.1
 """
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (198 bytes, 23 lines)
+Updated from source of 443 bytes, 40 lines
+Resulted in 373 bytes, 36 lines
+
+\tAdded from new file:
+\t\tprop1/prop1.3                            9  | prop1.3: 1.3
+\t\tprop11                                   12 | prop11:
+\t\tprop2/obj[0]/three                       31 | three: 3
+\t\tprop3                                    39 | prop3:
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()
@@ -131,7 +154,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# something
@@ -175,6 +198,13 @@ pppp: some
 prop3:
     prop3.1: 3.1
 """
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (443 bytes, 40 lines)
+Updated from source of 198 bytes, 23 lines
+Resulted in 391 bytes, 40 lines
+
+\tOnly comments, order or formatting changed
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()
@@ -191,7 +221,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """object:
@@ -213,6 +243,13 @@ prop3:
         first line
       second line
 """
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (287 bytes, 18 lines)
+Updated from source of 330 bytes, 18 lines
+Resulted in 313 bytes, 18 lines
+
+\tOnly comments, order or formatting changed
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()
@@ -228,7 +265,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """object:
@@ -251,6 +288,14 @@ prop3:
       second line
 """
 
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (331 bytes, 18 lines)
+Updated from source of 286 bytes, 18 lines
+Resulted in 305 bytes, 18 lines
+
+\tOnly comments, order or formatting changed
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
+
         cleanup:
         current.delete()
         update.delete()
@@ -266,7 +311,7 @@ prop3:
         Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# explicitly shifted lines
@@ -327,6 +372,22 @@ sublist:
       sub2: 2
 """
 
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (325 bytes, 41 lines)
+Updated from source of 686 bytes, 71 lines
+Resulted in 512 bytes, 56 lines
+
+\tAdded from new file:
+\t\tobject[0]/two                            17 | two: 2
+\t\tobject2[0]/two                           26 | two: 2
+\t\tobject3[0]/two/four                      37 | four: 4
+\t\tobject3[0]/and                           38 | and:
+\t\tmap_of_maps/one/a2                       46 | a2: 2
+\t\tmap_of_maps/two                          47 | two:
+\t\tcomplexMatch[0]/three                    66 | three: 4
+\t\tsublist[0]/one/sub2                      71 | sub2: 2
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
+
         cleanup:
         current.delete()
         update.delete()
@@ -341,7 +402,7 @@ sublist:
         Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        YamlUpdater.create(current, update).backup(false).update()
+        def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
         unifyString(current.text) == """# explicitly shifted lines
@@ -417,6 +478,60 @@ sublist:
       sub1: 1
       sub2: 2
 """
+
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration: /tmp/CONFIG.yml (687 bytes, 71 lines)
+Updated from source of 324 bytes, 41 lines
+Resulted in 689 bytes, 72 lines
+
+\tAdded from new file:
+\t\tempty[0]/three                           28 | three: 3
+\t\treorder[0]/three                         33 | three: 3
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
+
+        cleanup:
+        current.delete()
+        update.delete()
+    }
+
+    def "Check configuration not changed"() {
+
+        setup: "prepare files"
+        File current = Files.createTempFile("config", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        File update = Files.createTempFile("update", ".yml").toFile()
+        Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        when: "merging"
+        def report = YamlUpdater.create(current, update).backup(false).update()
+
+        then: "updated"
+        unifyString(current.text) == """# something
+
+# something 2
+prop1:
+  prop1.1: 1.1
+
+  prop1.2: 1.2
+
+prop2:
+
+  # sub comment
+  prop2.1: 2.1
+
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+
+# original comment
+pppp: some"""
+        and: "report correct"
+        ReportPrinter.print(report) == """Configuration not changed: /tmp/CONFIG.yml (198 bytes, 23 lines)
+""".replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
         current.delete()

@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.report.ReportPrinter
 import spock.lang.TempDir
 
 /**
@@ -91,6 +92,15 @@ large: multi-line
   value
 
 # changed trailing comment
+"""
+        and: "report correct"
+        lastReport == """Configuration: /tmp/CONFIG.yml (185 bytes, 23 lines)
+Updated from source of 497 bytes, 25 lines
+Resulted in 326 bytes, 25 lines
+
+\tAdded from new file:
+\t\tprop/three                               7  | three: 3                              # new property
+\t\tlists/obj[0]/three                       20 | three: 3                        # new value
 """
     }
 
@@ -219,13 +229,16 @@ list:
 """
     }
 
+    private String lastReport
+
     private String merge(String source, String update) {
         File current = new File(dir, "config.yml")
         current << source.trim()
         File upd = new File(dir, "update.yml")
         upd << update.trim()
 
-        YamlUpdater.create(current, upd).backup(false).update()
+        def report = YamlUpdater.create(current, upd).backup(false).update()
+        lastReport = ReportPrinter.print(report).replace(current.getAbsolutePath(), '/tmp/CONFIG.yml')
 
         unifyString("\n" + current.text)
     }

@@ -11,6 +11,7 @@ import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
+import ru.vyarus.yaml.updater.report.UpdateReport;
 import ru.vyarus.yaml.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.updater.update.EnvSupport;
 import ru.vyarus.yaml.updater.update.TreeMerger;
@@ -82,8 +83,11 @@ public class YamlUpdater {
     private StructTree updateStructure;
     private CmtTree updateTree;
 
+    private final UpdateReport report;
+
     YamlUpdater(final UpdateConfig config) {
         this.config = config;
+        this.report = new UpdateReport(config.getCurrent());
     }
 
     /**
@@ -116,7 +120,7 @@ public class YamlUpdater {
         return UpdateConfig.configureUpdate(current, update);
     }
 
-    public void execute() {
+    public UpdateReport execute() {
         try {
             prepareNewConfig();
             prepareCurrentConfig();
@@ -128,15 +132,20 @@ public class YamlUpdater {
         } finally {
             cleanup();
         }
+        return report;
     }
 
     private void prepareNewConfig() throws Exception {
         logger.debug("Parsing new configuration...");
         String source = config.getUpdate();
         if (!config.getEnv().isEmpty()) {
-            source = EnvSupport.apply(source, config.getEnv());
+            final EnvSupport envSupport = new EnvSupport(config.getEnv());
+            source = envSupport.apply(source);
             logger.info("Environment variables applied to new config");
+            report.getAppliedVariables().putAll(envSupport.getApplied());
         }
+        // size after variables applied
+        report.setUpdateSize(source.getBytes(StandardCharsets.UTF_8).length);
 
         // read structure first to validate correctness!
         updateStructure = StructureReader.read(source);
@@ -148,8 +157,10 @@ public class YamlUpdater {
             throw new IllegalStateException("Model validation fail: comments parser tree does not match snakeyaml's "
                     + "parse tree for update config", ex);
         }
+        report.setUpdateLines(updateTree.getLinesCnt());
 
-        logger.info("New configuration parsed");
+        logger.info("New configuration parsed ({} bytes, {} lines)",
+                report.getUpdateSize(), report.getUpdateLines());
         config.getListener().updateConfigParsed(updateTree, updateStructure);
     }
 
@@ -157,6 +168,7 @@ public class YamlUpdater {
         final File currentCfg = config.getCurrent();
         if (currentCfg.exists()) {
             logger.debug("Parsing current configuration file ({})...", currentCfg.getAbsolutePath());
+            report.setBeforeSize(currentCfg.length());
             // read current file with two parsers (snake first to make sure file is valid)
             currentStructure = StructureReader.read(currentCfg);
             currentTree = CommentsReader.read(currentCfg);
@@ -168,6 +180,7 @@ public class YamlUpdater {
                 throw new IllegalStateException("Model validation fail: comments parser tree does not match "
                         + "snakeyaml's parse tree for current config: " + currentCfg.getAbsolutePath(), ex);
             }
+            report.setBeforeLinesCnt(currentTree.getLinesCnt());
 
             // removing props
             for (String prop : config.getDeleteProps()) {
@@ -181,7 +194,8 @@ public class YamlUpdater {
                     logger.warn("Property not removed on path '{}': not found", prop);
                 }
             }
-            logger.info("Current configuration parsed ({})", currentCfg.getAbsolutePath());
+            logger.info("Current configuration parsed ({} bytes, {} lines)",
+                    report.getBeforeSize(), report.getBeforeLinesCnt());
             config.getListener().currentConfigParsed(updateTree, updateStructure);
         } else {
             logger.info("Current configuration doesn't exist: {}", currentCfg.getAbsolutePath());
@@ -198,6 +212,7 @@ public class YamlUpdater {
             // for root level property, it would not point to tree object
             final TreeNode<CmtNode> root = node.getRoot() == null ? currentTree : node.getRoot();
             root.getChildren().remove(node);
+            report.addRemoved(node);
 
             // remove in both trees because struct tree is used for result validation
             // (trees are equal (validated) so can't have different branches)
@@ -221,10 +236,23 @@ public class YamlUpdater {
             // merge
             TreeMerger.merge(currentTree, updateTree);
             logger.info("Configuration merged");
+            reportAddedNodes(currentTree);
         }
         config.getListener().merged(currentTree);
         // write merged result
         CommentsWriter.write(currentTree, work);
+    }
+
+    private void reportAddedNodes(final TreeNode<CmtNode> root) {
+        for (CmtNode node : root.getChildren()) {
+            // searching first added node (could be added value or added subtree)
+            if (node.isAddedNode() && !node.isCommentOnly()) { // do not show trailing comment addition
+                report.addAdded(node);
+            } else if (node.hasChildren()) {
+                // search deeper
+                reportAddedNodes(node);
+            }
+        }
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
@@ -243,6 +271,9 @@ public class YamlUpdater {
                     logger.warn("Result validation skipped");
                 }
             }
+
+            report.setAfterSize(work.length());
+            report.setAfterLinesCnt(Files.readAllLines(work.toPath()).size());
         } catch (Exception ex) {
             String yamlContent;
             try {
@@ -267,16 +298,43 @@ public class YamlUpdater {
     private void backupAndReplace() throws IOException {
         // on first installation no need to backup
         final File current = config.getCurrent();
-        if (config.isBackup() && current.exists()) {
-            final Path backup = Paths.get(current.getAbsolutePath()
-                    + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
-            Files.copy(current.toPath(), backup);
-            logger.info("Backup created: {}", backup);
-            config.getListener().backupCreated(backup.toFile());
-        }
+        if (isConfigChanged()) {
+            if (config.isBackup() && current.exists()) {
+                final Path backup = Paths.get(current.getAbsolutePath()
+                        + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
+                Files.copy(current.toPath(), backup);
+                logger.info("Backup created: {}", backup);
+                config.getListener().backupCreated(backup.toFile());
+                report.setBackup(backup.toFile());
+            }
 
-        Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        logger.info("Configuration updated: {}", current.getAbsolutePath());
+            Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            logger.info("Configuration updated: {}", current.getAbsolutePath());
+            report.setConfigChanged(true);
+        } else {
+            logger.warn("Configuration not changed (no need to update)");
+        }
+    }
+
+    private boolean isConfigChanged() throws IOException {
+        boolean res = true;
+        final File current = config.getCurrent();
+        if (current.exists()) {
+            // validate if file changed (to avoid redundant backups)
+            // use trim to avoid empty line difference (could appear at the end after read-write)
+            final char[] cur = String.join("\n", Files.readAllLines(current.toPath())).trim().toCharArray();
+            final char[] wrk = String.join("\n", Files.readAllLines(work.toPath())).trim().toCharArray();
+            if (cur.length == wrk.length) {
+                res = false;
+                for (int i = 0; i < cur.length; i++) {
+                    if (cur[i] != wrk[i]) {
+                        res = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     private void cleanup() {

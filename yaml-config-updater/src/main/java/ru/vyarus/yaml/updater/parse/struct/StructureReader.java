@@ -65,7 +65,7 @@ public final class StructureReader {
             final Node node = new Yaml().compose(reader);
             final Context context = new Context();
             processNode(node, context);
-            return new StructTree(context.rootNodes);
+            return new StructTree(context.rootNodes, node.getEndMark().getLine() + 1);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml structure", e);
         }
