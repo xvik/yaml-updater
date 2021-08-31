@@ -66,9 +66,9 @@ public final class UpdateResultValidator {
                 continue;
             }
             LOGGER.debug("Searching list item {} in current file", item.getYamlPath());
-            final StructNode oldItem = ListMatcher.match(item, oldList.getChildren());
+            final StructNode oldItem = oldList != null ? ListMatcher.match(item, oldList.getChildren()) : null;
             LOGGER.debug("Searching list item {} in update file", item.getYamlPath());
-            final StructNode newItem = ListMatcher.match(item, newList.getChildren());
+            final StructNode newItem = newList != null ? ListMatcher.match(item, newList.getChildren()) : null;
             if (oldItem == null && newItem == null) {
                 throw new IllegalStateException("Can't find reference list item neither in old nor in new file: "
                         + item.getYamlPath());

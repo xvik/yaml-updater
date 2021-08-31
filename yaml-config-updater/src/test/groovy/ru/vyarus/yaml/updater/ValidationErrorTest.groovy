@@ -23,6 +23,7 @@ class ValidationErrorTest extends AbstractTest {
         current = new File(dir, "config.yml")
         current << """
 one: 1
+ff: 1
 list:
     - one
     - two
@@ -35,6 +36,9 @@ list:
     - one
     - two
     - three
+
+obj:
+  - one: 1    
 """
     }
 
@@ -66,6 +70,37 @@ list:
         then: "detected"
         def ex = thrown(IllegalStateException)
         ex.cause.cause.message == "Property 'other' not found neither in old nor in new file: '12'"
+    }
+
+    def "Check unknown list item appears"() {
+
+        when: "add additional node"
+        exec({it.find('obj').children.add(CmtNodeFactory.createListObject(null, 2, 10,
+            CmtNodeFactory.createProperty(null, 4, 11, 'foo', ' bar')))})
+
+        then: "detected"
+        def ex = thrown(IllegalStateException)
+        ex.cause.cause.message == "Can't find reference list item neither in old nor in new file: obj[1]"
+    }
+
+    def "Check current value disappear"() {
+
+        when: "remove old config's value"
+        exec({it.getChildren().remove(it.find('ff'))})
+
+        then: "detected"
+        def ex = thrown(IllegalStateException)
+        ex.cause.cause.message == "Value 'ff' disappeared (should remain from original file): '1'"
+    }
+
+    def "Check new value disappear"() {
+
+        when: "remove new config's value"
+        exec({it.getChildren().remove(it.find('two'))})
+
+        then: "detected"
+        def ex = thrown(IllegalStateException)
+        ex.cause.cause.message == "Value 'two' from update file was not added: '2'"
     }
 
     private void exec(Consumer<CmtTree> callback) {
