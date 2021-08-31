@@ -3,6 +3,8 @@
 Might be used for merging configuration just after new application version installation
 (before startup).
 
+Works with dropwizard 1.x and 2.x.
+
 Arguments and behaviour is almost equivalent to [cli module](../yaml-config-updater-cli)
 (full argument names works a bit differently). 
 
@@ -18,14 +20,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>dropwizard-config-updater</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:dropwizard-config-updater:1.0.0'
+implementation 'ru.vyarus:dropwizard-config-updater:1.1.0'
 ```
 
 

@@ -1,3 +1,4 @@
+### 1.1.0 (2021-08-31)
 * [api]
   - Add update report object (returned after update call)
   - Add report printer (for cli modules)

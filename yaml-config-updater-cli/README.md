@@ -8,7 +8,7 @@ For general workflow and update rules read [root readme](../../../).
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.0.0/) (classifier `all`)
+[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.1.0/) (classifier `all`)
 
 It will include all required dependencies (shadowjar).
 
@@ -17,7 +17,7 @@ It will include all required dependencies (shadowjar).
 If you want to package it differently, not shadowed version is also available:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater-cli:1.0.0'
+implementation 'ru.vyarus:yaml-config-updater-cli:1.1.0'
 ```
 
 Use it for required packaging.

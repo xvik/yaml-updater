@@ -17,7 +17,9 @@ abstract class AbstractTest extends Specification {
     }
 
     protected String print(UpdateReport report, long srcSize, long size) {
-        return ReportPrinter.print(report)
+        def res = ReportPrinter.print(report)
+        println res
+        return res
         // size is different on win and lin
                 .replaceAll("([^\\d])$srcSize ", '$1300 ')
                 .replaceAll("([^\\d])$size ", '$1301 ')

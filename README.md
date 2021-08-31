@@ -24,7 +24,7 @@ Supports:
 * Variables replacement in new config before merge (environment-specific config adoption)
 * Current values remove (e.g. deprecated values or for value replacement)
 * Object list items update (lists not merged, but new properties could be added to list items)
-* Backup current configuration
+* Backup current configuration (only if content changes)
 
 IMPORTANT: this is not a general-purpose yaml merge tool because yaml features like multiple documents in
 one file and object references are not supported (only common subset of features, used in configs)
@@ -117,6 +117,18 @@ large: multi-line
   value
 
 # changed trailing comment
+```
+
+Merge report (shown by cli modules):
+
+```
+Configuration: /var/somewhere/config.yml (185 bytes, 23 lines)
+Updated from source of 497 bytes, 25 lines
+Resulted in 351 bytes, 25 lines
+
+	Added from new file:
+		prop/three                               7  | three: 3                              # new property
+		lists/obj[0]/three                       20 | three: 3                        # new value
 ```
 
 ### Setup
@@ -524,6 +536,8 @@ Cli modules would automatically use environment variables.
 * Check all new properties added and current values preserved (validation)
 * Backup current config (in the same folder)
 * Replace config
+
+Two last steps performed only if file content changes, otherwise current config remain untouched (to avoid producing redundant backups).
 
 ### Comments parser specifics
  
