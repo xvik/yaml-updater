@@ -8,6 +8,8 @@ import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 import ru.vyarus.yaml.updater.YamlUpdater;
+import ru.vyarus.yaml.updater.report.ReportPrinter;
+import ru.vyarus.yaml.updater.report.UpdateReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,14 +77,14 @@ public class UpdateConfigCli implements Callable<Void> {
 
         System.out.println("Updating configuration: " + current.getAbsolutePath());
 
-        YamlUpdater.create(current, target)
+        final UpdateReport report = YamlUpdater.create(current, target)
                 .backup(!backup)
                 .deleteProps(removePaths != null ? removePaths.toArray(new String[0]) : null)
                 .validateResult(!valid)
                 .envVars(env)
                 .update();
 
-        System.out.println("\nConfiguration successfully updated");
+        System.out.println("\n" + ReportPrinter.print(report));
 
         return null;
     }

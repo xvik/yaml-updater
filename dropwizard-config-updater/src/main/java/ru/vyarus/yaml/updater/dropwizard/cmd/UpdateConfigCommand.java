@@ -9,6 +9,8 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import ru.vyarus.yaml.updater.YamlUpdater;
+import ru.vyarus.yaml.updater.report.ReportPrinter;
+import ru.vyarus.yaml.updater.report.UpdateReport;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -97,14 +99,14 @@ public class UpdateConfigCommand extends Command {
             enableDebugLogs();
         }
 
-        YamlUpdater.create(current, update)
+        final UpdateReport report = YamlUpdater.create(current, update)
                 .backup(backup)
                 .deleteProps(delete != null ? delete.toArray(new String[]{}) : null)
                 .validateResult(validate)
                 .envVars(env)
                 .update();
 
-        System.out.println("\nConfiguration successfully updated");
+        System.out.println("\n" + ReportPrinter.print(report));
     }
 
     private InputStream prepareTargetFile(final String path) {
