@@ -4,6 +4,7 @@
 [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/yaml-updater?svg=true)](https://ci.appveyor.com/project/xvik/yaml-updater)
 [![codecov](https://codecov.io/gh/xvik/yaml-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/yaml-updater)
 
+Support: [Discussions](https://github.com/xvik/yaml-updater/discussions) | [Gitter chat](https://gitter.im/xvik/yaml-updater)
 
 ### About
 
