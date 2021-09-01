@@ -1,11 +1,11 @@
 # Dropwizard command for config update
 
-Might be used for merging configuration just after new application version installation
+Should be used for updating configuration just after new application version installation
 (before startup).
 
 Works with dropwizard 1.x and 2.x.
 
-Arguments and behaviour is almost equivalent to [cli module](../yaml-config-updater-cli)
+Arguments and behaviour are almost equivalent to [cli module](../yaml-config-updater-cli)
 (full argument names works a bit differently). 
 
 For general workflow and update rules read [root readme](../../../).
@@ -49,7 +49,11 @@ This will merge update.yml into config.yml file (creating backup of original fil
 Update file may be a local file, path from classpath or any [URL](https://docs.oracle.com/javase/7/docs/api/java/net/URL.html)
 (e.g. to load new config from remote server).
 
-NOTE: classpath case is useful if new configuration is packaged inside application jar
+NOTE: classpath case is useful if new configuration was packaged inside application jar. E.g.:
+
+```
+java -jar yourApp.jar update-config config.yml /config/default.yml
+```
 
 #### Options
 
