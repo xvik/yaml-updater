@@ -11,6 +11,9 @@ Support: [Discussions](https://github.com/xvik/yaml-updater/discussions) | [Gitt
 Merges yaml configuration files, preserving comments and whitespaces. Assumed to be used for microservice configuration
 updates.
 
+By default, targets the most common use-case: add all new properties, without removing or changing existing values.
+Lists not merged because list is a value and all current values must remain.
+
 Comments preserved using custom (simple) yaml parser. [Snakeyaml](https://bitbucket.org/asomov/snakeyaml/wiki/Documentation) 
 parser used for source files validation, comments parser self-validation (compares parse trees)
 and result validation.
@@ -20,12 +23,12 @@ Due to complete validation, merged file correctness is guaranteed.
 Supports:
 
 * Multiline values (all [syntax variations](https://yaml-multiline.info))
-* Reformatting (changed paddings in new config in both directions)
+* [Reformatting](#merge-rules) (changed paddings in new config in both directions)
 * Properties reordering according to new config
-* Variables replacement in new config before merge (environment-specific config adoption)
-* Current values remove (e.g. deprecated values or for value replacement)
-* Object list items update (lists not merged, but new properties could be added to list items)
-* Backup current configuration (only if content changes)
+* [Variables replacement](#variables) in new config before merge (environment-specific config adoption)
+* [Current values remove](yaml-config-updater#delete-props) (e.g. deprecated values or for value replacement)
+* [Object list items update](#lists-matching-logic) (lists not merged, but new properties could be added to list items)
+* [Backup](yaml-config-updater#backup) current configuration (only if content changes)
 
 IMPORTANT: this is not a general-purpose yaml merge tool because yaml features like multiple documents in
 one file and object references are not supported (only common subset of features, used in configs)
@@ -138,9 +141,9 @@ Resulted in 351 bytes, 25 lines
 
 Could be used as:
 
-* [library](yaml-config-updater) through API
-* [command line util](yaml-config-updater-cli) (jar)
-* [dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
+* [Library](yaml-config-updater) through API
+* [Command line util](yaml-config-updater-cli) (jar)
+* [Dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
 
 Read exact module's readme for setup instructions.
 
