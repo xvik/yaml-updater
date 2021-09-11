@@ -14,6 +14,8 @@ updates.
 By default, targets the most common use-case: add all new properties, without removing or changing existing values.
 Lists not merged because list is a value and all current values must remain.
 
+[Introduction article](https://blog.vyarus.ru/yaml-confg-migration-tool)
+
 Comments preserved using custom (simple) yaml parser. [Snakeyaml](https://bitbucket.org/asomov/snakeyaml/wiki/Documentation) 
 parser used for source files validation, comments parser self-validation (compares parse trees)
 and result validation.
