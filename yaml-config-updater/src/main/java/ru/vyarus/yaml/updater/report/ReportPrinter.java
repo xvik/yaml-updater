@@ -64,7 +64,7 @@ public final class ReportPrinter {
             printSize(report.getBeforeSize(), report.getBeforeLinesCnt(), out);
             out.append(")\n");
         } else {
-            out.append("Not exising configuration: ").append(report.getConfig().getAbsolutePath()).append('\n');
+            out.append("Not existing configuration: ").append(report.getConfig().getAbsolutePath()).append('\n');
         }
 
         out.append("Updated from source of ");
