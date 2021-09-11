@@ -71,19 +71,19 @@ use `-d` flag (or `--delete-path=`).
 For example, to remove `list` sub-tree under `prop1`:
 
 ```
-java -jar yaml-config-updater-cli.jar -d prop1.list config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -d prop1.list
 ```
 
 You can specify multiple properties:
 
 ```
-java -jar yaml-config-updater-cli.jar -d prop1.list prop2 config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -d prop1.list prop2 
 ```
 
 For full flag name:
 
 ```
-java -jar yaml-config-updater-cli.jar --delete-path=prop1.list --delete-path=prop2 config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml --delete-path=prop1.list --delete-path=prop2
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -93,7 +93,7 @@ NOTE: you can use both '.' and '/' as level separator ('/' is useful when proper
 To [specify environment variables](../yaml-config-updater#env-vars) use `-e` (or `--env=`):
 
 ```
-java -jar yaml-config-updater-cli.jar -e name=foo config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -e name=foo
 ```
 
 If update.yaml contains:
@@ -113,13 +113,13 @@ NOTE: not specified variables are not replaced!
 Multiple variables:
 
 ```
-java -jar yaml-config-updater-cli.jar -e name=foo var2=other config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -e name=foo var2=other
 ```
 
 Other syntax:
 
 ```
-java -jar yaml-config-updater-cli.jar --env=name=foo --env=var2=other config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml --env=name=foo --env=var2=other
 ```
 
 ##### Defaults
@@ -139,17 +139,17 @@ var2=other
 ```
 
 ```
-java -jar yaml-config-updater-cli.jar -e vars.properties config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -e vars.properties
 ```
 
 Multiple files could be declared. Files and direct variables declaration could be mixed:
 
 ```
-java -jar yaml-config-updater-cli.jar -e vars.properties custom=name config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -e vars.properties custom=name
 ```
 
 Variables file could be an url (same as with update file):
 
 ```
-java -jar yaml-config-updater-cli.jar -e http://mydomian.com/vars.properties config.yml update.yml
+java -jar yaml-config-updater-cli.jar config.yml update.yml -e http://mydomian.com/vars.properties
 ```

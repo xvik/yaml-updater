@@ -92,19 +92,19 @@ use `-d` flag (or `--delete-path=`).
 For example, to remove `list` sub-tree under `prop1`:
 
 ```
-java -jar yourApp.jar update-config -d prop1.list config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -d prop1.list
 ```
 
 You can specify multiple properties:
 
 ```
-java -jar yourApp.jar update-config -d prop1.list prop2 config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -d prop1.list prop2
 ```
 
 For full flag name:
 
 ```
-java -jar yourApp.jar update-config --delete-path prop1.list prop2 config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml --delete-path prop1.list prop2
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -114,7 +114,7 @@ NOTE: you can use both '.' and '/' as level separator ('/' is useful when proper
 To [specify environment variables](../yaml-config-updater#env-vars) use `-e` (or `--env=`):
 
 ```
-java -jar yourApp.jar update-config -e name=foo config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -e name=foo
 ```
 
 If update.yaml contains:
@@ -134,13 +134,13 @@ NOTE: not specified variables are not replaced!
 Multiple variables:
 
 ```
-java -jar yourApp.jar update-config -e name=foo var2=other config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -e name=foo var2=other
 ```
 
 Other syntax:
 
 ```
-java -jar yourApp.jar update-config --env name=foo var2=other config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml --env name=foo var2=other
 ```
 
 ##### Defaults
@@ -160,17 +160,17 @@ var2=other
 ```
 
 ```
-java -jar yourApp.jar update-config -e vars.properties config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -e vars.properties
 ```
 
 Multiple files could be declared. Files and direct variable declaration could be mixed:
 
 ```
-java -jar yourApp.jar update-config -e vars.properties custom=name config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -e vars.properties custom=name
 ```
 
 Variables file could be an url or classpath path (same as with update file):
 
 ```
-java -jar yourApp.jar update-config -e http://mydomian.com/vars.properties config.yml update.yml
+java -jar yourApp.jar update-config config.yml update.yml -e http://mydomian.com/vars.properties
 ```
