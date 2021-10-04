@@ -83,7 +83,7 @@ sublist:
         tree.toString() == """simple: 'value with multiple lines (flow)'
 quoted: 'value with multiple lines'
 quoted2: 'value with multiple lines'
-include_newlines: 'exactly as you see\\nwill appear these three\\nlines of poetry\\n'
+include_newlines: 'exactly as you see\\nwill appear these three\\nlines of poetry\\n \\n'
 middle_newlines: 'exactly as you see\\nwill appear these three\\n\\nlines of poetry\\n'
 fold_newlines: 'this is really a single line of text\\ndespite appearances\\n'
 ignore_ind: 'this is really a single line of text despite appearances'

@@ -1,3 +1,6 @@
+* Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
+* Fix detection of sequence ([]) and raw object ({}) in list value (don't try to search property in it)
+
 ### 1.1.0 (2021-08-31)
 * [api]
   - Add update report object (returned after update call)

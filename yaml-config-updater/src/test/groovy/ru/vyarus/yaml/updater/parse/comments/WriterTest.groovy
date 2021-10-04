@@ -28,5 +28,6 @@ class WriterTest extends AbstractTest {
         'multiline.yml' | _
         'lists.yml'     | _
         'complex.yml'   | _
+        'sequences.yml' | _
     }
 }

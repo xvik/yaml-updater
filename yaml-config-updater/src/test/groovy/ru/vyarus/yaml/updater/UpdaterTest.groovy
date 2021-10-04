@@ -324,6 +324,7 @@ simple_list:
   - one
   # comment
   - three
+
 # new comment appear
 object:
   - one: 1
@@ -379,7 +380,7 @@ sublist:
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 41 lines)
 Updated from source of 686 bytes, 71 lines
-Resulted in 301 bytes, 56 lines
+Resulted in 301 bytes, 57 lines
 
 \tAdded from new file:
 \t\tobject[0]/two                            17 | two: 2
@@ -422,7 +423,6 @@ simple_list:
   - 'prop: like'
   - multiline
     property
-
 
 object:
   - one: 1
@@ -487,7 +487,7 @@ sublist:
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
 Updated from source of 324 bytes, 41 lines
-Resulted in 301 bytes, 72 lines
+Resulted in 301 bytes, 71 lines
 
 \tAdded from new file:
 \t\tempty[0]/three                           28 | three: 3

@@ -38,24 +38,33 @@ prop3: '3'
 
         then: "parsed"
         tree.children.size() == 13
-        tree.toString() == """simple: value 3 lines
-quoted: value 3 lines
-quoted2: value 3 lines
-include_newlines: value 6 lines
-middle_newlines: value 7 lines
+        tree.toString() == """simple: value 2 lines
 # comment
-fold_newlines: value 6 lines
-ignore_ind: value 5 lines
+quoted: value 2 lines
+# comment
+quoted2: value 2 lines
+# comment
+include_newlines: value 5 lines
+# comment
+middle_newlines: value 5 lines
+# comment 3 lines
+fold_newlines: value 5 lines
+# comment
+ignore_ind: value 4 lines
+# comment
 append_ind: value 5 lines
-custom_indent: value 6 lines
+custom_indent: value 4 lines
+# comment 3 lines
+custom_indent2: value 4 lines
 # comment
-custom_indent2: value 5 lines
 object: ''
-  sub: value 4 lines
+  sub: value 3 lines
+# comment
 list: ''
   - value 2 lines
   - obj: value 2 lines
-  - ob2: value 4 lines
+  - ob2: value 3 lines
+# comment
 flow: value 3 lines
 """
     }
@@ -74,7 +83,8 @@ flow: value 3 lines
   # comment
   - 'three'
   - ''prop: like''
-  - value 3 lines
+  - value 2 lines
+# comment
 object: ''
   - one: '1'
     two: '2'
@@ -139,5 +149,35 @@ one:
         then: "parse error"
         def ex = thrown(IllegalStateException)
         ex.message == "Failed to read yaml string"
+    }
+
+
+    def "Check sequence values"() {
+        when: "parsing file"
+        CmtTree tree = CommentsReader.read(new File(getClass().getResource('/common/sequences.yml').toURI()))
+
+        then: "parsed"
+        tree.children.size() == 8
+        // NOTE double quotes are ok below because value was in quotes and outer quotes are "technical"
+        tree.toString() == """line: '[1, 2, 4]'
+# comment
+multiLine: value 2 lines
+# comment
+empty: '[]'
+# comment
+object: '{ one: 1, two: 2 }'
+# comment
+multiObject: value 2 lines
+# comment
+emptyObj: '{}'
+# comment
+listOfArr: ''
+    - '[1, 2]'
+    - '[]'
+# comment
+listOfObj: ''
+    - '{ one: 1, two: 3 }'
+    - '{}'
+"""
     }
 }
