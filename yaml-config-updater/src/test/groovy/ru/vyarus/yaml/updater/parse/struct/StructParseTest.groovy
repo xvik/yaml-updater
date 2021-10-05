@@ -99,4 +99,26 @@ list:
 flow: 'something before whitespace\\nsomething after whitespace'
 """
     }
+
+    def "Check sequences parse"() {
+
+        when: "parsing"
+        StructTree tree = StructureReader.read(new File(getClass().getResource('/common/sequences.yml').toURI()))
+
+        then: "ok"
+        tree.children.size() == 8
+        tree.toString() == """line: '[1, 2, 4]'
+multiLine: '[1, 2, 3, 4]'
+empty: '[]'
+object: '{one: 1, two: 2}'
+multiObject: '{one: 1, two: 2}'
+emptyObj: '{}'
+listOfArr: 
+    - '[1, 2]'
+    - '[]'
+listOfObj: 
+    - '{one: 1, two: 3}'
+    - '{}'
+"""
+    }
 }

@@ -1,6 +1,6 @@
 line: [1, 2, 4]
 
-multiLine: [1, 2
+multiLine: [1, 2,
     3, 4]
 
 empty: []

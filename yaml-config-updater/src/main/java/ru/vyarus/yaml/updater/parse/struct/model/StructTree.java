@@ -50,7 +50,7 @@ public class StructTree extends TreeRoot<StructNode> {
             if (val.length() > MAX_VAL_LENGTH) {
                 val = val.substring(0, MAX_VAL_LENGTH) + "...";
             }
-            // value identified with quotes to avoid umbiquity whe value looks like property
+            // value identified with quotes to avoid ubiquity whe value looks like property
             out.append(val).append('\'');
         }
         // for objects in list node virtual node created, splitting line into two objects (if no empty dash used)

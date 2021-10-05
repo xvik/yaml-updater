@@ -1,6 +1,8 @@
 package ru.vyarus.yaml.updater.parse.struct;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.CollectionNode;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -72,8 +75,17 @@ public final class StructureReader {
     }
 
     private static void processNode(final Node node, final Context context) {
-        if (node instanceof MappingNode) {
-            for (NodeTuple tuple : ((MappingNode) node).getValue()) {
+        if (node instanceof CollectionNode
+                && DumperOptions.FlowStyle.FLOW.equals(((CollectionNode<?>) node).getFlowStyle())) {
+            // special case when object declared in FLOW style: {one: 1, two: 2} or [1, 2, 3]
+            // in this case assuming entire object as single value - mapping it to string
+            context.current.setValue(parseFlowObject((CollectionNode<?>) node));
+            // lists items might be considered as objects, which is not the case
+            context.current.setListItemWithProperty(false);
+        } else if (node instanceof MappingNode) {
+            final MappingNode container = (MappingNode) node;
+
+            for (NodeTuple tuple : container.getValue()) {
                 if (!(tuple.getKeyNode() instanceof ScalarNode)) {
                     throw new IllegalStateException("Unsupported key node type " + tuple.getKeyNode()
                             + " in tuple " + tuple);
@@ -96,6 +108,13 @@ public final class StructureReader {
         } else {
             throw new IllegalStateException("Unsupported node type: " + node);
         }
+    }
+
+    private static String parseFlowObject(final CollectionNode<?> node) {
+        final StringWriter out = new StringWriter();
+        new Yaml().serialize(node, out);
+        // trim cut's off trailing newline
+        return out.toString().trim();
     }
 
     private static void processSequence(final SequenceNode node, final Context context) {

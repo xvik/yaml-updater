@@ -1,5 +1,6 @@
 * Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
-* Fix detection of sequence ([]) and raw object ({}) in list value (don't try to search property in it)
+* Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
+   such objects considered as single value and not parsed.
 
 ### 1.1.0 (2021-08-31)
 * [api]
