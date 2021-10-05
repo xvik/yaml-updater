@@ -1,0 +1,27 @@
+line: [1, 2]
+
+multiLine: [1, 2,
+            3]
+
+empty: [1]
+
+object: { one: 1}
+
+multiObject: {
+               two: 2 }
+
+emptyObj: {o: 1}
+
+listOfArr:
+  - [1]
+  - [2]
+  - []
+
+listOfObj:
+  - { one: 1}
+  - { two: 3 }
+  - {}
+
+addition: [2, 3]
+
+addition2: {t: t}
