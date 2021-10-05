@@ -13,7 +13,6 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ import java.util.List;
 public final class CommentsReader {
 
     // assume explicit sequence and object notion as non parsable (keep and store as-is)
-    public static final List<Character> VALUE_BOUNDARY_START = Arrays.asList('\'', '"', '{', '[');
+    private static final List<Character> VALUE_BOUNDARY_START = Arrays.asList('\'', '"', '{', '[');
 
     private CommentsReader() {
     }
@@ -252,6 +251,7 @@ public final class CommentsReader {
             }
         }
 
+        @SuppressWarnings("PMD.InefficientEmptyStringCheck")
         public boolean detectMultilineValue(final int padding, final boolean whitespaceOnly, final String line) {
             if (multiline != null && (whitespaceOnly || multiline.indent <= padding)) {
                 current.getValue().add(line);
@@ -268,15 +268,15 @@ public final class CommentsReader {
                 if (multiline.ending != 1) {
                     // in all other cases, whitespace lines must be re-considered as comments
                     final List<String> lines = current.getValue();
-                    for(int i = lines.size() - 1; i > 0; i--) {
+                    for (int i = lines.size() - 1; i > 0; i--) {
                         final String ln = lines.get(i);
                         // detaching empty ending line (but only with lesser indent)
                         if (ln.trim().isEmpty() && ln.length() < multiline.indent) {
                             // insert at 0 because we go backward
                             comments.add(0, lines.remove(i));
-                            continue;
+                        } else {
+                            break;
                         }
-                        break;
                     }
                 }
 
