@@ -4,6 +4,8 @@
      such objects considered as single value and not parsed.
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
     Suitable for migration tests.
+* [dropwizard]
+  - Add --dry-run option for update simulation. Prints merged config to console.
 
 ### 1.1.0 (2021-08-31)
 * [api]

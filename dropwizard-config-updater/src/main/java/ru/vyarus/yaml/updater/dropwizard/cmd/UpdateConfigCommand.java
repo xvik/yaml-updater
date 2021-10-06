@@ -79,6 +79,12 @@ public class UpdateConfigCommand extends Command {
                 .action(Arguments.storeTrue())
                 .setDefault(false)
                 .help("Show debug logs");
+
+        subparser.addArgument("--dry-run")
+                .dest("dryrun")
+                .action(Arguments.storeTrue())
+                .setDefault(false)
+                .help("Test run without file modification");
     }
 
     @Override
@@ -91,6 +97,7 @@ public class UpdateConfigCommand extends Command {
         final List<String> delete = namespace.getList("delete");
         final Map<String, String> env = prepareEnv(namespace.getList("env"));
         final boolean verbose = namespace.get("verbose");
+        final boolean dryrun = namespace.get("dryrun");
 
         // logging is configured to WARN level by default, use direct output instead
         System.out.println("Updating configuration: " + current.getAbsolutePath());
@@ -104,9 +111,18 @@ public class UpdateConfigCommand extends Command {
                 .deleteProps(delete != null ? delete.toArray(new String[]{}) : null)
                 .validateResult(validate)
                 .envVars(env)
+                .dryRun(dryrun)
                 .update();
 
         System.out.println("\n" + ReportPrinter.print(report));
+
+        if (dryrun && report.isConfigChanged()) {
+            System.out.println("\n---------------------------------------------------------- \n"
+                    + "   Merged configuration (NOT SAVED): \n"
+                    + "---------------------------------------------------------- \n\n"
+                    + report.getDryRunResult() + "\n\n"
+                    + "---------------------------------------------------------- \n\n");
+        }
     }
 
     private InputStream prepareTargetFile(final String path) {
