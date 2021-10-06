@@ -64,11 +64,15 @@ public class UpdateConfigCli implements Callable<Void> {
             description = "Show debug logs")
     private boolean verbose;
 
+    @Option(names = "--dry-run", paramLabel = "DRYRUN",
+            description = "Test run without file modification")
+    private boolean dryrun;
+
     @Spec
     private CommandSpec spec;
 
     @Override
-    @SuppressWarnings("PMD.SystemPrintln")
+    @SuppressWarnings({"PMD.SystemPrintln", "checkstyle:MultipleStringLiterals"})
     public Void call() throws Exception {
         final InputStream target = resoleFile(update, "update");
         final Map<String, String> env = prepareEnv();
@@ -82,9 +86,18 @@ public class UpdateConfigCli implements Callable<Void> {
                 .deleteProps(removePaths != null ? removePaths.toArray(new String[0]) : null)
                 .validateResult(!valid)
                 .envVars(env)
+                .dryRun(dryrun)
                 .update();
 
         System.out.println("\n" + ReportPrinter.print(report));
+
+        if (dryrun && report.isConfigChanged()) {
+            System.out.println("\n---------------------------------------------------------- \n"
+                    + "   Merged configuration (NOT SAVED): \n"
+                    + "---------------------------------------------------------- \n\n"
+                    + report.getDryRunResult() + "\n\n"
+                    + "---------------------------------------------------------- \n\n");
+        }
 
         return null;
     }
