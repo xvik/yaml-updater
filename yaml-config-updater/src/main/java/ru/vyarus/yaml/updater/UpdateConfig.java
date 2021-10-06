@@ -38,6 +38,7 @@ public final class UpdateConfig {
     private Map<String, String> env = Collections.emptyMap();
     private boolean validateResult = true;
     private UpdateListener listener;
+    private boolean dryRun;
 
     private UpdateConfig() {
     }
@@ -111,6 +112,13 @@ public final class UpdateConfig {
      */
     public UpdateListener getListener() {
         return listener;
+    }
+
+    /**
+     * @return true if configuration should not be modified (test run), false for normal execution
+     */
+    public boolean isDryRun() {
+        return dryRun;
     }
 
     /**
@@ -208,6 +216,18 @@ public final class UpdateConfig {
             if (listener != null) {
                 config.listener = listener;
             }
+            return this;
+        }
+
+        /**
+         * Test execution - performs complete update, but did not override existing file. Useful for validations
+         * (in tests or with CLI to make sure upgrade would be successful).
+         * 
+         * @param dryRun true to not perform any modifications (test run)
+         * @return builder instance for chained calls
+         */
+        public Configurator dryRun(final boolean dryRun) {
+            config.dryRun = dryRun;
             return this;
         }
 

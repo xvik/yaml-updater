@@ -296,9 +296,18 @@ public class YamlUpdater {
     }
 
     private void backupAndReplace() throws IOException {
-        // on first installation no need to backup
-        final File current = config.getCurrent();
-        if (isConfigChanged()) {
+        final boolean configChanged = isConfigChanged();
+        report.setConfigChanged(configChanged);
+        if (config.isDryRun()) {
+            report.setDryRun(true);
+            // store entire merged file content for manual validation (in tests) because it disappears otherwise
+            report.setDryRunResult(String.join(System.lineSeparator(), Files.readAllLines(work.toPath())));
+            logger.warn("DRY RUN: no modifications performed (changes detected: {})", configChanged);
+            return;
+        }
+        if (configChanged) {
+            final File current = config.getCurrent();
+            // on first installation no need to backup
             if (config.isBackup() && current.exists()) {
                 final Path backup = Paths.get(current.getAbsolutePath()
                         + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
@@ -310,7 +319,6 @@ public class YamlUpdater {
 
             Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);
             logger.info("Configuration updated: {}", current.getAbsolutePath());
-            report.setConfigChanged(true);
         } else {
             logger.warn("Configuration not changed (no need to update)");
         }

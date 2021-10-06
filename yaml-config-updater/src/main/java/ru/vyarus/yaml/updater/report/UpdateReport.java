@@ -35,14 +35,27 @@ public class UpdateReport {
     private boolean configChanged;
     private File backup;
 
+    // dummy execution
+    private boolean dryRun;
+    // complete updated file config (populated only in dry run)
+    private String dryRunResult;
+
     public UpdateReport(final File config) {
         this.config = config;
     }
 
+    /**
+     * @return updating configuration file
+     */
     public File getConfig() {
         return config;
     }
 
+    /**
+     * NOTE: size obtained as {@link java.io.File#length()} and may be slightly different on different OS.
+     *
+     * @return original file size
+     */
     public long getBeforeSize() {
         return beforeSize;
     }
@@ -51,6 +64,9 @@ public class UpdateReport {
         this.beforeSize = beforeSize;
     }
 
+    /**
+     * @return original file lines count
+     */
     public int getBeforeLinesCnt() {
         return beforeLinesCnt;
     }
@@ -59,6 +75,11 @@ public class UpdateReport {
         this.beforeLinesCnt = beforeLinesCnt;
     }
 
+    /**
+     * NOTE: size obtained as {@link java.io.File#length()} and may be slightly different on different OS.
+     *
+     * @return merged file size
+     */
     public long getAfterSize() {
         return afterSize;
     }
@@ -67,6 +88,9 @@ public class UpdateReport {
         this.afterSize = afterSize;
     }
 
+    /**
+     * @return merged file lines count
+     */
     public int getAfterLinesCnt() {
         return afterLinesCnt;
     }
@@ -75,6 +99,13 @@ public class UpdateReport {
         this.afterLinesCnt = afterLinesCnt;
     }
 
+    /**
+     * NOTE: updating file read as stream and trimmed so size may be a bit less the original file due to
+     * whitespace trimming. That's why even when merging the same files, sizes could be different (due to size
+     * obtaining difference and update file trimming).
+     *
+     * @return updating file size
+     */
     public long getUpdateSize() {
         return updateSize;
     }
@@ -83,6 +114,12 @@ public class UpdateReport {
         this.updateSize = updateSize;
     }
 
+    /**
+     * NOTE: updating file read as stream and trimmed so lines count may be less the original file due to
+     * whitespace trimming.
+     *
+     * @return update file lines count
+     */
     public int getUpdateLines() {
         return updateLines;
     }
@@ -91,14 +128,23 @@ public class UpdateReport {
         this.updateLines = updateLines;
     }
 
+    /**
+     * @return variables replaced in update file
+     */
     public Map<String, String> getAppliedVariables() {
         return appliedVariables;
     }
 
+    /**
+     * @return removed properties or empty list
+     */
     public List<Pair> getRemoved() {
         return removed;
     }
 
+    /**
+     * @return added properties or empty list
+     */
     public List<Pair> getAdded() {
         return added;
     }
@@ -111,6 +157,14 @@ public class UpdateReport {
         added.add(formatPair(node));
     }
 
+    /**
+     * If merged file content is identical to the original file (ignoring leading/trailing whitespaces) then original
+     * file is not touched.
+     * <p>
+     * NOTE: in dry run would correctly indicate if file is changed
+     *
+     * @return true if configuration file was changed
+     */
     public boolean isConfigChanged() {
         return configChanged;
     }
@@ -119,12 +173,45 @@ public class UpdateReport {
         this.configChanged = configChanged;
     }
 
+    /**
+     * NOTE: in dry run always return null.
+     *
+     * @return created backup file or null if backup not created
+     */
     public File getBackup() {
         return backup;
     }
 
     public void setBackup(final File backup) {
         this.backup = backup;
+    }
+
+    /**
+     * Changed configuration could be obtained with {@link #getDryRunResult()} (because otherwise it is not stored
+     * anywhere).
+     *
+     * @return true if execution without modifications performed (config will not be changed)
+     */
+    public boolean isDryRun() {
+        return dryRun;
+    }
+
+    public void setDryRun(final boolean dryRun) {
+        this.dryRun = dryRun;
+    }
+
+    /**
+     * NOTE: set ONLY for dry run ({@link #isDryRun()}), in normal execution you can always read updated file content
+     * (in dry run content is not saved).
+     *
+     * @return complete update file text
+     */
+    public String getDryRunResult() {
+        return dryRunResult;
+    }
+
+    public void setDryRunResult(final String dryRunResult) {
+        this.dryRunResult = dryRunResult;
     }
 
     private Pair formatPair(final CmtNode node) {
@@ -144,10 +231,16 @@ public class UpdateReport {
             this.value = value;
         }
 
+        /**
+         * @return property yaml path
+         */
         public String getPath() {
             return path;
         }
 
+        /**
+         * @return property value representation
+         */
         public String getValue() {
             return value;
         }

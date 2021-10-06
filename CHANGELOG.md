@@ -1,6 +1,9 @@
-* Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
-* Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
-   such objects considered as single value and not parsed.
+* [api]
+  - Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
+  - Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
+     such objects considered as single value and not parsed.
+  - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
+    Suitable for migration tests.
 
 ### 1.1.0 (2021-08-31)
 * [api]
