@@ -110,7 +110,7 @@ public class UpdateConfigCommand extends Command {
                 .backup(backup)
                 .deleteProps(delete != null ? delete.toArray(new String[]{}) : null)
                 .validateResult(validate)
-                .envVars(env)
+                .vars(env)
                 .dryRun(dryrun)
                 .update();
 

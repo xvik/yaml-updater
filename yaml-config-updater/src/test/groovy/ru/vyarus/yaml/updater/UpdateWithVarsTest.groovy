@@ -19,7 +19,7 @@ class UpdateWithVarsTest extends AbstractTest {
         Files.copy(new File(getClass().getResource('/merge/simple_vars.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
         when: "merging"
-        def report= YamlUpdater.create(current, update).backup(false).envVars(['var': '4']).update()
+        def report= YamlUpdater.create(current, update).backup(false).vars(['var': '4']).update()
 
         then: "updated"
         unifyString(current.text) == """# something

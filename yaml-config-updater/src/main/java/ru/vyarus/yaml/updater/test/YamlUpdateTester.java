@@ -86,7 +86,7 @@ public final class YamlUpdateTester {
      * @param name  variable name
      * @param value variable value
      * @return tester instance for chained calls
-     * @see ru.vyarus.yaml.updater.UpdateConfig.Configurator#envVars(java.util.Map)
+     * @see ru.vyarus.yaml.updater.UpdateConfig.Configurator#vars(java.util.Map)
      */
     @SuppressWarnings("checkstyle:IllegalIdentifierName")
     public YamlUpdateTester var(final String name, final String value) {
@@ -99,7 +99,7 @@ public final class YamlUpdateTester {
      *
      * @param vars variables map (may be null)
      * @return tester instance for chained calls
-     * @see ru.vyarus.yaml.updater.UpdateConfig.Configurator#envVars(java.util.Map)
+     * @see ru.vyarus.yaml.updater.UpdateConfig.Configurator#vars(java.util.Map)
      */
     public YamlUpdateTester vars(final Map<String, String> vars) {
         if (vars != null) {
@@ -155,7 +155,7 @@ public final class YamlUpdateTester {
     public UpdateReport execute() {
         try {
             final UpdateReport report = YamlUpdater.create(config, update)
-                    .envVars(envVars)
+                    .vars(envVars)
                     .dryRun(true)
                     .validateResult(validate)
                     .listen(listener)

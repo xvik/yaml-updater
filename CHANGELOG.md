@@ -4,6 +4,10 @@
      such objects considered as single value and not parsed.
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
     Suitable for migration tests.
+  - Builder:
+    * Delete props and variables methods may be called multiple times (values aggregated)
+    * Deprecated envVars: use vars instead
+    * Add var method to simplify single variable declaration
 * [dropwizard]
   - Add --dry-run option for update simulation. Prints merged config to console.
 * [cli]

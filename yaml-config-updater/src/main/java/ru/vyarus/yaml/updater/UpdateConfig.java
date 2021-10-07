@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,9 +34,9 @@ public final class UpdateConfig {
     private boolean backup;
     // not File type to allow loading from classpath (jar) or any other location
     private String update;
-    private List<String> deleteProps = Collections.emptyList();
+    private final List<String> deleteProps = new ArrayList<>();
     // variables to apply to fresh config placeholders (adopt config to exact environment)
-    private Map<String, String> env = Collections.emptyMap();
+    private final Map<String, String> env = new HashMap<>();
     private boolean validateResult = true;
     private UpdateListener listener;
     private boolean dryRun;
@@ -165,14 +166,28 @@ public final class UpdateConfig {
          *      - foo: 1
          *        bar: 2
          * </pre>
+         * <p>
+         * Method may be called multiple times.
          *
          * @param deleteProps yaml paths to delete in the old file (would be replaced with props from new file;
          *                    null ignored)
          * @return builder instance for chained calls
          */
         public Configurator deleteProps(final String... deleteProps) {
+            return deleteProps != null ? deleteProps(Arrays.asList(deleteProps)) : this;
+        }
+
+        /**
+         * Properties paths to delete in current file. Method may be called multiple times.
+         *
+         * @param deleteProps yaml paths to delete in the old file (would be replaced with props from new file;
+         *                    null ignored)
+         * @return builder instance for chained calls
+         * @see #deleteProps(String...)
+         */
+        public Configurator deleteProps(final List<String> deleteProps) {
             if (deleteProps != null) {
-                config.deleteProps = Arrays.asList(deleteProps);
+                config.deleteProps.addAll(deleteProps);
             }
             return this;
         }
@@ -192,14 +207,43 @@ public final class UpdateConfig {
 
         /**
          * Variables use special syntax {@code #{name}} because with it yaml file still remains valid (variable treated
-         * as comment).
+         * as comment). Method may be called multiple times.
+         *
+         * @param env variables to replace in updating file (null ignored)
+         * @return builder instance for chained calls
+         * @deprecated use {@link #vars(java.util.Map)} instead
+         */
+        @Deprecated
+        public Configurator envVars(final Map<String, String> env) {
+            return vars(env);
+        }
+
+        /**
+         * Variables use special syntax {@code #{name}} because with it yaml file still remains valid (variable treated
+         * as comment). Method may be called multiple times.
          *
          * @param env variables to replace in updating file (null ignored)
          * @return builder instance for chained calls
          */
-        public Configurator envVars(final Map<String, String> env) {
+        public Configurator vars(final Map<String, String> env) {
             if (env != null) {
-                config.env = env;
+                config.env.putAll(env);
+            }
+            return this;
+        }
+
+        /**
+         * Adds variable for source config substitution. May be called multiple times.
+         *
+         * @param name  variable name
+         * @param value variable value
+         * @return builder instance for chained calls
+         * @see #vars(java.util.Map)
+         */
+        @SuppressWarnings("checkstyle:IllegalIdentifierName")
+        public Configurator var(final String name, final String value) {
+            if (name != null) {
+                config.env.put(name, value);
             }
             return this;
         }
@@ -222,7 +266,7 @@ public final class UpdateConfig {
         /**
          * Test execution - performs complete update, but did not override existing file. Useful for validations
          * (in tests or with CLI to make sure upgrade would be successful).
-         * 
+         *
          * @param dryRun true to not perform any modifications (test run)
          * @return builder instance for chained calls
          */

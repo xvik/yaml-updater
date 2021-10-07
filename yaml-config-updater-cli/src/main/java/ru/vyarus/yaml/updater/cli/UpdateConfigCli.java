@@ -85,7 +85,7 @@ public class UpdateConfigCli implements Callable<Void> {
                 .backup(!backup)
                 .deleteProps(removePaths != null ? removePaths.toArray(new String[0]) : null)
                 .validateResult(!valid)
-                .envVars(env)
+                .vars(env)
                 .dryRun(dryrun)
                 .update();
 
