@@ -12,6 +12,7 @@ import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
 import ru.vyarus.yaml.updater.report.UpdateReport;
+import ru.vyarus.yaml.updater.test.TestConfigurator;
 import ru.vyarus.yaml.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.updater.update.EnvSupport;
 import ru.vyarus.yaml.updater.update.TreeMerger;
@@ -85,7 +86,7 @@ public class YamlUpdater {
 
     private final UpdateReport report;
 
-    YamlUpdater(final UpdateConfig config) {
+    public YamlUpdater(final UpdateConfig config) {
         this.config = config;
         this.report = new UpdateReport(config.getCurrent());
     }
@@ -115,11 +116,38 @@ public class YamlUpdater {
      * @param update  update file content
      * @return builder instance for chained calls
      * @see #create(File, File) shortcut for direct file case (most common)
+     * @see ru.vyarus.yaml.updater.util.FileUtils#findExistingFile(String) for loading file from classpath or url
      */
     public static UpdateConfig.Configurator create(final File current, final InputStream update) {
-        return UpdateConfig.configureUpdate(current, update);
+        return new UpdateConfig.Configurator(current, update);
     }
 
+    /**
+     * Special factory for testing file migrations (WITHOUT actual modifications). Essentially, it is pre-configured
+     * {@link ru.vyarus.yaml.updater.UpdateConfig.Configurator#dryRun(boolean)}, but with additional reporting options.
+     * <p>
+     * In contrast to main factory, this one directly support loading files from fs, classpath or URL. In most cases,
+     * it is assumed to be used for testing configuration migration in unit tests (assuming both old and new configs
+     * are placed in classpath). It would implicitly create tmp file and copy provided config there to match main
+     * contract (tmp file would be mostly hidden in the final report).
+     * <p>
+     * Note that in dry run, merged file content is stored as
+     * {@link ru.vyarus.yaml.updater.report.UpdateReport#getDryRunResult()} and so could be manually introspected.
+     *
+     * @param config updating config path (fs, classpath or url)
+     * @param target target config path (fs, classpath or url)
+     * @return test configurator instance for chained calls
+     */
+    public static TestConfigurator test(final String config, final String target) {
+        return new TestConfigurator(config, target);
+    }
+
+    /**
+     * Perform configuration migration.
+     *
+     * @return update report object with migration details
+     * @see ru.vyarus.yaml.updater.report.ReportPrinter for default report formatter
+     */
     public UpdateReport execute() {
         try {
             prepareNewConfig();

@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -120,6 +121,18 @@ public final class FileUtils {
         } catch (IOException ex) {
             throw new IllegalStateException("Failed to create temp file", ex);
         }
+    }
+
+    /**
+     * Loads properties file from fs, classpath or url (see {@link #findFile(String)}) as map of values.
+     *
+     * @param path fs file path, classpath or file url
+     * @return loader properties map or empty map if file not found
+     */
+    public static Map<String, String> loadProperties(final String path) {
+        final Map<String, String> out = new HashMap<>();
+        loadProperties(path, out);
+        return out;
     }
 
     /**

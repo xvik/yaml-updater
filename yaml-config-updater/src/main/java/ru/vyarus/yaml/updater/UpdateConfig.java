@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass")
 public final class UpdateConfig {
 
     private File current;
@@ -35,18 +36,10 @@ public final class UpdateConfig {
     private UpdateListener listener;
     private boolean dryRun;
 
-    private UpdateConfig() {
-    }
-
     /**
-     * Yaml updater configurator.
-     *
-     * @param current current configuration file
-     * @param update  update file
-     * @return builder for config construction
+     * Instance created through the {@link ru.vyarus.yaml.updater.UpdateConfig.Configurator} instance.
      */
-    public static Configurator configureUpdate(final File current, final InputStream update) {
-        return new Configurator(current, update);
+    private UpdateConfig() {
     }
 
     /**
@@ -117,12 +110,19 @@ public final class UpdateConfig {
     }
 
     /**
-     * Updater configurator.
+     * Updater configurator. Class might be extended to extend functionality
+     * (see {@link ru.vyarus.yaml.updater.test.TestConfigurator} as example).
      */
-    public static final class Configurator {
-        private final UpdateConfig config = new UpdateConfig();
+    public static class Configurator {
+        protected final UpdateConfig config = new UpdateConfig();
 
-        private Configurator(final File current, final InputStream update) {
+        /**
+         * Yaml updater configurator.
+         *
+         * @param current current configuration file
+         * @param update  update file stream
+         */
+        public Configurator(final File current, final InputStream update) {
             if (current == null) {
                 throw new IllegalArgumentException("Current config file not specified");
             }
@@ -217,10 +217,26 @@ public final class UpdateConfig {
          *
          * @param env variables to replace in updating file (null ignored)
          * @return builder instance for chained calls
+         * @see ru.vyarus.yaml.updater.util.FileUtils#loadProperties(String) for loading
          */
         public Configurator vars(final Map<String, String> env) {
             if (env != null) {
                 config.env.putAll(env);
+            }
+            return this;
+        }
+
+        /**
+         * Load variables (see {@link #vars(java.util.Map)}) from properties file.
+         * May be called multiple times.
+         *
+         * @param path           fs file path, classpath or file url
+         * @param failIfNotFound true to fail when file not found, false to bypass
+         * @return builder instance for chained calls
+         */
+        public Configurator varsFile(final String path, final boolean failIfNotFound) {
+            if (!FileUtils.loadProperties(path, config.env) && failIfNotFound) {
+                throw new IllegalArgumentException("Variables file not found: " + path);
             }
             return this;
         }

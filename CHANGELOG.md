@@ -1,14 +1,18 @@
 * [api]
   - Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
   - Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
-     such objects considered as single value and not parsed.
+     such objects considered as single value and not parsed (taken as strings in both parsers).
   - Fix update file size and lines count calculation (no trim anymore; affects cli tools report)
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
-    Suitable for migration tests.
+     Suitable for migration tests.
+  - Add YamlUpdater.test(String, String) builder for test runs: pre-configures dry run, allows direct usage of 
+     classpath or url configs and prints report and migrated file (could be disabled).
+     Assumed to be used for production config migration validation in tests.
   - Builder:
     * Delete props and variables methods may be called multiple times (values aggregated)
     * Deprecated envVars: use vars instead
     * Add var method to simplify single variable declaration
+    * Add varFile method to simplify loading properties file from fs, classpath or url
 * [dropwizard]
   - Add --dry-run option for update simulation. Prints merged config to console.
 * [cli]
