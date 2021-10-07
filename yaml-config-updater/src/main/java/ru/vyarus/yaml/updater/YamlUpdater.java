@@ -12,7 +12,8 @@ import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
 import ru.vyarus.yaml.updater.report.UpdateReport;
-import ru.vyarus.yaml.updater.test.TestConfigurator;
+import ru.vyarus.yaml.updater.profile.ProdConfigurator;
+import ru.vyarus.yaml.updater.profile.TestConfigurator;
 import ru.vyarus.yaml.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.updater.update.EnvSupport;
 import ru.vyarus.yaml.updater.update.TreeMerger;
@@ -72,6 +73,7 @@ import java.util.Locale;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class YamlUpdater {
     private final Logger logger = LoggerFactory.getLogger(YamlUpdater.class);
 
@@ -98,7 +100,7 @@ public class YamlUpdater {
      * @param update  update file
      * @return builder instance for chained calls
      */
-    public static UpdateConfig.Configurator<UpdateConfig.Configurator> create(final File current, final File update) {
+    public static ProdConfigurator create(final File current, final File update) {
         try {
             return create(current, update != null ? Files.newInputStream(update.toPath()) : null);
         } catch (Exception e) {
@@ -118,9 +120,9 @@ public class YamlUpdater {
      * @see #create(File, File) shortcut for direct file case (most common)
      * @see ru.vyarus.yaml.updater.util.FileUtils#findExistingFile(String) for loading file from classpath or url
      */
-    public static UpdateConfig.Configurator<UpdateConfig.Configurator> create(
+    public static ProdConfigurator create(
             final File current, final InputStream update) {
-        return new UpdateConfig.Configurator(current, update);
+        return new ProdConfigurator(current, update);
     }
 
     /**

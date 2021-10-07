@@ -1,4 +1,4 @@
-package ru.vyarus.yaml.updater.test;
+package ru.vyarus.yaml.updater.profile;
 
 import ru.vyarus.yaml.updater.UpdateConfig;
 import ru.vyarus.yaml.updater.report.ReportPrinter;

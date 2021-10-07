@@ -111,11 +111,11 @@ public final class UpdateConfig {
 
     /**
      * Updater configurator. Class might be extended to extend functionality
-     * (see {@link ru.vyarus.yaml.updater.test.TestConfigurator} as example).
+     * (see {@link ru.vyarus.yaml.updater.profile.TestConfigurator} as example).
      *
      * @param <T> actual builder type (could be extended)
      */
-    public static class Configurator<T extends Configurator> {
+    public abstract static class Configurator<T extends Configurator<T>> {
         protected final UpdateConfig config = new UpdateConfig();
 
         /**
