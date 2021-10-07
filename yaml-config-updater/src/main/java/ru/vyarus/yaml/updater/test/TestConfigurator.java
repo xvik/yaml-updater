@@ -17,10 +17,10 @@ import ru.vyarus.yaml.updater.util.FileUtils;
  *
  * @author Vyacheslav Rusakov
  * @since 06.10.2021
- * @see ru.vyarus.yaml.updater.YamlUpdater#test(String, String)
+ * @see ru.vyarus.yaml.updater.YamlUpdater#createTest(String, String)
  */
 @SuppressWarnings("PMD.SystemPrintln")
-public final class TestConfigurator extends UpdateConfig.Configurator {
+public final class TestConfigurator extends UpdateConfig.Configurator<TestConfigurator> {
 
     private final String configPath;
     private final String updatePath;
@@ -59,7 +59,7 @@ public final class TestConfigurator extends UpdateConfig.Configurator {
     }
 
     @Override
-    public UpdateConfig.Configurator dryRun(final boolean dryRun) {
+    public TestConfigurator dryRun(final boolean dryRun) {
         if (!dryRun) {
             throw new IllegalArgumentException("Test run must be a dry run");
         }

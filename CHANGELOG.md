@@ -5,7 +5,7 @@
   - Fix update file size and lines count calculation (no trim anymore; affects cli tools report)
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
      Suitable for migration tests.
-  - Add YamlUpdater.test(String, String) builder for test runs: pre-configures dry run, allows direct usage of 
+  - Add YamlUpdater.createTest(String, String) builder for test runs: pre-configures dry run, allows direct usage of 
      classpath or url configs and prints report and migrated file (could be disabled).
      Assumed to be used for production config migration validation in tests.
   - Builder:

@@ -112,8 +112,10 @@ public final class UpdateConfig {
     /**
      * Updater configurator. Class might be extended to extend functionality
      * (see {@link ru.vyarus.yaml.updater.test.TestConfigurator} as example).
+     *
+     * @param <T> actual builder type (could be extended)
      */
-    public static class Configurator {
+    public static class Configurator<T extends Configurator> {
         protected final UpdateConfig config = new UpdateConfig();
 
         /**
@@ -142,9 +144,9 @@ public final class UpdateConfig {
          * @param backup true to do backup of configuration before update
          * @return builder instance for chained calls
          */
-        public Configurator backup(final boolean backup) {
+        public T backup(final boolean backup) {
             config.backup = backup;
-            return this;
+            return self();
         }
 
         /**
@@ -166,8 +168,8 @@ public final class UpdateConfig {
          *                    null ignored)
          * @return builder instance for chained calls
          */
-        public Configurator deleteProps(final String... deleteProps) {
-            return deleteProps != null ? deleteProps(Arrays.asList(deleteProps)) : this;
+        public T deleteProps(final String... deleteProps) {
+            return deleteProps != null ? deleteProps(Arrays.asList(deleteProps)) : self();
         }
 
         /**
@@ -178,11 +180,11 @@ public final class UpdateConfig {
          * @return builder instance for chained calls
          * @see #deleteProps(String...)
          */
-        public Configurator deleteProps(final List<String> deleteProps) {
+        public T deleteProps(final List<String> deleteProps) {
             if (deleteProps != null) {
                 config.deleteProps.addAll(deleteProps);
             }
-            return this;
+            return self();
         }
 
         /**
@@ -193,9 +195,9 @@ public final class UpdateConfig {
          * @param validate true to enable validation
          * @return builder instance for chained calls
          */
-        public Configurator validateResult(final boolean validate) {
+        public T validateResult(final boolean validate) {
             config.validateResult = validate;
-            return this;
+            return self();
         }
 
         /**
@@ -207,7 +209,7 @@ public final class UpdateConfig {
          * @deprecated use {@link #vars(java.util.Map)} instead
          */
         @Deprecated
-        public Configurator envVars(final Map<String, String> env) {
+        public T envVars(final Map<String, String> env) {
             return vars(env);
         }
 
@@ -219,11 +221,11 @@ public final class UpdateConfig {
          * @return builder instance for chained calls
          * @see ru.vyarus.yaml.updater.util.FileUtils#loadProperties(String) for loading
          */
-        public Configurator vars(final Map<String, String> env) {
+        public T vars(final Map<String, String> env) {
             if (env != null) {
                 config.env.putAll(env);
             }
-            return this;
+            return self();
         }
 
         /**
@@ -234,11 +236,11 @@ public final class UpdateConfig {
          * @param failIfNotFound true to fail when file not found, false to bypass
          * @return builder instance for chained calls
          */
-        public Configurator varsFile(final String path, final boolean failIfNotFound) {
+        public T varsFile(final String path, final boolean failIfNotFound) {
             if (!FileUtils.loadProperties(path, config.env) && failIfNotFound) {
                 throw new IllegalArgumentException("Variables file not found: " + path);
             }
-            return this;
+            return self();
         }
 
         /**
@@ -250,11 +252,11 @@ public final class UpdateConfig {
          * @see #vars(java.util.Map)
          */
         @SuppressWarnings("checkstyle:IllegalIdentifierName")
-        public Configurator var(final String name, final String value) {
+        public T var(final String name, final String value) {
             if (name != null) {
                 config.env.put(name, value);
             }
-            return this;
+            return self();
         }
 
         /**
@@ -265,11 +267,11 @@ public final class UpdateConfig {
          * @param listener merge process stages listener (null ignored)
          * @return builder instance for chained calls
          */
-        public Configurator listen(final UpdateListener listener) {
+        public T listen(final UpdateListener listener) {
             if (listener != null) {
                 config.listener = listener;
             }
-            return this;
+            return self();
         }
 
         /**
@@ -279,9 +281,9 @@ public final class UpdateConfig {
          * @param dryRun true to not perform any modifications (test run)
          * @return builder instance for chained calls
          */
-        public Configurator dryRun(final boolean dryRun) {
+        public T dryRun(final boolean dryRun) {
             config.dryRun = dryRun;
-            return this;
+            return self();
         }
 
         /**
@@ -297,6 +299,11 @@ public final class UpdateConfig {
             }
             config.listener.configured(config);
             return new YamlUpdater(config).execute();
+        }
+
+        @SuppressWarnings("unchecked")
+        private T self() {
+            return (T) this;
         }
     }
 }

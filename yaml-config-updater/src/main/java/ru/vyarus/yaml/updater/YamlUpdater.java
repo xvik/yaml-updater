@@ -98,7 +98,7 @@ public class YamlUpdater {
      * @param update  update file
      * @return builder instance for chained calls
      */
-    public static UpdateConfig.Configurator create(final File current, final File update) {
+    public static UpdateConfig.Configurator<UpdateConfig.Configurator> create(final File current, final File update) {
         try {
             return create(current, update != null ? Files.newInputStream(update.toPath()) : null);
         } catch (Exception e) {
@@ -118,7 +118,8 @@ public class YamlUpdater {
      * @see #create(File, File) shortcut for direct file case (most common)
      * @see ru.vyarus.yaml.updater.util.FileUtils#findExistingFile(String) for loading file from classpath or url
      */
-    public static UpdateConfig.Configurator create(final File current, final InputStream update) {
+    public static UpdateConfig.Configurator<UpdateConfig.Configurator> create(
+            final File current, final InputStream update) {
         return new UpdateConfig.Configurator(current, update);
     }
 
@@ -138,7 +139,7 @@ public class YamlUpdater {
      * @param target target config path (fs, classpath or url)
      * @return test configurator instance for chained calls
      */
-    public static TestConfigurator test(final String config, final String target) {
+    public static TestConfigurator createTest(final String config, final String target) {
         return new TestConfigurator(config, target);
     }
 
