@@ -2,6 +2,7 @@
   - Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
   - Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
      such objects considered as single value and not parsed.
+  - Fix update file size and lines count calculation (no trim anymore; affects cli tools report)
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
     Suitable for migration tests.
   - Builder:

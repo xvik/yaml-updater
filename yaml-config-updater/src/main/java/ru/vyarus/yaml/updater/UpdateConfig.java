@@ -1,23 +1,17 @@
 package ru.vyarus.yaml.updater;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.vyarus.yaml.updater.listen.UpdateListener;
 import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter;
 import ru.vyarus.yaml.updater.report.UpdateReport;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Update configuration. Required current config and updating file. Optionally, environment variables could be
@@ -126,7 +120,6 @@ public final class UpdateConfig {
      * Updater configurator.
      */
     public static final class Configurator {
-        private final Logger logger = LoggerFactory.getLogger(Configurator.class);
         private final UpdateConfig config = new UpdateConfig();
 
         private Configurator(final File current, final InputStream update) {
@@ -138,7 +131,7 @@ public final class UpdateConfig {
             if (update == null) {
                 throw new IllegalArgumentException("New config file not specified");
             }
-            final String text = read(update);
+            final String text = FileUtils.read(update);
             if (text.isEmpty()) {
                 throw new IllegalArgumentException("New config file is empty");
             }
@@ -288,23 +281,6 @@ public final class UpdateConfig {
             }
             config.listener.configured(config);
             return new YamlUpdater(config).execute();
-        }
-
-        @SuppressWarnings("PMD.UseTryWithResources")
-        private String read(final InputStream in) {
-            try {
-                return new BufferedReader(
-                        new InputStreamReader(in, StandardCharsets.UTF_8))
-                        .lines()
-                        .collect(Collectors.joining("\n"))
-                        .trim();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    logger.debug("Failed to close stream", e);
-                }
-            }
         }
     }
 }

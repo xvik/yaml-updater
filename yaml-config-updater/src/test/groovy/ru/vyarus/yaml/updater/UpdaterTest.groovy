@@ -247,7 +247,7 @@ Resulted in 301 bytes, 40 lines
 """
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 330 bytes, 18 lines
+Updated from source of 331 bytes, 18 lines
 Resulted in 301 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
@@ -293,7 +293,7 @@ Resulted in 301 bytes, 18 lines
 
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 286 bytes, 18 lines
+Updated from source of 287 bytes, 18 lines
 Resulted in 301 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
@@ -379,7 +379,7 @@ sublist:
 
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 41 lines)
-Updated from source of 686 bytes, 71 lines
+Updated from source of 687 bytes, 71 lines
 Resulted in 301 bytes, 57 lines
 
 \tAdded from new file:
@@ -486,7 +486,7 @@ sublist:
 
         and: "report correct"
         print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
-Updated from source of 324 bytes, 41 lines
+Updated from source of 325 bytes, 41 lines
 Resulted in 301 bytes, 71 lines
 
 \tAdded from new file:

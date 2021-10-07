@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -73,6 +74,33 @@ public final class FileUtils {
             throw new IllegalArgumentException("File not found: " + path);
         }
         return out;
+    }
+
+    /**
+     * Reads file content from stream. Closes stream after read.
+     *
+     * @param in file stream
+     * @return file content string
+     */
+    @SuppressWarnings("PMD.UseTryWithResources")
+    public static String read(final InputStream in) {
+        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+            final byte[] buffer = new byte[1024];
+            int length;
+            while ((length = in.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+
+            return result.toString(StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to read stream content", e);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ignored) {
+                // ignored
+            }
+        }
     }
 
     /**

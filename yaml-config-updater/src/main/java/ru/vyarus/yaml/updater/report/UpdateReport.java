@@ -23,7 +23,6 @@ public class UpdateReport {
     private long afterSize;
     private int afterLinesCnt;
 
-    // NOTE it would be TRIMMED size and after variables replacement
     private long updateSize;
     private int updateLines;
 
@@ -100,9 +99,9 @@ public class UpdateReport {
     }
 
     /**
-     * NOTE: updating file read as stream and trimmed so size may be a bit less the original file due to
-     * whitespace trimming. That's why even when merging the same files, sizes could be different (due to size
-     * obtaining difference and update file trimming).
+     * NOTE: update file length calculated from the content instead of calling {@link java.io.File#length()} (which
+     * is OS dependent). So, it could appear that even when file if merged with itself, the size would be a bit
+     * different.
      *
      * @return updating file size
      */
@@ -115,9 +114,6 @@ public class UpdateReport {
     }
 
     /**
-     * NOTE: updating file read as stream and trimmed so lines count may be less the original file due to
-     * whitespace trimming.
-     *
      * @return update file lines count
      */
     public int getUpdateLines() {
