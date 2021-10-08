@@ -11,13 +11,14 @@ import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
-import ru.vyarus.yaml.updater.report.UpdateReport;
 import ru.vyarus.yaml.updater.profile.ProdConfigurator;
 import ru.vyarus.yaml.updater.profile.TestConfigurator;
+import ru.vyarus.yaml.updater.report.UpdateReport;
 import ru.vyarus.yaml.updater.update.CommentsParserValidator;
 import ru.vyarus.yaml.updater.update.EnvSupport;
 import ru.vyarus.yaml.updater.update.TreeMerger;
 import ru.vyarus.yaml.updater.update.UpdateResultValidator;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -332,7 +333,7 @@ public class YamlUpdater {
         if (config.isDryRun()) {
             report.setDryRun(true);
             // store entire merged file content for manual validation (in tests) because it disappears otherwise
-            report.setDryRunResult(String.join(System.lineSeparator(), Files.readAllLines(work.toPath())));
+            report.setDryRunResult(FileUtils.read(Files.newInputStream(work.toPath())));
             logger.warn("DRY RUN: no modifications performed (changes detected: {})", configChanged);
             return;
         }

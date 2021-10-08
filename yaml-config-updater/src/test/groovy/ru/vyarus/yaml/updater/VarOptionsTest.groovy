@@ -25,7 +25,8 @@ class VarOptionsTest extends AbstractTest {
         unifyString(report.dryRunResult) == """prop1:
   prop2: bar
   prop3: baz
-  prop4: #{var}"""
+  prop4: #{var}
+"""
 
         cleanup:
         file.delete()
@@ -46,7 +47,8 @@ class VarOptionsTest extends AbstractTest {
         unifyString(report.dryRunResult) == """prop1:
   prop2: bar
   prop3: baz
-  prop4: #{var}"""
+  prop4: #{var}
+"""
 
         cleanup:
         file.delete()
@@ -66,7 +68,8 @@ class VarOptionsTest extends AbstractTest {
         unifyString(report.dryRunResult) == """prop1:
   prop2: bar
   prop3: baz
-  prop4: #{var}"""
+  prop4: #{var}
+"""
 
         cleanup:
         file.delete()
@@ -86,7 +89,8 @@ class VarOptionsTest extends AbstractTest {
         unifyString(report.dryRunResult) == """prop1:
   prop2: #{foo}
   prop3: #{baa}
-  prop4: #{var}"""
+  prop4: #{var}
+"""
 
         when: "missed file should not be ignored"
         YamlUpdater.createTest(file.absolutePath, '/common/vars.yml')
@@ -116,7 +120,8 @@ class VarOptionsTest extends AbstractTest {
         unifyString(report.dryRunResult) == """prop1:
   prop2: bar
   prop3: 2
-  prop4: 1"""
+  prop4: 1
+"""
 
         cleanup:
         file.delete()
