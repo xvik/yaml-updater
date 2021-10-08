@@ -94,8 +94,8 @@ large: multi-line
 """
         and: "report correct"
         lastReport == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 25 lines
-Resulted in 301 bytes, 25 lines
+Updated from source of 300 bytes, 25 lines
+Resulted in 300 bytes, 25 lines
 
 \tAdded from new file:
 \t\tprop/three                               7  | three: 3                              # new property

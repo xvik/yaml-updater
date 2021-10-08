@@ -65,8 +65,8 @@ prop3:
 """
         and: "report correct"
         print(report) == """Not existing configuration: /tmp/CONFIG.yml
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 40 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 40 lines
 
 \tNew configuration copied as-is
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())

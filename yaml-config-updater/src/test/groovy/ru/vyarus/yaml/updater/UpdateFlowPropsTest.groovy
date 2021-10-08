@@ -49,8 +49,8 @@ addition2: {t: t}
 """
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 21 lines)
-Updated from source of 302 bytes, 27 lines
-Resulted in 301 bytes, 25 lines
+Updated from source of 300 bytes, 27 lines
+Resulted in 300 bytes, 25 lines
 
 \tAdded from new file:
 \t\taddition                                 25 | addition: [2, 3]

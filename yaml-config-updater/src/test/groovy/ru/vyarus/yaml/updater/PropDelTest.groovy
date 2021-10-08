@@ -61,8 +61,8 @@ prop3:
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 37 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 37 lines
 
 \tRemoved from old file:
 \t\tprop2/list                               14 | list:
@@ -134,8 +134,8 @@ prop3:
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 37 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 37 lines
 
 \tRemoved from old file:
 \t\tprop2/list                               14 | list:
@@ -206,8 +206,8 @@ prop3:
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 36 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 36 lines
 
 \tAdded from new file:
 \t\tprop1/prop1.3                            9  | prop1.3: 1.3

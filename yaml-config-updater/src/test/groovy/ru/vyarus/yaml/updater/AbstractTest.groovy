@@ -22,7 +22,7 @@ abstract class AbstractTest extends Specification {
         return res
         // size is different on win and lin
                 .replaceAll("([^\\d])$report.beforeSize ", '$1300 ')
-                .replaceAll("([^\\d])$report.afterSize ", '$1301 ')
-                .replaceAll("([^\\d])$report.updateSize ", '$1302 ')
+                .replaceAll("([^\\d])$report.afterSize ", '$1300 ')
+                .replaceAll("([^\\d])$report.updateSize ", '$1300 ')
     }
 }

@@ -60,8 +60,8 @@ prop3:
 """
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 36 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 36 lines
 
 \tAdded from new file:
 \t\tprop1/prop1.3                            9  | prop1.3: 1.3
@@ -127,8 +127,8 @@ prop3:
 """
         and: "report correct"
         print(report)  == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 302 bytes, 40 lines
-Resulted in 301 bytes, 36 lines
+Updated from source of 300 bytes, 40 lines
+Resulted in 300 bytes, 36 lines
 
 \tAdded from new file:
 \t\tprop1/prop1.3                            9  | prop1.3: 1.3
@@ -198,8 +198,8 @@ prop3:
 """
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 40 lines)
-Updated from source of 302 bytes, 23 lines
-Resulted in 301 bytes, 40 lines
+Updated from source of 300 bytes, 23 lines
+Resulted in 300 bytes, 40 lines
 
 \tOnly comments, order or formatting changed
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
@@ -243,8 +243,8 @@ Resulted in 301 bytes, 40 lines
 """
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 302 bytes, 18 lines
-Resulted in 301 bytes, 18 lines
+Updated from source of 300 bytes, 18 lines
+Resulted in 300 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
@@ -288,8 +288,8 @@ Resulted in 301 bytes, 18 lines
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 302 bytes, 18 lines
-Resulted in 301 bytes, 18 lines
+Updated from source of 300 bytes, 18 lines
+Resulted in 300 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
@@ -373,8 +373,8 @@ sublist:
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 41 lines)
-Updated from source of 302 bytes, 71 lines
-Resulted in 301 bytes, 57 lines
+Updated from source of 300 bytes, 71 lines
+Resulted in 300 bytes, 57 lines
 
 \tAdded from new file:
 \t\tobject[0]/two                            17 | two: 2
@@ -479,8 +479,8 @@ sublist:
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
-Updated from source of 302 bytes, 41 lines
-Resulted in 301 bytes, 71 lines
+Updated from source of 300 bytes, 41 lines
+Resulted in 300 bytes, 71 lines
 
 \tAdded from new file:
 \t\tempty[0]/three                           28 | three: 3
