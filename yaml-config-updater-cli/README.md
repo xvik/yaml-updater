@@ -8,7 +8,7 @@ For general workflow and update rules read [root readme](../../../).
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.1.0/) (classifier `all`)
+[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.2.0/) (classifier `all`)
 
 It will include all required dependencies (shadowjar).
 
@@ -17,7 +17,7 @@ It will include all required dependencies (shadowjar).
 If you want to package it differently, not shadowed version is also available:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater-cli:1.1.0'
+implementation 'ru.vyarus:yaml-config-updater-cli:1.2.0'
 ```
 
 Use it for required packaging.
@@ -45,23 +45,39 @@ java -jar yaml-config-updater-cli.jar update-config config.yml update.yml
 #### Options
 
 ```
-Usage: [-bhivV] [-d=DELETE...]... [-e=ENV...]... CONFIG UPDATE
+Usage: [-bhisvV] [--dry-run] [-d=DELETE...]... [-e=ENV...]...
+                     CONFIG UPDATE
 Update yaml configuration file from new file
       CONFIG          Path to updating configuration file (might not exist)
       UPDATE          Path to new configuration file or any URL
   -b, --no-backup     Don't create backup before configuration update
   -d, --delete-path=DELETE...
                       Delete properties from the current config before update
+      --dry-run       Test run without file modification
   -e, --env=ENV...    Variables to replace (name=value) or path(s) to
                         properties file with variables
   -h, --help          Show this help message and exit.
   -i, --verbose       Show debug logs
+  -s, --non-strict    Don't fail if specified properties file does not exists
   -v, --no-validate   Don't validate the resulted configuration
   -V, --version       Print version information and exit.
 ```
 
 Two notions of options supported: short flags and full names. 
 short flags might be aggregated (`-bv` == `-b -v`).
+
+NOTE: it is not highlighted, but you can also use classpath files for update file or variable files.
+In most cases this, of course, is useless (as tool supposed to be used standalone).
+
+#### Dry run
+
+You can run with `--dry-run` option to test migration: this is complete migration process, but
+without actual configuration updating (and no backup creation). Updated file would only be printed into console
+for consultation.
+
+```
+java -jar yaml-config-updater-cli.jar --dry-run config.yml update.yml
+```
 
 #### Delete props
 
@@ -153,3 +169,6 @@ Variables file could be an url (same as with update file):
 ```
 java -jar yaml-config-updater-cli.jar config.yml update.yml -e http://mydomian.com/vars.properties
 ```
+
+By default, error is thrown if specified variables file does not exist.
+But you can use `-s` (`--non-strict`) option to ignore not existing files.

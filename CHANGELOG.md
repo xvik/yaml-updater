@@ -1,3 +1,4 @@
+### 1.2.0 (2021-10-09)
 * [api]
   - Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)
   - Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
@@ -10,10 +11,10 @@
      classpath or url configs and prints report and migrated file (could be disabled).
      Assumed to be used for production config migration validation in tests.
   - Builder:
-    * Delete props and variables methods may be called multiple times (values aggregated)
+    * Props delete and variables methods may be called multiple times (values aggregated)
     * Deprecated envVars: use vars instead
     * Add var method to simplify single variable declaration
-    * Add varFile method to simplify loading properties file from fs, classpath or url
+    * Add varsFile method to simplify loading properties file from fs, classpath or url
 * [dropwizard]
   - Add --dry-run option for update simulation. Prints merged config to console.
   - Add -s or --non-strict option for ignoring not found variable files 

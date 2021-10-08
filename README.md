@@ -31,6 +31,7 @@ Supports:
 * [Current values remove](yaml-config-updater#delete-props) (e.g. deprecated values or for value replacement)
 * [Object list items update](#lists-matching-logic) (lists not merged, but new properties could be added to list items)
 * [Backup](yaml-config-updater#backup) current configuration (only if content changes)
+* Migration testing (dry run in cli and testing api)
 
 IMPORTANT: this is not a general-purpose yaml merge tool because yaml features like multiple documents in
 one file and object references are not supported (only common subset of features, used in configs)
@@ -143,7 +144,7 @@ Resulted in 351 bytes, 25 lines
 
 Could be used as:
 
-* [Library](yaml-config-updater) through API
+* [Library](yaml-config-updater) through API (embedding tool or perform testing migration)
 * [Command line util](yaml-config-updater-cli) (jar)
 * [Dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
 
@@ -163,6 +164,7 @@ Read exact module's readme for setup instructions.
 * Lists not merged
   - Object list items could be updated with new properties (if matched item found)
   - Dash style for object item could change in both directions: empty dash (property on new line) or property on the same line with dash
+* Flow style lists and objects considered as single value and not merged: `[1, 2, 3]` or `{ one:1, two: 2 }`
 
 <table>
 <tr>
@@ -594,45 +596,6 @@ This way, current value could be restored *exactly* the same as it was in the or
 (to avoid re-formatting).
 
 And because of this in-line comments are not recognized and so could "survive" update.
-
-#### Multi-line values
-
-It might be not obvious, but in most cases multi-line value includes empty line
-after last value line. In some situation this might lead to confusion:
-
-Source config:
-
-```yaml
-some: 1
-
-prop: multi-line
-  value
-```
-
-Update config:
-
-```yaml
-some: 1
-
-other: 1
-```
-
-Merge result would be:
-
-```yaml
-some: 1
-
-prop: multi-line
-  value
-
-
-other: 1
-```
-
-Note double empty lines at the end: first line appeared as part of multi-line value
-and other line is `other` property "comment" (empty line preserved as comments to preserve file structure).
-
-Such cases may confuse, but it's correct behaviour.
 
 ---
 [![java lib generator](http://img.shields.io/badge/Powered%20by-%20Java%20lib%20generator-green.svg?style=flat-square)](https://github.com/xvik/generator-lib-java)

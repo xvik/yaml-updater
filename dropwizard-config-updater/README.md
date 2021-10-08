@@ -20,14 +20,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>dropwizard-config-updater</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:dropwizard-config-updater:1.1.0'
+implementation 'ru.vyarus:dropwizard-config-updater:1.2.0'
 ```
 
 
@@ -58,8 +58,9 @@ java -jar yourApp.jar update-config config.yml /config/default.yml
 #### Options
 
 ```
-usage: java -jar project.jar update-config [-b] [-d DELETE [DELETE ...]]
-                             [-e ENV [ENV ...]] [-v] [-i] [-h] file update
+usage: java -jar project.jar
+       update-config [-b] [-d DELETE [DELETE ...]] [-e ENV [ENV ...]]
+       [-v] [-s] [-i] [--dry-run] [-h] file update
 
 Update configuration file from new file
 
@@ -80,8 +81,22 @@ named arguments:
                          classpath path or any URL)
   -v, --no-validate      Don't   validate   the    resulted   configuration
                          (default: true)
+  -s, --non-strict       Don't fail if specified  properties  file does not
+                         exists (default: true)
   -i, --verbose          Show debug logs (default: false)
+  --dry-run              Test  run  without   file  modification  (default:
+                         false)
   -h, --help             show this help message and exit
+```
+
+#### Dry run
+
+You can run with `--dry-run` option to test migration: this is complete migration process, but
+without actual configuration updating (and no backup creation). Updated file would only be printed into console
+for consultation.  
+
+```
+java -jar yourApp.jar update-config --dry-run config.yml /config/default.yml
 ```
 
 #### Delete props
@@ -174,3 +189,6 @@ Variables file could be an url or classpath path (same as with update file):
 ```
 java -jar yourApp.jar update-config config.yml update.yml -e http://mydomian.com/vars.properties
 ```
+
+By default, error is thrown if specified variables file does not exist.
+But you can use `-s` (`--non-strict`) option to ignore not existing files.

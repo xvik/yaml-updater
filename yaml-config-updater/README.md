@@ -19,14 +19,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>yaml-config-updater</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater:1.1.0'
+implementation 'ru.vyarus:yaml-config-updater:1.2.0'
 ```
 
 ### Usage
@@ -38,6 +38,8 @@ UpdateReport report = YamlUpdater.create(new File("config.yaml"), new File("upda
 ```
 
 Optionally, returned report could be used for custom output (see `ReportPrinter` class used by both cli modules).
+
+There is a special factory for [migration tests](#testing).
 
 #### Source files
 
@@ -55,26 +57,32 @@ YamlUpdater.create(
         .update()
 ```
 
+NOTE: alternatively, you can use `FileUtils.findExistingFile('/files/config.yml')`
+instead, which could load file from local fs, classpath or URL.
+
 #### Options
 
 The following options supported (goes after updater creation):
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| backup()| Create backup of original config at the same folder| true |
-| envVars() | Specify variables to replace in update file | - |
+| backup()| Create backup of original config at the same folder| false |
+| vars() | Specify variables to replace in update file | - |
+| var() | Specify single variable to replace in update file | - |
+| varsFile() | Specify properties file to load variables from | - |
 | deleteProps() | Specify properties to remove in current config before update | - |
 | validateResult() | Perform complete resulted file validation | true |
 | listen() | Specify update process listener (mostly for testing) | - |
+| dryRun() | Run migration without fs changes (test run) | - |
 
 #### Backup
 
 Backup file is created only if merged file pass validation so in case when update process fails,
 backup will never be created (and original config would not be changed).
 
-Backup is enabled by default. To disable it: `.backup(false)`.
+Backup is disabled by default. To enable it: `.backup(true)`.
 
-#### Env vars
+#### Variables
 
 Configuration might contain environment-specific variables, making raw update file
 a "template" for creation of real environment-specific config.
@@ -94,7 +102,13 @@ obj:
 IMPORTANT: only known placeholders would be replaced (unknown variables will remain unprocessed)
 
 By default, no variables specified! So if you need variables support, you need
-to prepare variables map and specify it: `.envVars(mapOfVars)`.
+to prepare variables map and specify it: `.vars(mapOfVars)`.
+
+Single variable could be declared with `.var('name', 'value')`. Also, variables 
+could be loaded from properties file: `.varsFile('file path', true)`. File path might be relative or absolute fs path,
+classpath or URL. Boolean parameter configures behaviour when file not found (fail or ignore).
+
+All variable methods might be combined and each could be called multiple times (values would be aggregated).
 
 NOTE: cli modules use environment by default and supports loading properties 
 files as variable sources
@@ -143,6 +157,32 @@ Then, all values from old file checked to be preserved and the same for new valu
 
 Normally, this validation should not be disabled, but in case of probable validation
 bugs, you can disable it with `.validateResult(false)`.
+
+#### Testing
+
+It is a very good idea to keep previous configuration somewhere in the project and test it's migration
+to the new version (to avoid surprises on prod). 
+
+There is a special factory simplifying testing:
+
+```java
+UpdateReport report = YamlUpdater.createTest("config.yaml", "update-config.yaml")
+        .update()
+```
+
+It accepts string file paths instead of objects. Path might be relative or absolute
+file path, classpath path or URL. The most common case should be in referencing files from 
+test classpath.
+
+This mode implicitly activates `dryRun()`, but in contrast to pure dry run it:
+
+* Provide simpler configuration (e.g. simpler to specify classpath files)
+* Automatically creates temporary file from provided file content (because main api requires File)
+* Prints report and migrated file to console after execution (could be disabled with options).
+
+Note that in dry run mode, migrated file content is stored in returned report field: `report.getDryRunResult()`
+(because otherwise it would be impossible to retrieve it for validation - original file is not modified, so all 
+changes simply discarded).
 
 #### Listener
 
