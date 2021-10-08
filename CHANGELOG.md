@@ -3,6 +3,7 @@
   - Fix object and lists FLOW style support (e.g. [1, 2] and {one: 1, t: 2}): 
      such objects considered as single value and not parsed (taken as strings in both parsers).
   - Fix update file size and lines count calculation (no trim anymore; affects cli tools report)
+  - Fix empty files support
   - Add dryRun option for execution simulation (in this case entire merged file is stored in report object)
      Suitable for migration tests.
   - Add YamlUpdater.createTest(String, String) builder for test runs: pre-configures dry run, allows direct usage of 

@@ -66,9 +66,14 @@ public final class StructureReader {
     public static StructTree read(final Reader reader) {
         try {
             final Node node = new Yaml().compose(reader);
-            final Context context = new Context();
-            processNode(node, context);
-            return new StructTree(context.rootNodes, node.getEndMark().getLine() + 1);
+            // null when file is empty
+            if (node != null) {
+                final Context context = new Context();
+                processNode(node, context);
+                return new StructTree(context.rootNodes, node.getEndMark().getLine() + 1);
+            } else {
+                return new StructTree(new ArrayList<>(), 0);
+            }
         } catch (Exception e) {
             throw new IllegalStateException("Failed to parse yaml structure", e);
         }

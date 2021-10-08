@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,7 +39,7 @@ public final class FileUtils {
      * @see #findExistingFile(String)
      */
     public static InputStream findFile(final String path) {
-        InputStream res;
+        InputStream res = null;
         // first check direct file
         final File file = new File(path);
         if (file.exists()) {
@@ -51,12 +52,13 @@ public final class FileUtils {
             // url
             try {
                 res = new URL(path).openStream();
-            } catch (FileNotFoundException ex) {
-                res = null;
+            } catch (FileNotFoundException | MalformedURLException ignored) {
+                // malformed url - not an url then, try classpath
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to load file from url: " + path, e);
             }
-        } else {
+        }
+        if (res == null) {
             // try to resolve in classpath
             res = FileUtils.class.getResourceAsStream(path);
         }
