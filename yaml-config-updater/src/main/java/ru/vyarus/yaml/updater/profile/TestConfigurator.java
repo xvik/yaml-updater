@@ -16,8 +16,8 @@ import ru.vyarus.yaml.updater.util.FileUtils;
  * to make sure production migration will not fail.
  *
  * @author Vyacheslav Rusakov
- * @since 06.10.2021
  * @see ru.vyarus.yaml.updater.YamlUpdater#createTest(String, String)
+ * @since 06.10.2021
  */
 @SuppressWarnings("PMD.SystemPrintln")
 public final class TestConfigurator extends UpdateConfig.Configurator<TestConfigurator> {
@@ -84,11 +84,7 @@ public final class TestConfigurator extends UpdateConfig.Configurator<TestConfig
                 System.out.println("\n" + render);
             }
             if (result && report.isConfigChanged()) {
-                System.out.println("\n---------------------------------------------------------- \n"
-                        + "   Merged configuration (NOT SAVED): \n"
-                        + "---------------------------------------------------------- \n\n"
-                        + report.getDryRunResult() + "\n\n"
-                        + "---------------------------------------------------------- \n\n");
+                System.out.println(ReportPrinter.printDryRunResult(report));
             }
 
             return report;

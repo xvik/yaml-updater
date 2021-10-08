@@ -15,6 +15,7 @@
     * Add varFile method to simplify loading properties file from fs, classpath or url
 * [dropwizard]
   - Add --dry-run option for update simulation. Prints merged config to console.
+  - Add -s or --non-strict option for ignoring not found variable files 
 * [cli]
   - Add --dry-run option for update simulation. Prints merged config to console.
 

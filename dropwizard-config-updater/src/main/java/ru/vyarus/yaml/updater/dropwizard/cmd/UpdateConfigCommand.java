@@ -11,20 +11,13 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import ru.vyarus.yaml.updater.YamlUpdater;
 import ru.vyarus.yaml.updater.report.ReportPrinter;
 import ru.vyarus.yaml.updater.report.UpdateReport;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Update config dropwizard command. It is required to specify complete or relative path to application configuration
@@ -74,6 +67,12 @@ public class UpdateConfigCommand extends Command {
                 .setDefault(true)
                 .help("Don't validate the resulted configuration");
 
+        subparser.addArgument("-s", "--non-strict")
+                .dest("strict")
+                .action(Arguments.storeFalse())
+                .setDefault(true)
+                .help("Don't fail if specified properties file does not exists");
+
         subparser.addArgument("-i", "--verbose")
                 .dest("verbose")
                 .action(Arguments.storeTrue())
@@ -95,7 +94,8 @@ public class UpdateConfigCommand extends Command {
         final boolean backup = namespace.get("backup");
         final boolean validate = namespace.get("validate");
         final List<String> delete = namespace.getList("delete");
-        final Map<String, String> env = prepareEnv(namespace.getList("env"));
+        final boolean strict = namespace.get("strict");
+        final Map<String, String> env = prepareEnv(namespace.getList("env"), strict);
         final boolean verbose = namespace.get("verbose");
         final boolean dryrun = namespace.get("dryrun");
 
@@ -117,23 +117,20 @@ public class UpdateConfigCommand extends Command {
         System.out.println("\n" + ReportPrinter.print(report));
 
         if (dryrun && report.isConfigChanged()) {
-            System.out.println("\n---------------------------------------------------------- \n"
-                    + "   Merged configuration (NOT SAVED): \n"
-                    + "---------------------------------------------------------- \n\n"
-                    + report.getDryRunResult() + "\n\n"
-                    + "---------------------------------------------------------- \n\n");
+            System.out.println(ReportPrinter.printDryRunResult(report));
         }
     }
 
     private InputStream prepareTargetFile(final String path) {
-        final InputStream in = findFile(path);
+        final InputStream in = FileUtils.findFile(path);
         if (in == null) {
             throw new IllegalArgumentException("Update file not found: " + path);
         }
         return in;
     }
 
-    private Map<String, String> prepareEnv(final List<String> envList) {
+    @SuppressWarnings("PMD.SystemPrintln")
+    private Map<String, String> prepareEnv(final List<String> envList, final boolean strict) {
         // always included environment vars
         final Map<String, String> res = new HashMap<>(System.getenv());
 
@@ -150,55 +147,15 @@ public class UpdateConfigCommand extends Command {
                     res.put(name, value);
                 } else {
                     // properties file
-                    loadVarsFile(env, res);
+                    if (!FileUtils.loadProperties(env, res)) {
+                        if (strict) {
+                            throw new IllegalArgumentException("Variables file not found: " + env);
+                        } else {
+                            System.out.println("Ignore not found variables file: " + env);
+                        }
+                    }
                 }
             }
-        }
-        return res;
-    }
-
-    private void loadVarsFile(final String path, final Map<String, String> res) {
-        final InputStream in = findFile(path);
-        if (in != null) {
-            try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                final Properties props = new Properties();
-                props.load(reader);
-
-                for (Object key : props.keySet()) {
-                    final String name = String.valueOf(key);
-                    final String value = props.getProperty(name);
-                    res.put(name, value == null ? "" : value);
-                }
-            } catch (Exception ex) {
-                throw new IllegalStateException("Failed to read variables from: " + path, ex);
-            }
-        } else {
-            throw new IllegalArgumentException("Variables file not found: " + path);
-        }
-    }
-
-    private InputStream findFile(final String path) {
-        InputStream res;
-        // first check direct file
-        final File file = new File(path);
-        if (file.exists()) {
-            try {
-                res = Files.newInputStream(file.toPath());
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to read file: " + path, e);
-            }
-        } else if (path.indexOf(':') > 0) {
-            // url
-            try {
-                res = new URL(path).openStream();
-            } catch (FileNotFoundException ex) {
-                res = null;
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to load file from url: " + path, e);
-            }
-        } else {
-            // try to resolve in classpath
-            res = UpdateConfigCommand.class.getResourceAsStream(path);
         }
         return res;
     }

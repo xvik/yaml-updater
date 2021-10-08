@@ -58,6 +58,23 @@ public final class ReportPrinter {
         return res.toString();
     }
 
+    /**
+     * Prints merged file from dry run execution.
+     *
+     * @param report report instance
+     * @return formatted merged file
+     */
+    public static String printDryRunResult(final UpdateReport report) {
+        if (!report.isDryRun()) {
+            throw new IllegalArgumentException("Not a DRY RUN");
+        }
+        return "\n---------------------------------------------------------- \n"
+                + "   Merged configuration (NOT SAVED): \n"
+                + "---------------------------------------------------------- \n\n"
+                + report.getDryRunResult()
+                + "\n\n---------------------------------------------------------- \n\n";
+    }
+
     private static void printHeader(final UpdateReport report, final StringBuilder out) {
         if (report.getBeforeSize() > 0) {
             out.append("Configuration: ").append(report.getConfig().getAbsolutePath()).append(" (");
