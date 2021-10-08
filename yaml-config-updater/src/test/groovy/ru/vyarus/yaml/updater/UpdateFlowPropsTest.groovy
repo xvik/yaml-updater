@@ -14,7 +14,6 @@ class UpdateFlowPropsTest extends AbstractTest {
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/sequences.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/sequences_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -49,8 +48,8 @@ addition: [2, 3]
 addition2: {t: t}
 """
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 21 lines)
-Updated from source of 256 bytes, 27 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 21 lines)
+Updated from source of 302 bytes, 27 lines
 Resulted in 301 bytes, 25 lines
 
 \tAdded from new file:
@@ -69,7 +68,6 @@ Resulted in 301 bytes, 25 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/sequences_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/sequences.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -106,7 +104,7 @@ addition: [2, 3]
 addition2: {t: t}
 """
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 27 lines)
+        print(report) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 27 lines)
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

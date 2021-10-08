@@ -14,7 +14,6 @@ class UpdaterTest extends AbstractTest {
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -60,8 +59,8 @@ prop3:
   prop3.1: 3.1
 """
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 385 bytes, 40 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+Updated from source of 302 bytes, 40 lines
 Resulted in 301 bytes, 36 lines
 
 \tAdded from new file:
@@ -82,7 +81,6 @@ Resulted in 301 bytes, 36 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -128,8 +126,8 @@ prop3:
     prop3.1: 3.1
 """
         and: "report correct"
-        print(report, curSize, current.size())  == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 443 bytes, 40 lines
+        print(report)  == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+Updated from source of 302 bytes, 40 lines
 Resulted in 301 bytes, 36 lines
 
 \tAdded from new file:
@@ -150,7 +148,6 @@ Resulted in 301 bytes, 36 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple_shifted_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -200,8 +197,8 @@ prop3:
     prop3.1: 3.1
 """
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 40 lines)
-Updated from source of 198 bytes, 23 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 40 lines)
+Updated from source of 302 bytes, 23 lines
 Resulted in 301 bytes, 40 lines
 
 \tOnly comments, order or formatting changed
@@ -218,7 +215,6 @@ Resulted in 301 bytes, 40 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -246,8 +242,8 @@ Resulted in 301 bytes, 40 lines
       second line
 """
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 331 bytes, 18 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
+Updated from source of 302 bytes, 18 lines
 Resulted in 301 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
@@ -263,7 +259,6 @@ Resulted in 301 bytes, 18 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/multiline_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/multiline.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -292,8 +287,8 @@ Resulted in 301 bytes, 18 lines
 """
 
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 287 bytes, 18 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
+Updated from source of 302 bytes, 18 lines
 Resulted in 301 bytes, 18 lines
 
 \tOnly comments, order or formatting changed
@@ -310,7 +305,6 @@ Resulted in 301 bytes, 18 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -378,8 +372,8 @@ sublist:
 """
 
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 41 lines)
-Updated from source of 687 bytes, 71 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 41 lines)
+Updated from source of 302 bytes, 71 lines
 Resulted in 301 bytes, 57 lines
 
 \tAdded from new file:
@@ -403,7 +397,6 @@ Resulted in 301 bytes, 57 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/lists_upd.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/lists.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -485,8 +478,8 @@ sublist:
 """
 
         and: "report correct"
-        print(report, curSize, current.size()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
-Updated from source of 325 bytes, 41 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
+Updated from source of 302 bytes, 41 lines
 Resulted in 301 bytes, 71 lines
 
 \tAdded from new file:
@@ -504,7 +497,6 @@ Resulted in 301 bytes, 71 lines
         setup: "prepare files"
         File current = Files.createTempFile("config", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = Files.createTempFile("update", ".yml").toFile()
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -536,7 +528,7 @@ prop2:
 # original comment
 pppp: some"""
         and: "report correct"
-        print(report, curSize, 111) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 23 lines)
+        print(report) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 23 lines)
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

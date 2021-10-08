@@ -21,7 +21,6 @@ class BackupTest extends AbstractTest {
         setup: "prepare files"
         File current = new File(dir, "config.yml")
         Files.copy(new File(getClass().getResource('/merge/simple.yml').toURI()).toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        long curSize = current.length()
         File update = new File(dir, "update.yml")
         Files.copy(new File(getClass().getResource('/merge/simple_upd.yml').toURI()).toPath(), update.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
@@ -34,8 +33,8 @@ class BackupTest extends AbstractTest {
         list.backup != null
 
         and: "report correct"
-        print(report, curSize, current.length()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 385 bytes, 40 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+Updated from source of 302 bytes, 40 lines
 Resulted in 301 bytes, 36 lines
 
 \tAdded from new file:

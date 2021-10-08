@@ -64,8 +64,8 @@ prop3:
   prop3.1: 3.1
 """
         and: "report correct"
-        print(report, 111, current.size()) == """Not existing configuration: /tmp/CONFIG.yml
-Updated from source of 385 bytes, 40 lines
+        print(report) == """Not existing configuration: /tmp/CONFIG.yml
+Updated from source of 302 bytes, 40 lines
 Resulted in 301 bytes, 40 lines
 
 \tNew configuration copied as-is

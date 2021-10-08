@@ -16,12 +16,13 @@ abstract class AbstractTest extends Specification {
                 .replace("\r", '')
     }
 
-    protected String print(UpdateReport report, long srcSize, long size) {
+    protected String print(UpdateReport report) {
         def res = ReportPrinter.print(report)
         println res
         return res
         // size is different on win and lin
-                .replaceAll("([^\\d])$srcSize ", '$1300 ')
-                .replaceAll("([^\\d])$size ", '$1301 ')
+                .replaceAll("([^\\d])$report.beforeSize ", '$1300 ')
+                .replaceAll("([^\\d])$report.afterSize ", '$1301 ')
+                .replaceAll("([^\\d])$report.updateSize ", '$1302 ')
     }
 }

@@ -10,7 +10,6 @@ class DryRunTest extends AbstractTest {
         when: "merging"
 
         def current = new File(getClass().getResource('/merge/simple.yml').toURI())
-        long curSize = current.size()
         def report = YamlUpdater.create(
                 current,
                 getClass().getResourceAsStream('/merge/simple_upd.yml'))
@@ -46,8 +45,8 @@ prop2:
 # original comment
 pppp: some"""
         and: "report correct"
-        print(report, curSize, report.getAfterSize()) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 385 bytes, 40 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+Updated from source of 302 bytes, 40 lines
 Resulted in 301 bytes, 36 lines
 
 \tAdded from new file:

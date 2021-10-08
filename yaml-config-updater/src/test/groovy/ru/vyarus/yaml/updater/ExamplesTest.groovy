@@ -94,7 +94,7 @@ large: multi-line
 """
         and: "report correct"
         lastReport == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
-Updated from source of 497 bytes, 25 lines
+Updated from source of 302 bytes, 25 lines
 Resulted in 301 bytes, 25 lines
 
 \tAdded from new file:
@@ -233,12 +233,11 @@ list:
     private String merge(String source, String update) {
         File current = new File(dir, "config.yml")
         current << source.trim()
-        long curSize = current.length()
         File upd = new File(dir, "update.yml")
         upd << update.trim()
 
         def report = YamlUpdater.create(current, upd).backup(false).update()
-        lastReport = print(report, curSize, current.size())
+        lastReport = print(report)
                 .replace(current.getAbsolutePath(), '/tmp/CONFIG.yml')
 
         unifyString("\n" + current.text)
