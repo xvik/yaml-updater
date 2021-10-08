@@ -10,19 +10,13 @@ import picocli.CommandLine.Spec;
 import ru.vyarus.yaml.updater.YamlUpdater;
 import ru.vyarus.yaml.updater.report.ReportPrinter;
 import ru.vyarus.yaml.updater.report.UpdateReport;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 
 /**
@@ -60,6 +54,10 @@ public class UpdateConfigCli implements Callable<Void> {
             description = "Don't validate the resulted configuration")
     private boolean valid;
 
+    @Option(names = {"-s", "--non-strict"}, paramLabel = "STRICT",
+            description = "Don't fail if specified properties file does not exists")
+    private boolean strict;
+
     @Option(names = {"-i", "--verbose"}, paramLabel = "VERBOSE",
             description = "Show debug logs")
     private boolean verbose;
@@ -74,7 +72,7 @@ public class UpdateConfigCli implements Callable<Void> {
     @Override
     @SuppressWarnings({"PMD.SystemPrintln", "checkstyle:MultipleStringLiterals"})
     public Void call() throws Exception {
-        final InputStream target = resoleFile(update, "update");
+        final InputStream target = resoleFile(update, "update", true);
         final Map<String, String> env = prepareEnv();
 
         enableLogs();
@@ -92,11 +90,7 @@ public class UpdateConfigCli implements Callable<Void> {
         System.out.println("\n" + ReportPrinter.print(report));
 
         if (dryrun && report.isConfigChanged()) {
-            System.out.println("\n---------------------------------------------------------- \n"
-                    + "   Merged configuration (NOT SAVED): \n"
-                    + "---------------------------------------------------------- \n\n"
-                    + report.getDryRunResult() + "\n\n"
-                    + "---------------------------------------------------------- \n\n");
+            System.out.println(ReportPrinter.printDryRunResult(report));
         }
 
         return null;
@@ -113,23 +107,16 @@ public class UpdateConfigCli implements Callable<Void> {
     }
 
     @SuppressWarnings("checkstyle:MultipleStringLiterals")
-    private InputStream resoleFile(final String name, final String desc) {
-        if (name.contains(":")) {
-            // url
-            try {
-                return new URL(name).openStream();
-            } catch (IOException e) {
-                throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file url: " + name, e);
-            }
-        }
-        final File file = new File(name);
-        if (!file.exists()) {
-            throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file (does not exists): " + name);
-        }
+    private InputStream resoleFile(final String path, final String desc, final boolean strict) {
         try {
-            return Files.newInputStream(file.toPath());
-        } catch (IOException e) {
-            throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file: " + file.getAbsolutePath(), e);
+            final InputStream res = FileUtils.findFile(path);
+            if (strict && res == null) {
+                throw new ParameterException(spec.commandLine(), "Invalid " + desc
+                        + " file (does not exists): " + path);
+            }
+            return res;
+        } catch (IllegalStateException e) {
+            throw new ParameterException(spec.commandLine(), "Invalid " + desc + " file: " + path, e);
         }
     }
 
@@ -157,20 +144,18 @@ public class UpdateConfigCli implements Callable<Void> {
         return res;
     }
 
+    @SuppressWarnings("PMD.SystemPrintln")
     private void loadVarsFile(final String path, final Map<String, String> res) {
-        final InputStream in = resoleFile(path, "variables");
-        try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-            final Properties props = new Properties();
-            props.load(reader);
-
-            for (Object key : props.keySet()) {
-                final String name = String.valueOf(key);
-                final String value = props.getProperty(name);
-                res.put(name, value == null ? "" : value);
+        final InputStream in = resoleFile(path, "variables", !strict);
+        if (in != null) {
+            try {
+                FileUtils.loadProperties(in, res);
+            } catch (Exception ex) {
+                throw new ParameterException(spec.commandLine(), "Invalid variables file: " + path + " ("
+                        + ex.getMessage() + ")", ex);
             }
-        } catch (Exception ex) {
-            throw new ParameterException(spec.commandLine(), "Invalid variables file: " + path + " ("
-                    + ex.getMessage() + ")", ex);
+        } else {
+            System.out.println("Ignore not found variables file: " + path);
         }
     }
 

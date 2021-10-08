@@ -52,6 +52,53 @@ prop3:
 """
     }
 
+    def "Check absolute path support"() {
+
+        when: "perform merge"
+        def res = run("src/test/resources/simple.yml",
+                new File("src/test/resources/simple_upd.yml").getAbsolutePath())
+
+        then: "merged"
+        isBackupCreated()
+        res == """# something
+
+# something 2
+prop1:
+  prop1.1: 1.1
+
+  prop1.2: 1.2
+  # comment line
+  prop1.3: 1.3
+
+# in the middle
+prop11:
+  prop11.1: 11.1
+
+prop2:
+
+  # sub comment
+  prop2.1: 2.1
+
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+      three: 3
+
+# comment changed
+pppp: some
+
+# complex
+
+# comment
+prop3:
+  prop3.1: 3.1
+"""
+    }
+
     def "Check merge from classpath"() {
 
         when: "perform merge"

@@ -18,6 +18,9 @@
   - Add -s or --non-strict option for ignoring not found variable files 
 * [cli]
   - Add --dry-run option for update simulation. Prints merged config to console.
+  - Add -s or --non-strict option for ignoring not found variable files
+  - Fix windows absolute paths support
+  - Files also searched in classpath now (not very useful, simply unification)  
 
 ### 1.1.0 (2021-08-31)
 * [api]

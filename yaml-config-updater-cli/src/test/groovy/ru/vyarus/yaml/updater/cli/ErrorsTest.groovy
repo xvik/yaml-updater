@@ -10,7 +10,7 @@ class ErrorsTest extends AbstractTest {
 
         expect: "invalid file url"
         runWithError("config.yml", "http://localhost/file.yml")
-                .contains("Invalid update file url: http://localhost/file.yml")
+                .contains("Invalid update file: http://localhost/file.yml")
 
     }
 
@@ -25,7 +25,7 @@ class ErrorsTest extends AbstractTest {
 
         expect: "no variables file"
         runWithError("src/test/resources/simple.yml", "src/test/resources/simple_vars.yml", "-e", "file:vars.properties")
-                .contains("Invalid variables file url: file:vars.properties")
+                .contains("Invalid variables file (does not exists): file:vars.properties")
     }
 
     def "Check bad variables file"() {

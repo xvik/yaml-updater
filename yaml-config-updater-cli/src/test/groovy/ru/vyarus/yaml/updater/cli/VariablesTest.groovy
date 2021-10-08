@@ -194,4 +194,52 @@ prop3:
   prop3.1: 3.1
 """
     }
+
+    def "Check non strict mode"() {
+
+        when: "perform merge"
+        def res = run("src/test/resources/simple.yml", "src/test/resources/simple_vars.yml",
+                "-e", "/vvv.properties", '-s')
+
+        then: "merged"
+        res == """# something
+
+# something 2
+prop1:
+  prop1.1: 1.1
+
+  prop1.2: 1.2
+  prop2: #{var1}
+  prop3: #{var2}
+  prop4: #{var3}
+
+# in the middle
+prop11:
+  prop11.1: 11.1
+
+prop2:
+
+  # sub comment
+  prop2.1: 2.1
+
+  list:
+    - one
+    - two
+
+  obj:
+    - one: 1
+      two: 2
+      three: 3
+
+# comment changed
+pppp: some
+
+# complex
+
+# comment
+prop3:
+  prop3.1: 3.1
+"""
+    }
+
 }

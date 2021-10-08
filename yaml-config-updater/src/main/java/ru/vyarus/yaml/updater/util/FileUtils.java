@@ -45,7 +45,7 @@ public final class FileUtils {
             try {
                 res = Files.newInputStream(file.toPath());
             } catch (IOException e) {
-                throw new IllegalStateException("Failed to read file: " + path, e);
+                throw new IllegalStateException("Failed to read file: " + file.getAbsolutePath(), e);
             }
         } else if (path.indexOf(':') > 0) {
             // url
@@ -146,20 +146,33 @@ public final class FileUtils {
     public static boolean loadProperties(final String path, final Map<String, String> out) {
         final InputStream in = findFile(path);
         if (in != null) {
-            try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                final Properties props = new Properties();
-                props.load(reader);
-
-                for (Object key : props.keySet()) {
-                    final String name = String.valueOf(key);
-                    final String value = props.getProperty(name);
-                    out.put(name, value == null ? "" : value);
-                }
+            try {
+                loadProperties(in, out);
                 return true;
             } catch (Exception ex) {
                 throw new IllegalStateException("Failed to read variables from: " + path, ex);
             }
         }
         return false;
+    }
+
+    /**
+     * Loads properties file from stream.
+     *
+     * @param in  input stream
+     * @param out map to put properties into
+     * @throws Exception on read errors
+     */
+    public static void loadProperties(final InputStream in, final Map<String, String> out) throws Exception {
+        try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+            final Properties props = new Properties();
+            props.load(reader);
+
+            for (Object key : props.keySet()) {
+                final String name = String.valueOf(key);
+                final String value = props.getProperty(name);
+                out.put(name, value == null ? "" : value);
+            }
+        }
     }
 }
