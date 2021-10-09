@@ -31,7 +31,7 @@ Supports:
 * [Current values remove](yaml-config-updater#delete-props) (e.g. deprecated values or for value replacement)
 * [Object list items update](#lists-matching-logic) (lists not merged, but new properties could be added to list items)
 * [Backup](yaml-config-updater#backup) current configuration (only if content changes)
-* Migration testing (dry run in cli and testing api)
+* [Migration testing](yaml-config-updater#testing) (dry run in cli and testing api)
 
 IMPORTANT: this is not a general-purpose yaml merge tool because yaml features like multiple documents in
 one file and object references are not supported (only common subset of features, used in configs)
