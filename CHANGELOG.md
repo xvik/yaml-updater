@@ -1,3 +1,6 @@
+* [api]
+  - Fix support for multilines starting from empty line(s) (without multiline marker)
+
 ### 1.2.0 (2021-10-09)
 * [api]
   - Fix multiline parsing: don't always include trailing empty lines (fixes correct comments detection after multiline)

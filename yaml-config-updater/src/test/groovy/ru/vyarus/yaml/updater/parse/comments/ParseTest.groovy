@@ -37,12 +37,16 @@ prop3: '3'
         CmtTree tree = CommentsReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
 
         then: "parsed"
-        tree.children.size() == 13
+        tree.children.size() == 15
         tree.toString() == """simple: value 2 lines
 # comment
 quoted: value 2 lines
 # comment
 quoted2: value 2 lines
+# comment
+multiline: value 3 lines
+# comment
+multiline2: value 4 lines
 # comment
 include_newlines: value 5 lines
 # comment

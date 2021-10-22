@@ -79,10 +79,12 @@ sublist:
         StructTree tree = StructureReader.read(new File(getClass().getResource('/common/multiline.yml').toURI()))
 
         then: "ok"
-        tree.children.size() == 13
+        tree.children.size() == 15
         tree.toString() == """simple: 'value with multiple lines (flow)'
 quoted: 'value with multiple lines'
 quoted2: 'value with multiple lines'
+multiline: 'line1 line2'
+multiline2: 'line3 line4'
 include_newlines: 'exactly as you see\\nwill appear these three\\nlines of poetry\\n \\n'
 middle_newlines: 'exactly as you see\\nwill appear these three\\n\\nlines of poetry\\n'
 fold_newlines: 'this is really a single line of text\\ndespite appearances\\n'

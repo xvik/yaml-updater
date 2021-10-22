@@ -7,6 +7,15 @@ quoted: 'value with
 quoted2: "value with
   multiple lines"
 
+multiline:
+  line1
+  line2
+
+multiline2:
+
+  line3
+  line4
+
 include_newlines: |
   exactly as you see
   will appear these three

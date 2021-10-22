@@ -61,6 +61,8 @@ public final class MultilineValue {
      */
     public static boolean couldBeFlowMultiline(final String value) {
         final String pure = cutComment(value);
+        // can't accept multiline starting from empty line here, because next line could be a property or
+        // list item (can't know beforehand, only after checking next line could guess multiline)
         return pure != null && !pure.isEmpty();
     }
 

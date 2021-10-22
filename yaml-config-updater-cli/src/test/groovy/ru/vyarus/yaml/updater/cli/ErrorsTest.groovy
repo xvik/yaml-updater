@@ -9,8 +9,8 @@ class ErrorsTest extends AbstractTest {
     def "Check invalid file url"() {
 
         expect: "invalid file url"
-        runWithError("config.yml", "http://localhost/file.yml")
-                .contains("Invalid update file: http://localhost/file.yml")
+        runWithError("config.yml", "http://localhost:2222/file.yml")
+                .contains("Invalid update file: http://localhost:2222/file.yml")
 
     }
 

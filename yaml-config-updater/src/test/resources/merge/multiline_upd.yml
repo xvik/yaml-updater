@@ -2,6 +2,11 @@ object:
     simple: value with
         multiple lines (flow)
 
+    multiline2:
+
+      line3
+      line4
+
     include_newlines: |
         exactly as you see
         will appear these three

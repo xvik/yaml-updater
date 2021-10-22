@@ -171,6 +171,15 @@ prop3:
     simple: value with
       multiple lines (flow)
 
+    multiline:
+      line1
+      line2
+
+    multiline2:
+
+      line3
+      line4
+
     include_newlines: |
       exactly as you see
       will appear these three
@@ -198,9 +207,19 @@ prop3:
         TreeMerger.merge(tree, upd)
 
         then: "merged"
+        // note multilines reverse order is not a bug! there is no way to order it differently
         unifyString(CommentsWriter.write(tree)) == """object:
   simple: value with
       multiple lines (flow)
+
+  multiline2:
+
+    line3
+    line4
+
+  multiline:
+    line1
+    line2
 
   include_newlines: |
       exactly as you see

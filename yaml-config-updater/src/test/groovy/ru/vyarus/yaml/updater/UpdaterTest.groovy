@@ -226,6 +226,15 @@ Resulted in 300 bytes, 40 lines
     simple: value with
       multiple lines (flow)
 
+    multiline:
+      line1
+      line2
+
+    multiline2:
+
+      line3
+      line4
+
     include_newlines: |
       exactly as you see
       will appear these three
@@ -242,11 +251,12 @@ Resulted in 300 bytes, 40 lines
       second line
 """
         and: "report correct"
-        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 300 bytes, 18 lines
-Resulted in 300 bytes, 18 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 22 lines)
+Updated from source of 300 bytes, 23 lines
+Resulted in 300 bytes, 27 lines
 
-\tOnly comments, order or formatting changed
+\tAdded from new file:
+\t\tobject/multiline2                        5  | multiline2:
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:
@@ -266,9 +276,19 @@ Resulted in 300 bytes, 18 lines
         def report = YamlUpdater.create(current, update).backup(false).update()
 
         then: "updated"
+        // note multilines reverse order is not a bug! there is no way to order it differently
         unifyString(current.text) == """object:
   simple: value with
       multiple lines (flow)
+
+  multiline2:
+
+    line3
+    line4
+
+  multiline:
+    line1
+    line2
 
   include_newlines: |
       exactly as you see
@@ -287,11 +307,12 @@ Resulted in 300 bytes, 18 lines
 """
 
         and: "report correct"
-        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 18 lines)
-Updated from source of 300 bytes, 18 lines
-Resulted in 300 bytes, 18 lines
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+Updated from source of 300 bytes, 22 lines
+Resulted in 300 bytes, 27 lines
 
-\tOnly comments, order or formatting changed
+\tAdded from new file:
+\t\tobject/multiline                         5  | multiline:
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

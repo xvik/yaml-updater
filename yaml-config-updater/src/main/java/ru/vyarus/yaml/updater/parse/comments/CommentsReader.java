@@ -144,9 +144,13 @@ public final class CommentsReader {
                     // property
                     final Prop prop = parseProperty(chars, line);
                     if (prop == null) {
-                        throw new IllegalStateException("Property line expected, but no property found");
+                        // could be multiline starting with an empty line
+                        if (!context.detectEmptyFlowMultiline(padding, line)) {
+                            throw new IllegalStateException("Property line expected, but no property found");
+                        }
+                    } else {
+                        context.property(padding, prop);
                     }
-                    context.property(padding, prop);
                 }
         }
     }
@@ -292,17 +296,20 @@ public final class CommentsReader {
                 // aggregating everything below (by padding)
                 if (current.getPadding() < padding && current.getValue() != null
                         && MultilineValue.couldBeFlowMultiline(current.getValue().get(0))) {
-                    if (!comments.isEmpty()) {
-                        // edge case: when the second (and maybe few following) lines of flow multiline value
-                        // are empty lines, it is impossible to detect as multiline, and they would go to comment
-                        // instead
-                        current.getValue().addAll(comments);
-                        comments.clear();
-                    }
-                    current.getValue().add(line);
-                    multiline = MultilineValue.flowMarker(padding);
+                    startFlowMultiline(padding, line);
                     return true;
                 }
+            }
+            return false;
+        }
+
+        public boolean detectEmptyFlowMultiline(final int padding, final String line) {
+            // in contrast to the previous method this one handles case when first multiline line is empty line
+            // in this case we have to check next line and only if it's not list value or property assume
+            // multiline continuation
+            if (current != null && current.getPadding() < padding && current.getValue() != null) {
+                startFlowMultiline(padding, line);
+                return true;
             }
             return false;
         }
@@ -312,6 +319,18 @@ public final class CommentsReader {
             if (!comments.isEmpty()) {
                 property(0, null);
             }
+        }
+
+        private void startFlowMultiline(final int padding, final String line) {
+            if (!comments.isEmpty()) {
+                // edge case: when the second (and maybe few following) lines of flow multiline value
+                // are empty lines, it is impossible to detect as multiline, and they would go to comment
+                // instead
+                current.getValue().addAll(comments);
+                comments.clear();
+            }
+            current.getValue().add(line);
+            multiline = MultilineValue.flowMarker(padding);
         }
 
         private void flushComments(final CmtNode node) {
