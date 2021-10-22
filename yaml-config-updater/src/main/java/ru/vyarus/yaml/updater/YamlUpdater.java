@@ -223,7 +223,7 @@ public class YamlUpdater {
                     done = removeProperty(prop.replace('.', YamlLine.PATH_SEPARATOR));
                 }
                 if (!done) {
-                    logger.warn("Property not removed on path '{}': not found", prop);
+                    logger.warn("Path '{}' not removed: not found", prop);
                 }
             }
             logger.info("Current configuration parsed ({} bytes, {} lines)",
