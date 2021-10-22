@@ -1,5 +1,6 @@
 * [api]
   - Fix support for multilines starting from empty line(s) (without multiline marker)
+  - Change dry-run config report to better identify it and remove additional new lines (show exact result) 
 
 ### 1.2.0 (2021-10-09)
 * [api]

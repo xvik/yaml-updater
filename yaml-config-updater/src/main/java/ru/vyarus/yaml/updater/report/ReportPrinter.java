@@ -68,11 +68,10 @@ public final class ReportPrinter {
         if (!report.isDryRun()) {
             throw new IllegalArgumentException("Not a DRY RUN");
         }
-        return "\n---------------------------------------------------------- \n"
-                + "   Merged configuration (NOT SAVED): \n"
-                + "---------------------------------------------------------- \n\n"
+        return "\n\n--------------------------------------------------------------" +
+                "[ Merged config (NOT SAVED) ]\n"
                 + report.getDryRunResult()
-                + "\n\n---------------------------------------------------------- \n\n";
+                + "\n--------------------------------------------------------------[ end of merged config ] \n\n";
     }
 
     private static void printHeader(final UpdateReport report, final StringBuilder out) {
