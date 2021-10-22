@@ -25,7 +25,7 @@ class ErrorsTest extends AbstractTest {
 
         then: "error"
         def ex = thrown(IllegalStateException)
-        ex.getCause().message.startsWith('Failed to parse yaml file')
+        ex.getCause().message.startsWith('Failed to parse current config file')
     }
 
     def "Check no update file"() {

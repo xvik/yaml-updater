@@ -179,9 +179,13 @@ public class YamlUpdater {
         // size after variables applied
         report.setUpdateSize(source.getBytes(StandardCharsets.UTF_8).length);
 
-        // read structure first to validate correctness!
-        updateStructure = StructureReader.read(source);
-        updateTree = CommentsReader.read(source);
+        try {
+            // read structure first to validate correctness!
+            updateStructure = StructureReader.read(source);
+            updateTree = CommentsReader.read(source);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to parse update config file", ex);
+        }
         try {
             // validate comments parser correctness using snakeyaml result
             CommentsParserValidator.validate(updateTree, updateStructure);
@@ -201,10 +205,13 @@ public class YamlUpdater {
         if (currentCfg.exists()) {
             logger.debug("Parsing current configuration file ({})...", currentCfg.getAbsolutePath());
             report.setBeforeSize(currentCfg.length());
-            // read current file with two parsers (snake first to make sure file is valid)
-            currentStructure = StructureReader.read(currentCfg);
-            currentTree = CommentsReader.read(currentCfg);
-
+            try {
+                // read current file with two parsers (snake first to make sure file is valid)
+                currentStructure = StructureReader.read(currentCfg);
+                currentTree = CommentsReader.read(currentCfg);
+            } catch (Exception ex) {
+                throw new IllegalStateException("Failed to parse current config file", ex);
+            }
             try {
                 // validate comments parser correctness using snakeyaml result
                 CommentsParserValidator.validate(currentTree, currentStructure);
