@@ -356,6 +356,10 @@ public class YamlUpdater {
                 report.setBackup(backup.toFile());
             }
 
+            if (!current.exists()) {
+                // create parent directories, if required
+                Files.createDirectories(current.getParentFile().toPath());
+            }
             Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);
             logger.info("Configuration updated: {}", current.getAbsolutePath());
         } else {

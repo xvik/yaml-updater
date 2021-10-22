@@ -1,6 +1,7 @@
 * [api]
   - Fix support for multilines starting from empty line(s) (without multiline marker)
-  - Change dry-run config report to better identify it and remove additional new lines (show exact result) 
+  - Change dry-run config report to better identify it and remove additional new lines (show exact result)
+  - Create parent directories when config is created (not existing config case)  
 
 ### 1.2.0 (2021-10-09)
 * [api]

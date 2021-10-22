@@ -1,5 +1,7 @@
 package ru.vyarus.yaml.updater
 
+import ru.vyarus.yaml.updater.util.FileUtils
+
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -76,4 +78,26 @@ Resulted in 300 bytes, 40 lines
         update.delete()
     }
 
+    def "Check first config install into not exising dir"() {
+
+        setup:
+        File dir = Files.createTempDirectory("temp").toFile();
+        File target = new File(dir, "some/sub/dir/config.yml")
+
+        when: "updating not existing config"
+        def report = YamlUpdater.create(target, FileUtils.findFile('/merge/simple.yml')).update()
+
+        then: "config created"
+        target.exists()
+        target.length() > 100
+        print(report) == """Not existing configuration: /tmp/CONFIG.yml
+Updated from source of 300 bytes, 23 lines
+Resulted in 300 bytes, 23 lines
+
+\tNew configuration copied as-is
+""".replace("/tmp/CONFIG.yml", target.getAbsolutePath())
+
+        cleanup:
+        dir.deleteDir()
+    }
 }
