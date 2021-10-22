@@ -549,7 +549,9 @@ prop2:
 # original comment
 pppp: some"""
         and: "report correct"
-        print(report) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 23 lines)
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 23 lines)
+
+\tNot changed
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

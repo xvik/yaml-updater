@@ -104,7 +104,9 @@ addition: [2, 3]
 addition2: {t: t}
 """
         and: "report correct"
-        print(report) == """Configuration not changed: /tmp/CONFIG.yml (300 bytes, 27 lines)
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 27 lines)
+
+\tNot changed
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

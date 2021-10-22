@@ -20,7 +20,7 @@ public final class ReportPrinter {
      * @return formatted update report
      */
     public static String print(final UpdateReport report) {
-        final StringBuilder res = new StringBuilder();
+        final StringBuilder res = new StringBuilder(50);
         if (report.isConfigChanged()) {
             printHeader(report, res);
 
@@ -51,9 +51,8 @@ public final class ReportPrinter {
                 res.append("\n\tBackup created: ").append(report.getBackup().getName()).append('\n');
             }
         } else {
-            res.append("Configuration not changed: ").append(report.getConfig().getAbsolutePath()).append(" (");
-            printSize(report.getBeforeSize(), report.getBeforeLinesCnt(), res);
-            res.append(")\n");
+            printConfigurationInfo(report, res);
+            res.append("\n\tNot changed\n");
         }
         return res.toString();
     }
@@ -74,11 +73,11 @@ public final class ReportPrinter {
                 + "\n--------------------------------------------------------------[ end of merged config ] \n\n";
     }
 
+
+
     private static void printHeader(final UpdateReport report, final StringBuilder out) {
         if (report.getBeforeSize() > 0) {
-            out.append("Configuration: ").append(report.getConfig().getAbsolutePath()).append(" (");
-            printSize(report.getBeforeSize(), report.getBeforeLinesCnt(), out);
-            out.append(")\n");
+            printConfigurationInfo(report, out);
         } else {
             out.append("Not existing configuration: ").append(report.getConfig().getAbsolutePath()).append('\n');
         }
@@ -89,6 +88,12 @@ public final class ReportPrinter {
         out.append("\nResulted in ");
         printSize(report.getAfterSize(), report.getAfterLinesCnt(), out);
         out.append('\n');
+    }
+
+    private static void printConfigurationInfo(final UpdateReport report, final StringBuilder out) {
+        out.append("Configuration: ").append(report.getConfig().getAbsolutePath()).append(" (");
+        printSize(report.getBeforeSize(), report.getBeforeLinesCnt(), out);
+        out.append(")\n");
     }
 
     private static void printSize(final long size, final int lines, final StringBuilder out) {

@@ -344,8 +344,8 @@ public class YamlUpdater {
             logger.warn("DRY RUN: no modifications performed (changes detected: {})", configChanged);
             return;
         }
+        final File current = config.getCurrent();
         if (configChanged) {
-            final File current = config.getCurrent();
             // on first installation no need to backup
             if (config.isBackup() && current.exists()) {
                 final Path backup = Paths.get(current.getAbsolutePath()
@@ -363,7 +363,7 @@ public class YamlUpdater {
             Files.copy(work.toPath(), current.toPath(), StandardCopyOption.REPLACE_EXISTING);
             logger.info("Configuration updated: {}", current.getAbsolutePath());
         } else {
-            logger.warn("Configuration not changed (no need to update)");
+            logger.info("Configuration not changed: {}", current.getAbsolutePath());
         }
     }
 
