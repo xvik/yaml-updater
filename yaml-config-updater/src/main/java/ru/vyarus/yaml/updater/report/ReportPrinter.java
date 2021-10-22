@@ -47,9 +47,7 @@ public final class ReportPrinter {
                 }
             }
 
-            if (report.getBackup() != null) {
-                res.append("\n\tBackup created: ").append(report.getBackup().getName()).append('\n');
-            }
+            printBackup(report, res);
         } else {
             printConfigurationInfo(report, res);
             res.append("\n\tNot changed\n");
@@ -103,6 +101,20 @@ public final class ReportPrinter {
     private static void printChanges(final List<UpdateReport.Pair> changes, final StringBuilder out) {
         for (UpdateReport.Pair change : changes) {
             out.append("\t\t").append(String.format("%-40s %s%s", change.getPath(), change.getValue(), '\n'));
+        }
+    }
+
+    private static void printBackup(final UpdateReport report, final StringBuilder out) {
+        if (report.getBackup() != null) {
+            out.append("\n\tBackup created: ");
+            if (report.getConfig().getParentFile().equals(report.getBackup().getParentFile())) {
+                // when backup created in the same dir show only file name
+                out.append(report.getBackup().getName());
+            } else {
+                // when custom dir show complete path
+                out.append(report.getBackup().getAbsolutePath());
+            }
+            out.append('\n');
         }
     }
 }

@@ -27,6 +27,7 @@ public final class UpdateConfig {
 
     private File current;
     private boolean backup;
+    private File backupDir;
     // not File type to allow loading from classpath (jar) or any other location
     private String update;
     private final List<String> deleteProps = new ArrayList<>();
@@ -54,6 +55,13 @@ public final class UpdateConfig {
      */
     public boolean isBackup() {
         return backup;
+    }
+
+    /**
+     * @return directory to store backups in or null to store near original config
+     */
+    public File getBackupDir() {
+        return backupDir;
     }
 
     /**
@@ -146,6 +154,17 @@ public final class UpdateConfig {
          */
         public T backup(final boolean backup) {
             config.backup = backup;
+            return self();
+        }
+
+        /**
+         * By default, backup is created in the same directory with configuration.
+         *
+         * @param dir directory to store backup into
+         * @return builder instance for chained calls
+         */
+        public T backupDir(final File dir) {
+            config.backupDir = dir;
             return self();
         }
 

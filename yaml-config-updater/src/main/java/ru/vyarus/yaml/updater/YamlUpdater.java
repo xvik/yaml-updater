@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -348,12 +346,17 @@ public class YamlUpdater {
         if (configChanged) {
             // on first installation no need to backup
             if (config.isBackup() && current.exists()) {
-                final Path backup = Paths.get(current.getAbsolutePath()
+                final File dir = config.getBackupDir() == null ? current.getParentFile() : config.getBackupDir();
+                if (!dir.exists()) {
+                    // create backup path, if required
+                    Files.createDirectories(dir.toPath());
+                }
+                final File backup = new File(dir, current.getName()
                         + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
-                Files.copy(current.toPath(), backup);
-                logger.info("Backup created: {}", backup);
-                config.getListener().backupCreated(backup.toFile());
-                report.setBackup(backup.toFile());
+                Files.copy(current.toPath(), backup.toPath());
+                logger.info("Backup created: {}", backup.getAbsolutePath());
+                config.getListener().backupCreated(backup);
+                report.setBackup(backup);
             }
 
             if (!current.exists()) {

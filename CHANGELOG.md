@@ -4,6 +4,7 @@
   - Create parent directories when config is created (not existing config case)
   - Re-style configuration not changed report to look like other reports.
   - Do not show warning when config not changes
+  - Add backup directory option
 
 ### 1.2.0 (2021-10-09)
 * [api]
