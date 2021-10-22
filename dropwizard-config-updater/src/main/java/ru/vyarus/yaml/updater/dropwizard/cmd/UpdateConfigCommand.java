@@ -50,6 +50,11 @@ public class UpdateConfigCommand extends Command {
                 .setDefault(true)
                 .help("Don't create backup before configuration update");
 
+        subparser.addArgument("--backup-dir")
+                .dest("backupDir")
+                .type(Arguments.fileType())
+                .help("Directory to store backup in");
+
         subparser.addArgument("-d", "--delete-path")
                 .dest("delete")
                 .nargs("+")
@@ -92,6 +97,7 @@ public class UpdateConfigCommand extends Command {
         final File current = namespace.get("file");
         final InputStream update = prepareTargetFile(namespace.get("update"));
         final boolean backup = namespace.get("backup");
+        final File backupDir = namespace.get("backupDir");
         final boolean validate = namespace.get("validate");
         final List<String> delete = namespace.getList("delete");
         final boolean strict = namespace.get("strict");
@@ -108,6 +114,7 @@ public class UpdateConfigCommand extends Command {
 
         final UpdateReport report = YamlUpdater.create(current, update)
                 .backup(backup)
+                .backupDir(backupDir)
                 .deleteProps(delete != null ? delete.toArray(new String[]{}) : null)
                 .validateResult(validate)
                 .vars(env)

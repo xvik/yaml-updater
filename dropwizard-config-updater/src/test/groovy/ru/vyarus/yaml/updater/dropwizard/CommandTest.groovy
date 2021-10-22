@@ -1,5 +1,8 @@
 package ru.vyarus.yaml.updater.dropwizard
 
+import java.nio.file.Files
+import java.nio.file.Path
+
 /**
  * @author Vyacheslav Rusakov
  * @since 23.07.2021
@@ -239,6 +242,21 @@ prop3:
 """
     }
 
+
+    def "Check backup in custom dir"() {
+
+        when: "perform merge"
+        File dir = Files.createTempDirectory('bkp').toFile()
+        def res = run("src/test/resources/simple.yml", "src/test/resources/simple_upd.yml", "--backup-dir",
+        dir.absolutePath)
+
+        then: "bakup created"
+        dir.list().length == 1
+        dir.list()[0].startsWith('config.yml')
+
+        cleanup:
+        dir.deleteDir()
+    }
 
 
     def "Check no backup and no validation"() {
