@@ -32,7 +32,7 @@ prop3: '3'
         StructTree tree = StructureReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
 
         then: "ok"
-        tree.children.size() == 6
+        tree.children.size() == 7
         tree.toString() == """simple_list: 
   - 'one'
   - 'two'
@@ -70,6 +70,8 @@ sublist:
   - one: 
       sub1: '1'
     two: '2'
+emptyLine: 
+  - 'one'
 """
     }
 

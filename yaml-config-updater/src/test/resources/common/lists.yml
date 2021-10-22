@@ -49,3 +49,7 @@ sublist:
   - one:
       sub1: 1
     two: 2
+
+emptyLine:
+
+  - one

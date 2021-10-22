@@ -51,7 +51,8 @@ class TreePathsTest extends Specification {
   45| map_of_maps/two/b1
   46| map_of_maps/two/b2
   50| sublist[0]/one/sub1
-  51| sublist[0]/two"""
+  51| sublist[0]/two
+  55| emptyLine[0]"""
     }
 
     def "Check multiline parse"() {

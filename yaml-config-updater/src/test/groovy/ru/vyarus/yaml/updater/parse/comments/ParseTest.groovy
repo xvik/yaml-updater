@@ -78,7 +78,7 @@ flow: value 3 lines
         CmtTree tree = CommentsReader.read(new File(getClass().getResource('/common/lists.yml').toURI()))
 
         then: "parsed"
-        tree.children.size() == 6
+        tree.children.size() == 7
         // NOTE double quotes are ok below because value was in quotes and outer quotes are "technical"
         tree.toString() == """simple_list: ''
   - 'one'
@@ -126,6 +126,10 @@ sublist: ''
   - one: ''
       sub1: '1'
     two: '2'
+# comment
+emptyLine: ''
+  # comment
+  - 'one'
 """
     }
 

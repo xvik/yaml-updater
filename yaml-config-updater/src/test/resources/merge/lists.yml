@@ -39,3 +39,7 @@ complexMatch:
 sublist:
   - one:
       sub1: 1
+
+emptyLine:
+
+  - one
