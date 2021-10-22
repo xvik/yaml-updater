@@ -42,6 +42,10 @@ public class UpdateConfigCli implements Callable<Void> {
             description = "Don't create backup before configuration update")
     private boolean backup;
 
+    @Option(names = "--backup-dir", paramLabel = "BACKUPDIR",
+            description = "Directory to store backup in")
+    private File backupDir;
+
     @Option(names = {"-d", "--delete-path"}, arity = "1..*", paramLabel = "DELETE",
             description = "Delete properties from the current config before update")
     private List<String> removePaths;
@@ -81,6 +85,7 @@ public class UpdateConfigCli implements Callable<Void> {
 
         final UpdateReport report = YamlUpdater.create(current, target)
                 .backup(!backup)
+                .backupDir(backupDir)
                 .deleteProps(removePaths != null ? removePaths.toArray(new String[0]) : null)
                 .validateResult(!valid)
                 .vars(env)

@@ -7,6 +7,8 @@
   - Add backup directory option
 * [dropwizard]
   - Add --backup-dir option 
+* [cli]
+  - Add --backup-dir option
 
 ### 1.2.0 (2021-10-09)
 * [api]
