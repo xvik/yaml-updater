@@ -5,6 +5,7 @@
   - Re-style configuration not changed report to look like other reports.
   - Do not show warning when config not changes
   - Add backup directory option
+  - Avoid using Yaml#serialize for compatibility with older snakeyaml versions (older dropwizard versions)
 * [dropwizard]
   - Add --backup-dir option 
 * [cli]

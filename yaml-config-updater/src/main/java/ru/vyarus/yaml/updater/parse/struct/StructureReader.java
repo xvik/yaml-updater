@@ -2,17 +2,22 @@ package ru.vyarus.yaml.updater.parse.struct;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.emitter.Emitter;
+import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.CollectionNode;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
+import org.yaml.snakeyaml.resolver.Resolver;
+import org.yaml.snakeyaml.serializer.Serializer;
 import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -32,6 +37,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 05.05.2021
  */
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public final class StructureReader {
 
     private StructureReader() {
@@ -117,7 +123,19 @@ public final class StructureReader {
 
     private static String parseFlowObject(final CollectionNode<?> node) {
         final StringWriter out = new StringWriter();
-        new Yaml().serialize(node, out);
+
+        // the code below is taken from Yaml#serialize(node, out) appeared only in recent snakeyaml versions
+        // (used like this for better compatibility with older snakeyaml versions (older dropwizard))
+        final DumperOptions options = new DumperOptions();
+        final Serializer serializer = new Serializer(new Emitter(out, options), new Resolver(), options, null);
+        try {
+            serializer.open();
+            serializer.serialize(node);
+            serializer.close();
+        } catch (IOException e) {
+            throw new YAMLException(e);
+        }
+
         // trim cut's off trailing newline
         return out.toString().trim();
     }
