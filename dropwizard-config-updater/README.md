@@ -59,19 +59,23 @@ java -jar yourApp.jar update-config config.yml /config/default.yml
 
 ```
 usage: java -jar project.jar
-       update-config [-b] [-d DELETE [DELETE ...]] [-e ENV [ENV ...]]
-       [-v] [-s] [-i] [--dry-run] [-h] file update
+       update-config [-b] [--backup-dir BACKUPDIR]
+       [-d DELETE [DELETE ...]] [-e ENV [ENV ...]] [-v] [-s] [-i]
+       [--dry-run] [-h] file update
 
 Update configuration file from new file
 
 positional arguments:
-  file                   Path to updating configuration file (might not exist)
+  file                   Path to  updating  configuration  file  (might not
+                         exist)
   update                 Path to new configuration  file.  Could  also be a
                          classpath path or any URL.
 
 named arguments:
   -b, --no-backup        Don't create  backup  before  configuration update
                          (default: true)
+  --backup-dir BACKUPDIR
+                         Directory to store backup in
   -d DELETE [DELETE ...], --delete-path DELETE [DELETE ...]
                          Delete properties from  the  current config before
                          update

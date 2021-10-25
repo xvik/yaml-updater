@@ -45,12 +45,14 @@ java -jar yaml-config-updater-cli.jar update-config config.yml update.yml
 #### Options
 
 ```
-Usage: [-bhisvV] [--dry-run] [-d=DELETE...]... [-e=ENV...]...
-                     CONFIG UPDATE
+Usage: [-bhisvV] [--dry-run] [--backup-dir=BACKUPDIR]
+                     [-d=DELETE...]... [-e=ENV...]... CONFIG UPDATE
 Update yaml configuration file from new file
       CONFIG          Path to updating configuration file (might not exist)
       UPDATE          Path to new configuration file or any URL
   -b, --no-backup     Don't create backup before configuration update
+      --backup-dir=BACKUPDIR
+                      Directory to store backup in
   -d, --delete-path=DELETE...
                       Delete properties from the current config before update
       --dry-run       Test run without file modification
