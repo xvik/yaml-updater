@@ -107,7 +107,8 @@ public final class ReportPrinter {
     private static void printBackup(final UpdateReport report, final StringBuilder out) {
         if (report.getBackup() != null) {
             out.append("\n\tBackup created: ");
-            if (report.getConfig().getParentFile().equals(report.getBackup().getParentFile())) {
+            if (report.getConfig().getAbsoluteFile().getParentFile()
+                    .equals(report.getBackup().getAbsoluteFile().getParentFile())) {
                 // when backup created in the same dir show only file name
                 out.append(report.getBackup().getName());
             } else {

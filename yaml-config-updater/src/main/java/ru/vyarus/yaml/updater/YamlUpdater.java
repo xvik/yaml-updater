@@ -342,7 +342,7 @@ public class YamlUpdater {
             logger.warn("DRY RUN: no modifications performed (changes detected: {})", configChanged);
             return;
         }
-        final File current = config.getCurrent();
+        final File current = config.getCurrent().getAbsoluteFile();
         if (configChanged) {
             // on first installation no need to backup
             if (config.isBackup() && current.exists()) {

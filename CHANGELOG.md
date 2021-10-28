@@ -1,3 +1,6 @@
+* [api]
+  - Fix NPE appeared for not existing config specified without full path 
+
 ### 1.3.0 (2021-10-25)
 * [api]
   - Fix support for multilines starting from empty line(s) (without multiline marker)
