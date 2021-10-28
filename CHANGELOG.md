@@ -1,5 +1,6 @@
+### 1.3.1 (2021-10-29)
 * [api]
-  - Fix NPE appeared for not existing config specified without full path 
+  - Fix NPE appeared for configs specified as filename only 
 
 ### 1.3.0 (2021-10-25)
 * [api]
