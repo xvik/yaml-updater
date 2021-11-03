@@ -161,6 +161,7 @@ Read exact module's readme for setup instructions.
   - Trailing comment at the end of file preserved as-is (not updated)
 * Paddings applied from update file (original config could be re-formatted)
   - Padding change works in both directions (reduce or enlarge)
+* Possible whitespace between property name and colon is removed (`name : value` becomes `name: value`)
 * Lists not merged
   - Object list items could be updated with new properties (if matched item found)
   - Dash style for object item could change in both directions: empty dash (property on new line) or property on the same line with dash

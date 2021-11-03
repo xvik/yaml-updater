@@ -1,3 +1,4 @@
+### 1.3.2 (2021-11-04)
 * [api]
   - Fix whitespace support between property name and colon: such whitespace is removed
 
