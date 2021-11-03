@@ -19,7 +19,7 @@ import java.util.List;
  * Custom yaml parser, preserving comments. Everything above property assumed to be it's comment.
  * Possible free comment at the end of file is parsed as special comment-only node.
  * <p>
- * Parser works by line. For values it does not parse exact value, instead remembers entire line to aggregate
+ * Parser works by line. For values, it does not parse exact value, instead remembers entire line to aggregate
  * possible in-line comments. Multi-line values are explicitly supported (but, also, all lines in multi line value
  * remembered completely to exactly reproduce original structure).
  * <p>
@@ -164,7 +164,8 @@ public final class CommentsReader {
             // no property marker or it is in comment part - not a property
             return null;
         }
-        final String name = line.substring(padding, split);
+        // in cases when there is a whitespace between property name and colon - it's removed
+        final String name = line.substring(padding, split).trim();
         // value may include in-line comment! pure value is not important
         final String value = split == chars.getEndIndex() ? null : line.substring(split + 1);
         final Prop res = new Prop(padding, name, value);

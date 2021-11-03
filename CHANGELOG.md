@@ -1,3 +1,6 @@
+* [api]
+  - Fix whitespace support between property name and colon: such whitespace is removed
+
 ### 1.3.1 (2021-10-29)
 * [api]
   - Fix NPE appeared for configs specified as filename only 
