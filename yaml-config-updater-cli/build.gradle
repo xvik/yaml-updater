@@ -6,7 +6,7 @@ description = "Command line executor for yaml config updater"
 
 dependencies {
     implementation project(':yaml-config-updater')
-    implementation 'info.picocli:picocli:4.6.1'
+    implementation 'info.picocli:picocli:4.6.2'
     implementation 'org.slf4j:slf4j-simple:1.7.32'
 
     annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
