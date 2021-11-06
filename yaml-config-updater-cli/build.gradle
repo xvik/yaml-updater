@@ -9,7 +9,7 @@ dependencies {
     implementation 'info.picocli:picocli:4.6.2'
     implementation 'org.slf4j:slf4j-simple:1.7.32'
 
-    annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.2'
 }
 
 compileJava {
