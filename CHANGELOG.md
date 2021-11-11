@@ -1,3 +1,8 @@
+* [api]
+  - Fix validation error after removing last children in container (#11)
+    Now, when last container node is removed, container itself being removed 
+    (to avoid treating such node as simple property)
+
 ### 1.3.2 (2021-11-04)
 * [api]
   - Fix whitespace support between property name and colon: such whitespace is removed

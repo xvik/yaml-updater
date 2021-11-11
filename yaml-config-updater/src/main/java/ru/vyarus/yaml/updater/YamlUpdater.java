@@ -260,6 +260,17 @@ public class YamlUpdater {
                 final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
                 rootStr.getChildren().remove(str);
             }
+
+            if (node.getRoot() != null && !root.hasChildren()) {
+                // if we removed all children then removing root property to avoid logic mistakes treating
+                // it as normal property and not as container (detected by children presence)
+                final String yamlPath = root.getYamlPath();
+                logger.warn("Container property '{}' remains empty after `{}` removal - removing it to "
+                        + "not mistakenly treat it as simple property", yamlPath, prop);
+                // cleanup inner properties removes from report
+                report.getRemoved().removeIf(pair -> pair.getPath().startsWith(yamlPath));
+                removeProperty(yamlPath);
+            }
         }
         return node != null;
     }
