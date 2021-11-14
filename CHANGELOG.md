@@ -1,3 +1,4 @@
+### 1.3.3 (2021-11-15)
 * [api]
   - Fix validation error after removing last children in container (#11)
     Now, when last container node is removed, container itself being removed 
