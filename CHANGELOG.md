@@ -1,3 +1,7 @@
+* [api]
+  - Fix properties recognition: colon must follow space or newline
+    (could be not quoted string containing colon or even property name with colon) 
+
 ### 1.3.3 (2021-11-15)
 * [api]
   - Fix validation error after removing last children in container (#11)

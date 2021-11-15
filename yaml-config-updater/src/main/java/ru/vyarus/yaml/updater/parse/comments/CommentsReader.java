@@ -159,7 +159,8 @@ public final class CommentsReader {
         // stream assumed to be set at the beginning of possible property (after list dash or after whitespace)
         final int padding = chars.getIndex();
         final int comment = line.indexOf('#', padding);
-        final int split = line.indexOf(':', padding);
+        // colon must be followed with space (at least one) otherwise it's not a property name
+        final int split = findPropertySeparator(line);
         if (split < 0 || (comment > 0 && split > comment)) {
             // no property marker or it is in comment part - not a property
             return null;
@@ -172,6 +173,19 @@ public final class CommentsReader {
         // detecting multiline markers
         res.multiline = MultilineValue.detect(value);
         return res;
+    }
+
+    private static int findPropertySeparator(final String line) {
+        int from = 0;
+        int pos;
+        while ((pos = line.indexOf(':', from)) > 0) {
+            // colon must follow by newline or whitespace, otherwise it's not a separator (single string)
+            if (pos == line.length() - 1 || line.charAt(pos + 1) == ' ') {
+                return pos;
+            }
+            from = pos + 1;
+        }
+        return -1;
     }
 
     @SuppressWarnings({"checkstyle:MultipleStringLiterals", "PMD.UseStringBufferForStringAppends"})
