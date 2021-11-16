@@ -1,5 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id "com.palantir.graal" version "0.10.0"
 }
 
 description = "Command line executor for yaml config updater"
@@ -19,3 +20,11 @@ compileJava {
 jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
 
 assemble.dependsOn = [shadowJar]
+
+// not used during released
+graal {
+    graalVersion '20.3.4'
+    javaVersion '11'
+    mainClass  'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
+    outputName project.name
+}
