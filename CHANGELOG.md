@@ -1,6 +1,7 @@
 * [api]
   - Fix properties recognition: colon must follow space or newline
-    (could be not quoted string containing colon or even property name with colon) 
+    (could be not quoted string containing colon or even property name with colon)
+  - Fix quoted property names support
 
 ### 1.3.3 (2021-11-15)
 * [api]

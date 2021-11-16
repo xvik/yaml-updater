@@ -110,7 +110,7 @@ public final class CommentsWriter {
             }
         }
         if (node.getKey() != null) {
-            res += node.getKey() + ':';
+            res += node.getSourceKey() + ':';
         }
         if (!node.getValue().isEmpty()) {
             res += node.getValue().get(0);

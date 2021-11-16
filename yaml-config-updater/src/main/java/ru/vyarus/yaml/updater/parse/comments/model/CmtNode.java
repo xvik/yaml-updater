@@ -26,6 +26,12 @@ public class CmtNode extends YamlLine<CmtNode> {
 
     // key may be null for comment only block (could go last in file)
 
+    // yaml property name might be quoted and contain escaped quotes (''): key must be unquoted to avoid comparison
+    // mistakes (snakeyaml would do it automatically, plus, same property may be quoted in source file and not quoted
+    // in update file (or vice versa))
+    // Preserving original property declaration to be able to write it exactly as-is
+    private String sourceKey;
+
     // important: value might contain comment (right comment)!
     // so even for object declaration value may exist (containing just comment)
     private List<String> value = new ArrayList<>();
@@ -41,6 +47,36 @@ public class CmtNode extends YamlLine<CmtNode> {
 
     public CmtNode(final CmtNode root, final int padding, final int lineNum) {
         super(root, padding, lineNum);
+    }
+
+    @Override
+    public void setKey(final String key) {
+        sourceKey = key;
+        String cleanKey = key;
+        if (key != null) {
+            final char first = key.charAt(0);
+            if (first == '"' || first == '\'') {
+                if (key.charAt(key.length() - 1) != first) {
+                    throw new IllegalStateException(
+                            "Quoted property must start and end with the same quote symbol: [" + key + "]");
+                }
+                cleanKey = cleanKey.substring(1, cleanKey.length() - 1)
+                        // replace possible escaped quotes
+                        .replace("''", "'");
+            }
+        }
+        super.setKey(cleanKey);
+    }
+
+    /**
+     * Original yaml file could contain quoted key, but {@link #getKey()} would always return unquoted key to avoid
+     * comparison mistakes. Use this method to get original key before writing it back to file (method ONLY for
+     * correct node writing).
+     *
+     * @return original key representation (quoted, if it was originally quoted in the file)
+     */
+    public String getSourceKey() {
+        return sourceKey;
     }
 
     /**
@@ -155,6 +191,6 @@ public class CmtNode extends YamlLine<CmtNode> {
         }
         final String value = hasValue() ? this.value.get(0) : "";
         return isListItem() ? "- " + value
-                : getKey() + ":" + value;
+                : getSourceKey() + ":" + value;
     }
 }

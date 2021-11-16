@@ -42,4 +42,43 @@ Resulted in 300 bytes, 6 lines
 \t\treal:name                                2  | real:name: val
 """.replace("/tmp/CONFIG.yml", report.config.getAbsolutePath())
     }
+
+    def "Check quoted property recognition"() {
+
+        when: "merging file with quoted properties"
+        def report = createQuickTest(
+                // src
+                """
+"prop1": 1
+'prop2': 2
+""",
+
+                // target
+                """
+"complex:name": 3
+"'complex':name2": 4
+'smth''s:name': 5
+""")
+                .update()
+
+        then: "properties recognized"
+        unifyString(report.dryRunResult) == """
+"prop1": 1
+'prop2': 2
+
+"complex:name": 3
+"'complex':name2": 4
+'smth''s:name': 5
+"""
+        and: "report correct"
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 3 lines)
+Updated from source of 300 bytes, 4 lines
+Resulted in 300 bytes, 7 lines
+
+\tAdded from new file:
+\t\tcomplex:name                             2  | "complex:name": 3
+\t\t'complex':name2                          3  | "'complex':name2": 4
+\t\tsmth's:name                              4  | 'smth''s:name': 5
+""".replace("/tmp/CONFIG.yml", report.config.getAbsolutePath())
+    }
 }
