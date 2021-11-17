@@ -58,7 +58,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.10.0
 
       - name: Setup MS VS tools
-        uses: microsoft/setup-msbuild@v1.1.1
+        uses: microsoft/setup-msbuild@v1.1
         with:
           msbuild-architecture: x64
 
