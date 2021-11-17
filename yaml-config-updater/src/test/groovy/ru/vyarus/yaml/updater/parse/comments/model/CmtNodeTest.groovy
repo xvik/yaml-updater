@@ -62,4 +62,20 @@ class CmtNodeTest extends AbstractTest {
         then:
         node.getIdentityValue() == '123'
     }
+
+    def "Check source key update"() {
+        setup:
+        CmtNode node = CmtNodeFactory.createProperty(null, 0, 1, "foo", ' 1')
+
+        when: "updating source key"
+        node.setSourceKey("'foo'")
+        then: "ok"
+        node.getKey() == 'foo'
+        node.getSourceKey() == "'foo'"
+
+        when: "invalid update"
+        node.setSourceKey("'bar'")
+        then: "error"
+        thrown(IllegalStateException)
+    }
 }

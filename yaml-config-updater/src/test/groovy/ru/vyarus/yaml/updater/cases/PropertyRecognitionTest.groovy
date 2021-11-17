@@ -81,4 +81,38 @@ Resulted in 300 bytes, 7 lines
 \t\tsmth's:name                              4  | 'smth''s:name': 5
 """.replace("/tmp/CONFIG.yml", report.config.getAbsolutePath())
     }
+
+    def "Check correct quoted property merge"() {
+
+        when: "merging file with quoted property"
+        def report = createQuickTest(
+                // src
+                """
+"prop1": 1
+
+"list":
+    - 1
+    - 2
+""",
+
+                // target
+                """
+prop1: 2
+
+list:
+    - 3
+""")
+                .update()
+
+        then: "properties recognized"
+        unifyString(report.dryRunResult) == """
+prop1: 1
+
+list:
+    - 1
+    - 2
+"""
+        and: "config not changed"
+        print(report).contains("Only comments, order or formatting changed")
+    }
 }

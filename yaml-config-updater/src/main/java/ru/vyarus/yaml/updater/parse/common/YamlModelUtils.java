@@ -8,6 +8,7 @@ import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
  * @author Vyacheslav Rusakov
  * @since 09.06.2021
  */
+@SuppressWarnings("checkstyle:MultipleStringLiterals")
 public final class YamlModelUtils {
 
     private YamlModelUtils() {
@@ -67,7 +68,7 @@ public final class YamlModelUtils {
      * Removes leading part of the path (specified). Cuts off separator after specified path if required.
      *
      * @param element leading element to remove from path
-     * @param path complete path
+     * @param path    complete path
      * @return remaining path
      */
     public static String removeLeadingPath(final String element, final String path) {
@@ -85,5 +86,33 @@ public final class YamlModelUtils {
             res = res.substring(1);
         }
         return res;
+    }
+
+    /**
+     * Property name may be quited in yaml file and contain escaped quotes ({@code ''}). Comments parser extracts
+     * property exactly as-is, but for inner comparisons cleaned version must be used.
+     * <p>
+     * NOTE: snakeyaml performs much more replaces in property and most likely this method would be improved over time,
+     * when more edge cases would appear.
+     *
+     * @param key property name to clean
+     * @return cleaned property name
+     */
+    public static String cleanPropertyName(final String key) {
+        String cleanKey = key;
+        if (key != null) {
+            final char first = key.charAt(0);
+            if (first == '"' || first == '\'') {
+                if (key.charAt(key.length() - 1) != first) {
+                    throw new IllegalStateException(
+                            "Quoted property must start and end with the same quote symbol: [" + key + "]");
+                }
+                cleanKey = cleanKey.substring(1, cleanKey.length() - 1);
+            }
+            cleanKey = cleanKey
+                    // replace possible escaped quotes
+                    .replace("''", "'");
+        }
+        return cleanKey;
     }
 }

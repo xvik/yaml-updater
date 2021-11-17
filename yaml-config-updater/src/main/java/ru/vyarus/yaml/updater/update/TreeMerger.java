@@ -99,6 +99,9 @@ public final class TreeMerger {
                     curr.getTopComment().addAll(newnode.getTopComment());
                 }
 
+                // property style could change (quoted to unquoted or the opposite)
+                curr.setSourceKey(newnode.getSourceKey());
+
                 // sync entire tree
                 mergeLevel(curr, newnode);
 

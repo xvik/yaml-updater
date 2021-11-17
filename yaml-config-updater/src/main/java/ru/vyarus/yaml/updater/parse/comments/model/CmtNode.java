@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.parse.comments.model;
 
+import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
 import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 
 import java.util.ArrayList;
@@ -51,21 +52,9 @@ public class CmtNode extends YamlLine<CmtNode> {
 
     @Override
     public void setKey(final String key) {
+        // store raw key to be able to write it as-is
         sourceKey = key;
-        String cleanKey = key;
-        if (key != null) {
-            final char first = key.charAt(0);
-            if (first == '"' || first == '\'') {
-                if (key.charAt(key.length() - 1) != first) {
-                    throw new IllegalStateException(
-                            "Quoted property must start and end with the same quote symbol: [" + key + "]");
-                }
-                cleanKey = cleanKey.substring(1, cleanKey.length() - 1)
-                        // replace possible escaped quotes
-                        .replace("''", "'");
-            }
-        }
-        super.setKey(cleanKey);
+        super.setKey(YamlModelUtils.cleanPropertyName(key));
     }
 
     /**
@@ -77,6 +66,20 @@ public class CmtNode extends YamlLine<CmtNode> {
      */
     public String getSourceKey() {
         return sourceKey;
+    }
+
+    /**
+     * Method should be used only to change existing node property style (e.g. quoted to unquoted and vice-versa).
+     * Style change is important because target file style must be implied in all possible aspects.
+     *
+     * @param sourceKey new property representation in file
+     */
+    public void setSourceKey(final String sourceKey) {
+        if (!getKey().equals(YamlModelUtils.cleanPropertyName(sourceKey))) {
+            throw new IllegalStateException("Attempt to replace raw property name from [" + this.sourceKey
+                    + "] into [" + sourceKey + "] for property " + getKey());
+        }
+        this.sourceKey = sourceKey;
     }
 
     /**
