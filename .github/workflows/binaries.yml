@@ -36,12 +36,19 @@ jobs:
           files: upload/yaml-updater-linux-amd64
           args: '--lzma --best'
 
-#      - name: Attach to release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: |
-#            upload/yaml-updater.jar
-#            upload/yaml-updater-linux-amd64
+      - name: Upload jar
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater.jar application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload linux binary
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater-linux-amd64 application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
   buildOnWindows:
@@ -82,10 +89,12 @@ jobs:
           files: upload/yaml-updater.exe
           args: '--lzma --best'
 
-#      - name: Attach to release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: upload/yaml-updater.exe
+      - name: Upload windows binary
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater.exe application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   buildOnMac:
     runs-on: macos-latest
@@ -115,7 +124,9 @@ jobs:
           file: upload/yaml-updater-mac-amd64
           args: '--lzma --best'
 
-#      - name: Attach to release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: upload/yaml-updater-mac-amd64
+      - name: Upload mac binary
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater-mac-amd64 application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
