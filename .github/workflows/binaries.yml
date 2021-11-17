@@ -33,7 +33,7 @@ jobs:
         continue-on-error: true
         with:
           version: latest
-          files: ./upload/yaml-updater-linux-amd64
+          files: upload/yaml-updater-linux-amd64
           args: '--lzma --best'
 
 #      - name: Attach to release
@@ -69,16 +69,17 @@ jobs:
           ./gradlew :yaml-config-updater-cli:nativeImage --no-daemon
 
       - name: Rename files
+        shell: bash
         run: |
           mkdir upload
-          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli.exe ./upload/yaml-updater.exe
+          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli.exe upload/yaml-updater.exe
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
         continue-on-error: true
         with:
           version: latest
-          files: ${GITHUB_WORKSPACE}/upload/yaml-updater.exe
+          files: upload/yaml-updater.exe
           args: '--lzma --best'
 
 #      - name: Attach to release
@@ -111,7 +112,7 @@ jobs:
         uses: svenstaro/upx-action@v2
         continue-on-error: true
         with:
-          file: ./upload/yaml-updater-mac-amd64
+          file: upload/yaml-updater-mac-amd64
           args: '--lzma --best'
 
 #      - name: Attach to release
