@@ -33,21 +33,14 @@ jobs:
         with:
           version: latest
           files: ./upload/yaml-updater-linux-amd64
-          args: '-7'
+          args: '--lzma --best'
 
-#      - name: Upload jar
-#        uses: JasonEtco/upload-to-release@master
+#      - name: Attach to release
+#        uses: softprops/action-gh-release@v1
 #        with:
-#          args: upload/yaml-updater.jar
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Upload linux binary
-#        uses: JasonEtco/upload-to-release@master
-#        with:
-#          args: upload/yaml-updater-linux-amd64
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          files: |
+#            upload/yaml-updater.jar
+#            upload/yaml-updater-linux-amd64
 
 
   buildOnWindows:
@@ -65,7 +58,9 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.10.0
 
       - name: Setup MS VS tools
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v1.1.1
+        with:
+          msbuild-architecture: x64
 
       - name: Build
         run: |
@@ -75,21 +70,19 @@ jobs:
       - name: Rename files
         run: |
           mkdir upload
-          cp yaml-config-updater-cli/build/graal/* upload/yaml-updater.exe
+          cp yaml-config-updater-cli/build/graal/* ./upload/yaml-updater.exe
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
         with:
           version: latest
           files: ./upload/yaml-updater.exe
-          args: '-7'
+          args: '--lzma --best'
 
-#      - name: Upload windows binary
-#        uses: JasonEtco/upload-to-release@master
+#      - name: Attach to release
+#        uses: softprops/action-gh-release@v1
 #        with:
-#          args: upload/yaml-updater.exe
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          files: upload/yaml-updater.exe
 
   buildOnMac:
     runs-on: macos-latest
@@ -116,11 +109,9 @@ jobs:
         uses: svenstaro/upx-action@v2
         with:
           file: ./upload/yaml-updater-mac-amd64
-          args: '-7'
+          args: '--lzma --best'
 
-#      - name: Upload mac binary
-#        uses: JasonEtco/upload-to-release@master
+#      - name: Attach to release
+#        uses: softprops/action-gh-release@v1
 #        with:
-#          args: upload/yaml-updater-mac-amd64
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          files: upload/yaml-updater-mac-amd64
