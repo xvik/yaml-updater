@@ -30,6 +30,7 @@ jobs:
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
+        continue-on-error: true
         with:
           version: latest
           files: ./upload/yaml-updater-linux-amd64
@@ -74,9 +75,10 @@ jobs:
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
+        continue-on-error: true
         with:
           version: latest
-          files: ./upload/yaml-updater.exe
+          files: ${GITHUB_WORKSPACE}/upload/yaml-updater.exe
           args: '--lzma --best'
 
 #      - name: Attach to release
@@ -107,6 +109,7 @@ jobs:
 
       - name: Run UPX
         uses: svenstaro/upx-action@v2
+        continue-on-error: true
         with:
           file: ./upload/yaml-updater-mac-amd64
           args: '--lzma --best'
