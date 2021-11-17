@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir upload
           cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
-          cp yaml-config-updater-cli/build/graal/* upload/yaml-updater-linux-amd64
+          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli upload/yaml-updater-linux-amd64
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
@@ -71,7 +71,7 @@ jobs:
       - name: Rename files
         run: |
           mkdir upload
-          cp yaml-config-updater-cli/build/graal/* ./upload/yaml-updater.exe
+          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli.exe ./upload/yaml-updater.exe
 
       - name: Run UPX
         uses: crazy-max/ghaction-upx@v1.4.0
@@ -105,7 +105,7 @@ jobs:
       - name: Rename files
         run: |
           mkdir upload
-          cp yaml-config-updater-cli/build/graal/* upload/yaml-updater-mac-amd64
+          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli upload/yaml-updater-mac-amd64
 
       - name: Run UPX
         uses: svenstaro/upx-action@v2
