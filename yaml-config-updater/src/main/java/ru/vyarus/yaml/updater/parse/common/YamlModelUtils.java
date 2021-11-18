@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.parse.common;
 
+import org.yaml.snakeyaml.scanner.ScannerImpl;
 import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 
 /**
@@ -89,11 +90,13 @@ public final class YamlModelUtils {
     }
 
     /**
-     * Property name may be quited in yaml file and contain escaped quotes ({@code ''}). Comments parser extracts
-     * property exactly as-is, but for inner comparisons cleaned version must be used.
+     * Property name may be quited in yaml file and contain escaped symbols. Comments parser extracts property exactly
+     * as-is, but for inner comparisons cleaned version must be used. Single quoted property may contain only
+     * {@code ''} single quote escape. Double-quoted property may contain escapes with backslash, including unicode
+     * symbols (but not every symbol could be escaped! only supported symbols - see
+     * <a href="http://yaml.org/spec/1.2-old/spec.html#id2776092">yaml spec</a>).
      * <p>
-     * NOTE: snakeyaml performs much more replaces in property and most likely this method would be improved over time,
-     * when more edge cases would appear.
+     * NOTE: cleanups should be unified with snakeyaml behaviour (same behavior)
      *
      * @param key property name to clean
      * @return cleaned property name
@@ -102,17 +105,57 @@ public final class YamlModelUtils {
         String cleanKey = key;
         if (key != null) {
             final char first = key.charAt(0);
-            if (first == '"' || first == '\'') {
+            final boolean singleQuote = first == '\'';
+            final boolean doubleQuote = first == '"';
+            if (singleQuote || doubleQuote) {
                 if (key.charAt(key.length() - 1) != first) {
                     throw new IllegalStateException(
                             "Quoted property must start and end with the same quote symbol: [" + key + "]");
                 }
                 cleanKey = cleanKey.substring(1, cleanKey.length() - 1);
             }
-            cleanKey = cleanKey
-                    // replace possible escaped quotes
-                    .replace("''", "'");
+            if (singleQuote) {
+                // the only possible escape in single quotes
+                cleanKey = cleanKey.replace("''", "'");
+            }
+            if (doubleQuote) {
+                // only double quotes allow escaping and unicode characters
+                cleanKey = unescapeDoubleQuotes(cleanKey);
+            }
         }
         return cleanKey;
+    }
+
+    // see org.yaml.snakeyaml.scanner.ScannerImpl
+    private static String unescapeDoubleQuotes(final String value) {
+        String cleaned = value;
+        int from = 1;
+        int pos;
+
+        while ((pos = cleaned.indexOf('\\', from)) > 0) {
+            final char next = cleaned.charAt(pos + 1);
+            if (!Character.isSupplementaryCodePoint(next)) {
+                if (ScannerImpl.ESCAPE_REPLACEMENTS.containsKey(next)) {
+                    // The character is one of the single-replacement
+                    // types; these are replaced with a literal character
+                    // from the mapping.
+                    final String replacement = ScannerImpl.ESCAPE_REPLACEMENTS.get(next);
+                    cleaned = cleaned.replace("\\" + next, replacement);
+                    // in most cases, replaced with unicode code which would be replaced at the same position
+                    continue;
+                }
+                if (ScannerImpl.ESCAPE_CODES.containsKey(next)) {
+                    // The character is a multi-digit escape sequence, with
+                    // length defined by the value in the ESCAPE_CODES map.
+                    final int length = ScannerImpl.ESCAPE_CODES.get(next);
+                    final String hex = value.substring(pos + 2, pos + 2 + length);
+                    final int decimal = Integer.parseInt(hex, 16);
+                    final String unicode = new String(Character.toChars(decimal));
+                    cleaned = cleaned.replace("\\" + next + hex, unicode);
+                }
+            }
+            from = pos + 1;
+        }
+        return cleaned;
     }
 }

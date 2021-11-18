@@ -27,12 +27,15 @@ class ModelUtilsTest extends AbstractTest {
         YamlModelUtils.cleanPropertyName(prop) == result
 
         where:
-        prop         | result
-        'prop'       | 'prop'
-        '"prop"'     | 'prop'
-        '\'prop\''   | 'prop'
-        "smth''ng"   | "smth'ng"
-        "'smth''ng'" | "smth'ng"
+        prop          | result
+        'prop'        | 'prop'
+        '"prop"'      | 'prop'
+        '\'prop\''    | 'prop'
+        "'smth''ng'"  | "smth'ng"
+        '"s\"t"'      | 's"t'
+        '"s\\"t"'      | 's"t'
+        '"s:\\ n"'    | 's: n'
+        '"s:\\u0020n"' | 's: n'
     }
 
     def "Check incorrectly quoted property"() {

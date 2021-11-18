@@ -1,7 +1,7 @@
 * [api]
   - Fix properties recognition: colon must follow space or newline
     (could be not quoted string containing colon or even property name with colon)
-  - Fix quoted property names support
+  - Add quoted property names support with escaped characters
   - Property writing could change on update according to target file
     (e.g. quoted property may become unquoted or opposite)
 

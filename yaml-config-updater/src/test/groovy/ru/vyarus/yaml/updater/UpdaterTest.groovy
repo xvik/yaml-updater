@@ -397,12 +397,13 @@ emptyLine:
 
 quoted:
   - "name": value
+  - "n\\"e": value
 """
 
         and: "report correct"
-        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 48 lines)
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 49 lines)
 Updated from source of 300 bytes, 71 lines
-Resulted in 300 bytes, 64 lines
+Resulted in 300 bytes, 65 lines
 
 \tAdded from new file:
 \t\tobject[0]/two                            17 | two: 2
@@ -510,12 +511,13 @@ emptyLine:
 
 quoted:
   - "name": value
+  - "n\\"e": value
 """
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
-Updated from source of 300 bytes, 48 lines
-Resulted in 300 bytes, 78 lines
+Updated from source of 300 bytes, 49 lines
+Resulted in 300 bytes, 79 lines
 
 \tAdded from new file:
 \t\tempty[0]/three                           28 | three: 3
