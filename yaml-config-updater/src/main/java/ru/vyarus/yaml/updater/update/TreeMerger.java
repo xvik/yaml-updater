@@ -22,6 +22,9 @@ import java.util.Map;
  * and in update file with 4 then all properties would be shifted according to update file (even if no new properties
  * applied). Shift appear on subtree level (where subtrees could be matched) so if there are subtrees in old file
  * not present in new one - old paddings will remain there (no target to align by).
+ * - Possible whitespace between property name and colon is removed
+ * - Property style is taken from new file (e.g. if property name was quoted and in target file not quoted then
+ * merged file would contain not quoted property)
  * - Lists are not merged. But if list contain object items, such items are updated (new properties added).
  * Items matched by property values.
  *
