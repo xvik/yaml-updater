@@ -93,6 +93,9 @@ Resulted in 300 bytes, 7 lines
 "list":
     - 1
     - 2
+
+list2:
+    - "name": val
 """,
 
                 // target
@@ -101,6 +104,9 @@ prop1: 2
 
 list:
     - 3
+
+list2:
+    - name: val
 """)
                 .update()
 
@@ -111,6 +117,9 @@ prop1: 1
 list:
     - 1
     - 2
+
+list2:
+    - name: val
 """
         and: "config not changed"
         print(report).contains("Only comments, order or formatting changed")

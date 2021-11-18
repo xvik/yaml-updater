@@ -394,12 +394,15 @@ sublist:
 emptyLine:
 
   - one
+
+quoted:
+  - "name": value
 """
 
         and: "report correct"
-        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 45 lines)
+        print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 48 lines)
 Updated from source of 300 bytes, 71 lines
-Resulted in 300 bytes, 61 lines
+Resulted in 300 bytes, 64 lines
 
 \tAdded from new file:
 \t\tobject[0]/two                            17 | two: 2
@@ -504,17 +507,21 @@ sublist:
 emptyLine:
 
   - one
+
+quoted:
+  - "name": value
 """
 
         and: "report correct"
         print(report) == """Configuration: /tmp/CONFIG.yml (300 bytes, 71 lines)
-Updated from source of 300 bytes, 45 lines
-Resulted in 300 bytes, 75 lines
+Updated from source of 300 bytes, 48 lines
+Resulted in 300 bytes, 78 lines
 
 \tAdded from new file:
 \t\tempty[0]/three                           28 | three: 3
 \t\treorder[0]/three                         33 | three: 3
 \t\temptyLine                                43 | emptyLine:
+\t\tquoted                                   47 | quoted:
 """.replace("/tmp/CONFIG.yml", current.getAbsolutePath())
 
         cleanup:

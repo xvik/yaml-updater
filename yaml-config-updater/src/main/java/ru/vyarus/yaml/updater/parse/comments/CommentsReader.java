@@ -31,7 +31,7 @@ import java.util.List;
 public final class CommentsReader {
 
     // assume explicit sequence and object notion as non parsable (keep and store as-is)
-    private static final List<Character> VALUE_BOUNDARY_START = Arrays.asList('\'', '"', '{', '[');
+    private static final List<Character> VALUE_BOUNDARY_START = Arrays.asList('{', '[');
 
     private CommentsReader() {
     }
@@ -160,7 +160,7 @@ public final class CommentsReader {
         final int padding = chars.getIndex();
         final int comment = line.indexOf('#', padding);
         // colon must be followed with space (at least one) otherwise it's not a property name
-        final int split = findPropertySeparator(line);
+        final int split = findPropertySeparator(line, padding);
         if (split < 0 || (comment > 0 && split > comment)) {
             // no property marker or it is in comment part - not a property
             return null;
@@ -175,8 +175,23 @@ public final class CommentsReader {
         return res;
     }
 
-    private static int findPropertySeparator(final String line) {
+    /**
+     * Property separator is colon, followed by whitespace or newline. For example {@code some:name} is not a property,
+     * but string. Also, colon might be in property name: {@code na:me: value}. Property name might be quoted:
+     * {@code "prop: name": value}. And may contain escaped quotes: {@code "some''s:name": value}.
+     *
+     * @param line line to find property in
+     * @return separator (colon) position or -1 if not found
+     */
+    private static int findPropertySeparator(final String line, final int padding) {
         int from = 0;
+        if (line.length() > padding + 1) {
+            // check for quoted property name
+            final char possibleQuote = line.charAt(padding);
+            if (possibleQuote == '"' || possibleQuote == '\'') {
+                from = line.indexOf(possibleQuote, padding + 1);
+            }
+        }
         int pos;
         while ((pos = line.indexOf(':', from)) > 0) {
             // colon must follow by newline or whitespace, otherwise it's not a separator (single string)

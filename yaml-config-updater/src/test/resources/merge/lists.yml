@@ -43,3 +43,6 @@ sublist:
 emptyLine:
 
   - one
+
+quoted:
+  - "name": value
