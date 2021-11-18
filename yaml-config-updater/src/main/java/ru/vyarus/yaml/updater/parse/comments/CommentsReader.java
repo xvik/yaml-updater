@@ -168,7 +168,7 @@ public final class CommentsReader {
         // in cases when there is a whitespace between property name and colon - it's removed
         final String name = line.substring(padding, split).trim();
         // value may include in-line comment! pure value is not important
-        final String value = split == chars.getEndIndex() ? null : line.substring(split + 1);
+        final String value = split + 1 == chars.getEndIndex() ? "" : line.substring(split + 1);
         final Prop res = new Prop(padding, name, value);
         // detecting multiline markers
         res.multiline = MultilineValue.detect(value);
@@ -324,7 +324,7 @@ public final class CommentsReader {
             if (current != null) {
                 // will go there only once for multiline value as after this multiline would be already detected,
                 // aggregating everything below (by padding)
-                if (current.getPadding() < padding && current.getValue() != null
+                if (current.getPadding() < padding
                         && MultilineValue.couldBeFlowMultiline(current.getValue().get(0))) {
                     startFlowMultiline(padding, line);
                     return true;
@@ -337,7 +337,7 @@ public final class CommentsReader {
             // in contrast to the previous method this one handles case when first multiline line is empty line
             // in this case we have to check next line and only if it's not list value or property assume
             // multiline continuation
-            if (current != null && current.getPadding() < padding && current.getValue() != null) {
+            if (current != null && current.getPadding() < padding) {
                 startFlowMultiline(padding, line);
                 return true;
             }

@@ -138,7 +138,7 @@ public class CmtNode extends YamlLine<CmtNode> {
      */
     @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     public boolean isCommentOnly() {
-        return hasComment() && !isListItem() && getKey() == null && (getValue() == null || getValue().isEmpty());
+        return hasComment() && !isListItem() && getKey() == null && getValue().isEmpty();
     }
 
     /**
