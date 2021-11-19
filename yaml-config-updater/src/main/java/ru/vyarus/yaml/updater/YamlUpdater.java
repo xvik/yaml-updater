@@ -257,29 +257,30 @@ public class YamlUpdater {
         final CmtNode node = currentTree.find(prop);
         if (node != null) {
             logger.info("Removing configuration property: {}", prop);
+            // register it before actual remove for proper index rendering in report
+            report.addRemoved(node);
             // for root level property, it would not point to tree object
             final TreeNode<CmtNode> root = node.getRoot() == null ? currentTree : node.getRoot();
-            root.getChildren().remove(node);
-            report.addRemoved(node);
 
             // remove in both trees because struct tree is used for result validation
             // (trees are equal (validated) so can't have different branches)
             final StructNode str = currentStructure.find(prop);
-            // could be commented node in comments tree, not visible in struct tree
-            if (str != null) {
-                final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
-                rootStr.getChildren().remove(str);
-            }
+            final TreeNode<StructNode> rootStr = str.getRoot() == null ? currentStructure : str.getRoot();
+            rootStr.getChildren().remove(str);
 
-            if (node.getRoot() != null && !root.hasChildren()) {
+            if (node.getRoot() != null && root.getChildren().size() == 1) {
                 // if we removed all children then removing root property to avoid logic mistakes treating
                 // it as normal property and not as container (detected by children presence)
                 final String yamlPath = root.getYamlPath();
-                logger.warn("Container property '{}' remains empty after `{}` removal - removing it to "
+                logger.warn("Container property '{}' remains empty after '{}' removal - removing it to "
                         + "not mistakenly treat it as simple property", yamlPath, prop);
                 // cleanup inner properties removes from report
                 report.getRemoved().removeIf(pair -> pair.getPath().startsWith(yamlPath));
                 removeProperty(yamlPath);
+            } else {
+                // remove node from root only when top node not removed itself because otherwise
+                // it would be impossible to show in report list item with property on the same line
+                root.getChildren().remove(node);
             }
         }
         return node != null;

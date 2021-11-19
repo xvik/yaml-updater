@@ -37,10 +37,15 @@ public class StructNode extends YamlLine<StructNode> {
     @Override
     public String toString() {
         final String value = this.value == null ? "" : this.value;
+        final String res;
         if (isListItem()) {
-            return "- " + value;
+            res = "- " + (isListItemWithProperty()
+                    // children may be empty in case when its consequent removes: root node removed when all child
+                    // nodes removed
+                    ? (hasChildren() ? getChildren().get(0) : "") : value);
         } else {
-            return getKey() + ":" + (value.isEmpty() ? "" : (" " + value));
+            res = getKey() + ":" + (value.isEmpty() ? "" : (" " + value));
         }
+        return res;
     }
 }

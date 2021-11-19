@@ -105,6 +105,78 @@ two: 2
 """
     }
 
+    def "Check object lists render"() {
+
+        when: "models with different list name"
+        compare("""
+one:
+    - prop1: val
+      prop2: val
+""", """
+two:
+    - pp1: v
+      pp2: v
+""")
+
+        then: "error detected"
+        def ex = thrown(IllegalStateException)
+        ex.message == """Comments parser validation problem on line 2: line should be different: "two:" (this is a parser bug, please report it!)
+      Comments parser subtree:    Structure parser subtree:
+         2| one:                     2| two:
+         3|   - prop1: val           3|   - pp1: v
+         4|     prop2: val           4|     pp2: v
+"""
+    }
+
+    def "Check object lists render 2"() {
+
+        when: "models with different list name"
+        compare("""
+one:
+    - 
+      prop1: val
+      prop2: val
+""", """
+two:
+    - 
+      pp1: v
+      pp2: v
+""")
+
+        then: "error detected"
+        def ex = thrown(IllegalStateException)
+        ex.message == """Comments parser validation problem on line 2: line should be different: "two:" (this is a parser bug, please report it!)
+      Comments parser subtree:    Structure parser subtree:
+         2| one:                     2| two:
+         3|   -                      3|   - 
+         4|     prop1: val           4|     pp1: v
+         5|     prop2: val           5|     pp2: v
+"""
+    }
+
+    def "Check scalar lists render"() {
+
+        when: "models with different list name"
+        compare("""
+one:
+    - val
+    - val2
+""", """
+two:
+    - pp
+    - pp2
+""")
+
+        then: "error detected"
+        def ex = thrown(IllegalStateException)
+        ex.message == """Comments parser validation problem on line 2: line should be different: "two:" (this is a parser bug, please report it!)
+      Comments parser subtree:    Structure parser subtree:
+         2| one:                     2| two:
+         3|   -  val                 3|   - pp
+         4|   -  val2                4|   - pp2
+"""
+    }
+
     private boolean compare(String cmtSrc, structSrc) {
         CmtTree cmt = CommentsReader.read(cmtSrc)
         StructTree struct = StructureReader.read(structSrc)

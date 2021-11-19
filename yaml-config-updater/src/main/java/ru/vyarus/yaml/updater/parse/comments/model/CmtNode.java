@@ -193,7 +193,15 @@ public class CmtNode extends YamlLine<CmtNode> {
             return topComment.get(0);
         }
         final String value = hasValue() ? this.value.get(0) : "";
-        return isListItem() ? "- " + value
-                : getSourceKey() + ":" + value;
+        final String res;
+        if (isListItem()) {
+            res = "- " + (isListItemWithProperty()
+                    // children may be empty in case when its consequent removes: root node removed when all child
+                    // nodes removed
+                    ? (hasChildren() ? getChildren().get(0) : "") : value);
+        } else {
+            res = getSourceKey() + ":" + value;
+        }
+        return res;
     }
 }

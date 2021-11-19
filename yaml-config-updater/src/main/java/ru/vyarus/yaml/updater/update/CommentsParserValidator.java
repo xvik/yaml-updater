@@ -148,9 +148,14 @@ public final class CommentsParserValidator {
             final ReportLines lines,
             final T line,
             final int padding) {
-        final String ln = String.format("%4s| ", line.getLineNum())
-                + TreeStringUtils.shiftRight(line.toString(), padding);
-        lines.add(ln);
+        // for property list items, when first property is on the same line as dash, do not render it separately
+        // (it was already rendered by upper list item node), but still render its subtree
+        if (line.getRoot() == null || !line.getRoot().isListItemWithProperty()
+                || line.getRoot().getChildren().indexOf(line) != 0) {
+            final String ln = String.format("%4s| ", line.getLineNum())
+                    + TreeStringUtils.shiftRight(line.toString(), padding);
+            lines.add(ln);
+        }
         for (T child : line.getChildren()) {
             debugTreeLeaf(lines, child, padding + 2);
         }

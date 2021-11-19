@@ -114,7 +114,7 @@ Resulted in 300 bytes, 14 lines
 \tRemoved from old file:
 \t\tdouble                                   2  | "double": 1
 \t\t'complex':name2                          6  | "'complex':name2": 4
-\t\tlist[-1]                                 14 | - 
+\t\tlist[1]                                  14 | - "cm:\\u0020g": val2
 
 \tAdded from new file:
 \t\tdouble                                   2  | 'double': 1
