@@ -155,6 +155,9 @@ public final class StructureReader {
                 if (!tickSameLine) {
                     // case when properties start after empty dash (next line)
                     // and hierarchically it must be reproduced (unification with comments parser)
+
+                    // it is impossible to know EXACTLY what line is tick on, but in most cases it would be previous
+                    context.lineNum--;
                     context.listValue(listPad, null);
                 } else {
                     // sub object: use virtual node (indicating dash) to group sub-object properties
