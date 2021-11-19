@@ -2,8 +2,9 @@
   - Fix properties recognition: colon must follow space or newline
     (could be not quoted string containing colon or even property name with colon)
   - Add quoted property names support with escaped characters
-  - Property writing could change on update according to target file
+  - Property writing style could change on update according to target file
     (e.g. quoted property may become unquoted or opposite)
+  - Add native binaries (lin, win, mac)
 
 ### 1.3.3 (2021-11-15)
 * [api]
