@@ -1,0 +1,14 @@
+
+'double': 1
+"single": 2
+
+complex:name: 3
+smth's:name: 5
+
+"compl:\ ex": 7
+"cmpl:\u0020x": 8
+
+list:
+  - something: val1
+  - "cm:\u0020g": val2
+  - '1 - création d''en': val3

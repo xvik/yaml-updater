@@ -6,8 +6,8 @@ import ru.vyarus.yaml.updater.parse.comments.CommentsReader;
 import ru.vyarus.yaml.updater.parse.comments.CommentsWriter;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtNode;
 import ru.vyarus.yaml.updater.parse.comments.model.CmtTree;
+import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
 import ru.vyarus.yaml.updater.parse.common.model.TreeNode;
-import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 import ru.vyarus.yaml.updater.parse.struct.StructureReader;
 import ru.vyarus.yaml.updater.parse.struct.model.StructNode;
 import ru.vyarus.yaml.updater.parse.struct.model.StructTree;
@@ -222,18 +222,7 @@ public class YamlUpdater {
             }
             report.setBeforeLinesCnt(currentTree.getLinesCnt());
 
-            // removing props
-            for (String prop : config.getDeleteProps()) {
-                boolean done = removeProperty(prop);
-                if (!done) {
-                    // it would be a very common error to use dot as a separator, so trying to replace dots
-                    // with real separator and try again (it's highly unlikely to have collisions)
-                    done = removeProperty(prop.replace('.', YamlLine.PATH_SEPARATOR));
-                }
-                if (!done) {
-                    logger.warn("Path '{}' not removed: not found", prop);
-                }
-            }
+            removeProperties();
             logger.info("Current configuration parsed ({} bytes, {} lines)",
                     report.getBeforeSize(), report.getBeforeLinesCnt());
             config.getListener().currentConfigParsed(updateTree, updateStructure);
@@ -243,6 +232,25 @@ public class YamlUpdater {
 
         // tmp file used to catch possible writing errors and only then override old file
         work = File.createTempFile("merge-result", ".yml");
+    }
+
+    private void removeProperties() {
+        // removing props
+        for (String path : config.getDeleteProps()) {
+            // unescape properties in path (keys are always unescaped - without unescape it would never find
+            // quoted property)
+            String prop = YamlModelUtils.cleanPropertyPath(path, false);
+            boolean done = removeProperty(prop);
+            if (!done) {
+                // it would be a very common error to use dot as a separator, so trying to replace dots
+                // with real separator and try again (it's highly unlikely to have collisions)
+                prop = YamlModelUtils.cleanPropertyPath(path, true);
+                done = removeProperty(prop);
+            }
+            if (!done) {
+                logger.warn("Path '{}' not removed: not found", path);
+            }
+        }
     }
 
     private boolean removeProperty(final String prop) {

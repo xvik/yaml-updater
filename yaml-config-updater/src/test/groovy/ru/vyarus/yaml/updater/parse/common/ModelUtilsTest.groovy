@@ -27,22 +27,33 @@ class ModelUtilsTest extends AbstractTest {
         YamlModelUtils.cleanPropertyName(prop) == result
 
         where:
-        prop          | result
-        'prop'        | 'prop'
-        '"prop"'      | 'prop'
-        '\'prop\''    | 'prop'
-        "'smth''ng'"  | "smth'ng"
-        '"s\"t"'      | 's"t'
+        prop           | result
+        'prop'         | 'prop'
+        '"prop"'       | 'prop'
+        '\'prop\''     | 'prop'
+        "'smth''ng'"   | "smth'ng"
+        '"s\"t"'       | 's"t'
         '"s\\"t"'      | 's"t'
-        '"s:\\ n"'    | 's: n'
+        '"s:\\ n"'     | 's: n'
         '"s:\\u0020n"' | 's: n'
     }
 
-    def "Check incorrectly quoted property"() {
+    def "Check path cleanup"() {
 
-        when: "property with incorrect quotes"
-        YamlModelUtils.cleanPropertyName("'name")
-        then: "error"
-        thrown(IllegalStateException)
+        expect:
+        YamlModelUtils.cleanPropertyPath(path, dot) == result
+
+        where:
+        path                      | dot   | result
+        'prop'                    | true  | 'prop'
+        'prop/name'               | false | 'prop/name'
+        'prop.name'               | true  | 'prop/name'
+        'prop."name"'             | true  | 'prop/name'
+        'prop."name".bar'         | true  | 'prop/name/bar'
+        'prop/"name"/bar'         | false | 'prop/name/bar'
+        'prop."na.me".bar'        | true  | 'prop/na.me/bar'
+        "prop.'na.me'.bar"        | true  | 'prop/na.me/bar'
+        'prop."na.\\u0020me".bar' | true  | 'prop/na. me/bar'
+
     }
 }

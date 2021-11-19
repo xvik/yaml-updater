@@ -1,11 +1,13 @@
+
 "double": 1
 'single': 2
 
 "complex:name": 3
 "'complex':name2": 4
-'smth''s:name': 5
+'"complex":name3': 5
+'smth''s:name': 6
 
-"compl:\\ ex": 6
+"compl:\ ex": 7
 
 list:
   - "something": val1

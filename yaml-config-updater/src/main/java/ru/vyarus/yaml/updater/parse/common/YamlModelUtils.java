@@ -3,6 +3,9 @@ package ru.vyarus.yaml.updater.parse.common;
 import org.yaml.snakeyaml.scanner.ScannerImpl;
 import ru.vyarus.yaml.updater.parse.common.model.YamlLine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Yaml model utils. Aggregates logic common for both parsers.
  *
@@ -105,14 +108,17 @@ public final class YamlModelUtils {
         String cleanKey = key;
         if (key != null) {
             final char first = key.charAt(0);
-            final boolean singleQuote = first == '\'';
-            final boolean doubleQuote = first == '"';
+            boolean singleQuote = first == '\'';
+            boolean doubleQuote = first == '"';
             if (singleQuote || doubleQuote) {
                 if (key.charAt(key.length() - 1) != first) {
-                    throw new IllegalStateException(
-                            "Quoted property must start and end with the same quote symbol: [" + key + "]");
+                    // for example: ['smth':els] is correct property name!
+                    singleQuote = false;
+                    doubleQuote = false;
+                } else {
+                    // get rid of quotes
+                    cleanKey = cleanKey.substring(1, cleanKey.length() - 1);
                 }
-                cleanKey = cleanKey.substring(1, cleanKey.length() - 1);
             }
             if (singleQuote) {
                 // the only possible escape in single quotes
@@ -124,6 +130,55 @@ public final class YamlModelUtils {
             }
         }
         return cleanKey;
+    }
+
+    /**
+     * Try to correctly split path elements and unescape quoted property names. For dot separator also correctly
+     * replace dots with paths (because dots might be under quotes simple replace would lead to incorrect name).
+     *
+     * @param path        path to analyze
+     * @param replaceDots assume dots used as separator, which must be replaced to normal separator
+     * @return clean string
+     */
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    public static String cleanPropertyPath(final String path, final boolean replaceDots) {
+        if (path.indexOf('"') < 0 && path.indexOf('\'') < 0) {
+            // no need to parse - no quotes at all (most common case)
+            return replaceDots ? path.replace('.', YamlLine.PATH_SEPARATOR) : path;
+        }
+
+        final char separator = replaceDots ? '.' : YamlLine.PATH_SEPARATOR;
+        final List<String> elements = new ArrayList<>();
+        if (path.indexOf(separator) > 0) {
+            // could be path
+            char underQuote = 0;
+            StringBuilder elt = new StringBuilder();
+            char prev = 0;
+            for (char next : path.toCharArray()) {
+                if (elt.length() == 0 && next == '"' || next == '\'') {
+                    // only first char of path element could be a quoting sign (inside it doesn't matter)
+                    underQuote = next;
+                } else if (next == separator && (underQuote == 0 || prev == underQuote)) {
+                    // either found separator or if property is quoted then assume ending with QUOTE+SEPARATOR
+                    elements.add(cleanPropertyName(elt.toString()));
+                    elt = new StringBuilder();
+                    prev = 0;
+                    underQuote = 0;
+                    continue;
+                }
+
+                elt.append(next);
+                prev = next;
+            }
+            if (elt.length() > 0) {
+                elements.add(cleanPropertyName(elt.toString()));
+            }
+        } else {
+            // single property
+            elements.add(cleanPropertyName((path)));
+        }
+
+        return String.join(String.valueOf(YamlLine.PATH_SEPARATOR), elements);
     }
 
     // see org.yaml.snakeyaml.scanner.ScannerImpl
