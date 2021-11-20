@@ -6,50 +6,6 @@ on:
     types: [created]
 
 jobs:
-  buildOnLinux:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
-      - name: Build
-        run: |
-          chmod +x gradlew
-          ./gradlew :yaml-config-updater-cli:shadowJar :yaml-config-updater-cli:nativeImage --no-daemon
-
-      - name: Rename files
-        run: |
-          mkdir upload
-          cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
-          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli upload/yaml-updater-linux-amd64
-
-      - name: Run UPX
-        uses: crazy-max/ghaction-upx@v1.4.0
-        continue-on-error: true
-        with:
-          version: latest
-          files: upload/yaml-updater-linux-amd64
-          args: '--lzma --best'
-
-      - name: Upload jar
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: upload/yaml-updater.jar application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload linux binary
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: upload/yaml-updater-linux-amd64 application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
   buildOnWindows:
     runs-on: windows-latest
@@ -89,12 +45,10 @@ jobs:
           files: upload/yaml-updater.exe
           args: '--lzma --best'
 
-      - name: Upload windows binary
-        uses: JasonEtco/upload-to-release@master
+      - uses: actions/upload-artifact@v2
         with:
-          args: upload/yaml-updater.exe application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: yaml-updater.exe
+          path: upload/yaml-updater.exe
 
   buildOnMac:
     runs-on: macos-latest
@@ -124,9 +78,116 @@ jobs:
           file: upload/yaml-updater-mac-amd64
           args: '--lzma --best'
 
-      - name: Upload mac binary
-        uses: JasonEtco/upload-to-release@master
+      - uses: actions/upload-artifact@v2
         with:
-          args: upload/yaml-updater-mac-amd64 application/octet-stream
+          name: yaml-updater-mac-amd64
+          path: upload/yaml-updater-mac-amd64
+
+  buildOnLinux:
+    runs-on: ubuntu-latest
+    needs: [buildOnWindows, buildOnMac]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew :yaml-config-updater-cli:shadowJar :yaml-config-updater-cli:nativeImage --no-daemon
+
+      - name: Rename files
+        run: |
+          mkdir upload
+          cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
+          cp yaml-config-updater-cli/build/graal/yaml-config-updater-cli upload/yaml-updater-linux-amd64
+
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v1.4.0
+        continue-on-error: true
+        with:
+          version: latest
+          files: upload/yaml-updater-linux-amd64
+          args: '--lzma --best'
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: yaml-updater.jar
+          path: upload/yaml-updater.jar
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: yaml-updater-linux-amd64
+          path: upload/yaml-updater-linux-amd64
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: yaml-updater.exe
+          path: upload
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: yaml-updater-mac-amd64
+          path: upload
+
+      # resolve the latest release from github api (to be able to run action after release)
+      - name: Find latest release
+        uses: octokit/request-action@v2.x
+        id: get_latest_release
+        with:
+          route: GET /repos/:repository/releases/latest
+          repository: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute release url
+        id: get_upload_url
+        run: |
+          url=$(echo "$response" | jq -r '.upload_url')
+          echo "::set-output name=url::$url"
+        env:
+          response: ${{ steps.get_latest_release.outputs.data }}
+
+      - name: Upload jar
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: upload/yaml-updater.jar
+          asset_name: yaml-updater.jar
+          asset_content_type: application/zip
+
+      - name: Upload linux binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: upload/yaml-updater-linux-amd64
+          asset_name: yaml-updater-linux-amd64
+          asset_content_type: application/octet-stream
+
+      - name: Upload windows binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: upload/yaml-updater.exe
+          asset_name: yaml-updater.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload mac binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: upload/yaml-updater-mac-amd64
+          asset_name: yaml-updater-mac-amd64
+          asset_content_type: application/octet-stream
