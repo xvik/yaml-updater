@@ -1,5 +1,6 @@
+### 1.4.0 (2021-11-20)
 * [api]
-  - Fix properties recognition: colon must follow space or newline
+  - Fix properties recognition: colon must be followed by space or newline
     (could be not quoted string containing colon or even property name with colon)
   - Add quoted property names support with escaped characters
   - Property writing style could change on update according to target file
