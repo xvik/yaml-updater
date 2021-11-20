@@ -8,9 +8,11 @@ For general workflow and update rules read [root readme](../../../).
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-[Download jar from maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.0/) (classifier `all`)
+There are native binaries [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.0) for windows, mac and linux.
+Also, shadowed (all dependencies included) jar attached to release.
 
-It will include all required dependencies (shadowjar).
+Signed version of shadowed is also [published to maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.0/) (classifier `all`)
+(might be more preferable for security reasons).
 
 #### Custom packaging
 
@@ -24,10 +26,16 @@ Use it for required packaging.
 
 ### Usage
 
-You will need java installed on target environment.
+For native binary (for example, on windows): 
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml
+yaml-updater.exe config.yml update.yml
+```
+
+If you don't want to use native version then you'll need java installed on target environment.
+
+```
+java -jar yaml-updater.jar config.yml update.yml
 ```
 
 This will merge update.yml into config.yml file (creating backup of original file). 
@@ -39,8 +47,11 @@ Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/do
 NOTE: longer version with command name will also work (as shown in help):
 
 ```
-java -jar yaml-config-updater-cli.jar update-config config.yml update.yml
+java -jar yaml-updater.jar update-config config.yml update.yml
 ```
+
+IMPORTANT: Below I'll show shorter command versions for native binaries. If you use jar instead of native
+version then prepend `java -jar`
 
 #### Options
 
@@ -78,7 +89,7 @@ without actual configuration updating (and no backup creation). Updated file wou
 for consultation.
 
 ```
-java -jar yaml-config-updater-cli.jar --dry-run config.yml update.yml
+yaml-updater.exe --dry-run config.yml update.yml
 ```
 
 #### Delete props
@@ -89,19 +100,19 @@ use `-d` flag (or `--delete-path=`).
 For example, to remove `list` sub-tree under `prop1`:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -d prop1.list
+yaml-updater.exe config.yml update.yml -d prop1.list
 ```
 
 You can specify multiple properties:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -d prop1.list prop2 
+yaml-updater.exe config.yml update.yml -d prop1.list prop2 
 ```
 
 For full flag name:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml --delete-path=prop1.list --delete-path=prop2
+yaml-updater.exe config.yml update.yml --delete-path=prop1.list --delete-path=prop2
 ```
 
 NOTE: you can use both '.' and '/' as level separator ('/' is useful when property name contains dots)
@@ -111,7 +122,7 @@ NOTE: you can use both '.' and '/' as level separator ('/' is useful when proper
 To [specify environment variables](../yaml-config-updater#env-vars) use `-e` (or `--env=`):
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -e name=foo
+yaml-updater.exe config.yml update.yml -e name=foo
 ```
 
 If update.yaml contains:
@@ -131,13 +142,13 @@ NOTE: not specified variables are not replaced!
 Multiple variables:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -e name=foo var2=other
+yaml-updater.exe config.yml update.yml -e name=foo var2=other
 ```
 
 Other syntax:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml --env=name=foo --env=var2=other
+yaml-updater.exe config.yml update.yml --env=name=foo --env=var2=other
 ```
 
 ##### Defaults
@@ -157,19 +168,19 @@ var2=other
 ```
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -e vars.properties
+yaml-updater.exe config.yml update.yml -e vars.properties
 ```
 
 Multiple files could be declared. Files and direct variables declaration could be mixed:
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -e vars.properties custom=name
+yaml-updater.exe config.yml update.yml -e vars.properties custom=name
 ```
 
 Variables file could be an url (same as with update file):
 
 ```
-java -jar yaml-config-updater-cli.jar config.yml update.yml -e http://mydomian.com/vars.properties
+yaml-updater.exe config.yml update.yml -e http://mydomian.com/vars.properties
 ```
 
 By default, error is thrown if specified variables file does not exist.

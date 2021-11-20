@@ -26,6 +26,7 @@ Supports:
 
 * Multiline values (all [syntax variations](https://yaml-multiline.info))
 * [Reformatting](#merge-rules) (changed paddings in new config in both directions)
+* Quoted property names with escaped characters (according to [yaml spec](http://yaml.org/spec/1.2-old/spec.html#id2776092))
 * Properties reordering according to new config
 * [Variables replacement](#variables) in new config before merge (environment-specific config adoption)
 * [Current values remove](yaml-config-updater#delete-props) (e.g. deprecated values or for value replacement)
@@ -145,7 +146,7 @@ Resulted in 351 bytes, 25 lines
 Could be used as:
 
 * [Library](yaml-config-updater) through API (embedding tool or perform testing migration)
-* [Command line util](yaml-config-updater-cli) (jar)
+* [Command line util](yaml-config-updater-cli) (jar or native binaries)
 * [Dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
 
 Read exact module's readme for setup instructions.
@@ -162,6 +163,7 @@ Read exact module's readme for setup instructions.
 * Paddings applied from update file (original config could be re-formatted)
   - Padding change works in both directions (reduce or enlarge)
 * Possible whitespace between property name and colon is removed (`name : value` becomes `name: value`)
+* Property writing style taken from target file: e.g. if property was quoted and not quoted in new file then it would be not quoted in merged file
 * Lists not merged
   - Object list items could be updated with new properties (if matched item found)
   - Dash style for object item could change in both directions: empty dash (property on new line) or property on the same line with dash
@@ -273,6 +275,27 @@ one:
 one: 
     # New comment
     two: 2
+  </pre>
+</td>
+</tr>
+
+<tr>
+<td>
+Style changed
+</td>
+<td>
+   <pre lang="yaml">
+"one": 1
+   </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 1
+  </pre>
+</td>
+<td>
+  <pre lang="yaml">
+one: 1
   </pre>
 </td>
 </tr>
