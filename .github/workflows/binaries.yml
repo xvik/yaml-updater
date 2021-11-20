@@ -1,6 +1,7 @@
 name: Publish native binaries
 
 on:
+  workflow_dispatch:
   release:
     types: [created, edited]
 
@@ -134,6 +135,7 @@ jobs:
           path: upload
 
       - name: Upload jar
+        if: ${{ github.event_name == 'release' }}
         uses: JasonEtco/upload-to-release@master
         with:
           args: upload/yaml-updater.jar application/octet-stream
@@ -141,6 +143,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload linux binary
+        if: ${{ github.event_name == 'release' }}
         uses: JasonEtco/upload-to-release@master
         with:
           args: upload/yaml-updater-linux-amd64.jar application/octet-stream
@@ -148,6 +151,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload windows binary
+        if: ${{ github.event_name == 'release' }}
         uses: JasonEtco/upload-to-release@master
         with:
           args: upload/yaml-updater.exe application/octet-stream
@@ -155,6 +159,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload mac binary
+        if: ${{ github.event_name == 'release' }}
         uses: JasonEtco/upload-to-release@master
         with:
           args: upload/yaml-updater-mac-amd64 application/octet-stream
