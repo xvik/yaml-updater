@@ -1,9 +1,8 @@
 name: Publish native binaries
 
 on:
-  workflow_dispatch:
   release:
-    types: [created]
+    types: [created, edited]
 
 jobs:
 
@@ -134,60 +133,30 @@ jobs:
           name: yaml-updater-mac-amd64
           path: upload
 
-      # resolve the latest release from github api (to be able to run action after release)
-      - name: Find latest release
-        uses: octokit/request-action@v2.x
-        id: get_latest_release
-        with:
-          route: GET /repos/:repository/releases/latest
-          repository: ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Compute release url
-        id: get_upload_url
-        run: |
-          url=$(echo "$response" | jq -r '.upload_url')
-          echo "::set-output name=url::$url"
-        env:
-          response: ${{ steps.get_latest_release.outputs.data }}
-
       - name: Upload jar
-        uses: actions/upload-release-asset@v1.0.2
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater.jar application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: upload/yaml-updater.jar
-          asset_name: yaml-updater.jar
-          asset_content_type: application/zip
 
       - name: Upload linux binary
-        uses: actions/upload-release-asset@v1.0.2
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater-linux-amd64.jar application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: upload/yaml-updater-linux-amd64
-          asset_name: yaml-updater-linux-amd64
-          asset_content_type: application/octet-stream
 
       - name: Upload windows binary
-        uses: actions/upload-release-asset@v1.0.2
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater.exe application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: upload/yaml-updater.exe
-          asset_name: yaml-updater.exe
-          asset_content_type: application/octet-stream
 
       - name: Upload mac binary
-        uses: actions/upload-release-asset@v1.0.2
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: upload/yaml-updater-mac-amd64 application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: upload/yaml-updater-mac-amd64
-          asset_name: yaml-updater-mac-amd64
-          asset_content_type: application/octet-stream
