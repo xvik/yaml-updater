@@ -1,3 +1,6 @@
+* [cli]
+  - Fix show version in native binary
+
 ### 1.4.0 (2021-11-20)
 * [api]
   - Fix properties recognition: colon must be followed by space or newline

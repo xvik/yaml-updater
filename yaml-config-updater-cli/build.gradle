@@ -14,7 +14,8 @@ dependencies {
 }
 
 compileJava {
-    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}",
+                             "-Aother.resource.patterns=META-INF/MANIFEST.MF"]
 }
 
 jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
