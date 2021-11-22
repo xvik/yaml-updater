@@ -5,6 +5,7 @@
   - Add quoted property names support with escaped characters
   - Property writing style could change on update according to target file
     (e.g. quoted property may become unquoted or opposite)
+* [cli]
   - Add native binaries (lin, win, mac)
 
 ### 1.3.3 (2021-11-15)
