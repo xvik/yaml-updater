@@ -7,10 +7,13 @@ package ru.vyarus.yaml.updater.cli
 class VersionTest extends AbstractTest {
 
     def "Check version call"() {
+        // sample version file is in test resources META-INF/VERSION
 
-        expect: "executing version command"
-        // skipping version because different test runs may bring or not jacoco meta-inf
-        runWithOutput("-V").startsWith("yaml-config-updater version ")
+        when: "executing version command"
+        def out = runWithOutput("-V")
+
+        then: "version not found"
+        out.startsWith("1.0 (10 NOV 2021)")
 
     }
 }

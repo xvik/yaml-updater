@@ -1,5 +1,6 @@
 * [cli]
   - Fix show version in native binary
+  - Change version format to: version (date)
 
 ### 1.4.0 (2021-11-20)
 * [api]

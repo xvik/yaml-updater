@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id "com.palantir.graal" version "0.10.0"
@@ -15,7 +17,36 @@ dependencies {
 
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}",
-                             "-Aother.resource.patterns=META-INF/MANIFEST.MF"]
+                             "-Aother.resource.patterns=META-INF/VERSION"]
+}
+
+// custom version file is required because native image would override MANIFEST.MF
+task generateVersionFile {
+    inputs.property('source', "${ -> project.version} (${new SimpleDateFormat('dd MMMM YYYY', Locale.ENGLISH).format(new Date())})")
+    outputs.file "$project.buildDir/version/VERSION"
+    doLast {
+        File file = outputs.files.singleFile
+        if (file.exists()) {
+            file.delete()
+        } else {
+            file.parentFile.mkdirs()
+        }
+        file << inputs.properties.get('source')
+    }
+}
+
+model {
+    tasks.jar {
+        into("META-INF/") {
+            from generateVersionFile
+        }
+    }
+}
+
+shadowJar {
+    into("META-INF/") {
+        from generateVersionFile
+    }
 }
 
 jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'

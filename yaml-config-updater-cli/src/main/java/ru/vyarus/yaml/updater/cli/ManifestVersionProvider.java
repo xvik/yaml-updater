@@ -2,13 +2,15 @@ package ru.vyarus.yaml.updater.cli;
 
 import picocli.CommandLine;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
- * Reads version from the bundled manifest file.
+ * Reads version from the bundled "META-INF/VERSION" file. Manifest file can't be used because its being overridden
+ * during native image build.
  *
  * @author Vyacheslav Rusakov
  * @since 04.08.2021
@@ -17,27 +19,19 @@ public class ManifestVersionProvider implements CommandLine.IVersionProvider {
 
     @Override
     public String[] getVersion() throws Exception {
-        String[] res;
-        final URL url = CommandLine.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
-        if (url != null) {
-            try {
-                final Manifest manifest = new Manifest(url.openStream());
-                final Attributes attr = manifest.getMainAttributes();
-                String version = get(attr, "Implementation-Version");
-                if (version == null) {
-                    version = "unknown";
+        final String[] res;
+        final InputStream in = CommandLine.class.getClassLoader().getResourceAsStream("META-INF/VERSION");
+        if (in != null) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                String version = reader.lines().collect(Collectors.joining("\n"));
+                if (version.isEmpty()) {
+                    version = "unknown version";
                 }
-                res = new String[]{"yaml-config-updater version " + version};
-            } catch (IOException ex) {
-                res = new String[]{"Unable to read from " + url + ": " + ex};
+                res = new String[]{version};
             }
         } else {
-            res = new String[]{"manifest not found"};
+            res = new String[]{"version file not found"};
         }
         return res;
-    }
-
-    private static String get(final Attributes attributes, final String key) {
-        return (String) attributes.get(new Attributes.Name(key));
     }
 }
