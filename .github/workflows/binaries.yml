@@ -138,7 +138,7 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         uses: JasonEtco/upload-to-release@master
         with:
-          args: upload/yaml-updater.jar
+          args: upload/yaml-updater.jar application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
