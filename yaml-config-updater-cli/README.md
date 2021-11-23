@@ -8,10 +8,10 @@ For general workflow and update rules read [root readme](../../../).
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-There are native binaries [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.0) for windows, mac and linux.
+There are native binaries [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.1) for windows, mac and linux.
 Also, shadowed (all dependencies included) jar attached to release.
 
-Signed version of shadowed is also [published to maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.0/) (classifier `all`)
+Signed version of shadowed is also [published to maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.1/) (classifier `all`)
 (might be more preferable for security reasons).
 
 #### Custom packaging
@@ -19,7 +19,7 @@ Signed version of shadowed is also [published to maven central](https://repo1.ma
 If you want to package it differently, not shadowed version is also available:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater-cli:1.4.0'
+implementation 'ru.vyarus:yaml-config-updater-cli:1.4.1'
 ```
 
 Use it for required packaging.

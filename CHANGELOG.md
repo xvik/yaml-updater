@@ -1,5 +1,6 @@
+### 1.4.1 (2021-11-24)
 * [cli]
-  - Fix show version in native binary
+  - Fix show version in native binary (-V argument)
   - Change version format to: version (date)
 
 ### 1.4.0 (2021-11-20)
