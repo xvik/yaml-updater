@@ -7,5 +7,5 @@ dependencies {
     }
     provided 'io.dropwizard:dropwizard-core:2.0.28'
 
-    testImplementation 'com.github.stefanbirkner:system-lambda:1.2.0'
+    testImplementation 'com.github.stefanbirkner:system-lambda:1.2.1'
 }
