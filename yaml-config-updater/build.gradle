@@ -3,7 +3,7 @@ description = "Merges current yaml config with a new version to add missed prope
 dependencies {
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.5.3'
 
-    implementation 'org.slf4j:slf4j-api:1.7.33'
+    implementation 'org.slf4j:slf4j-api:1.7.35'
     implementation 'org.yaml:snakeyaml:1.30'
 
     testImplementation 'org.slf4j:slf4j-simple:1.7.33'
