@@ -6,5 +6,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'org.yaml:snakeyaml:1.30'
 
-    testImplementation 'org.slf4j:slf4j-simple:1.7.35'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.36'
 }
