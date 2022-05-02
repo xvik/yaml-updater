@@ -5,7 +5,7 @@ dependencies {
         // dropwizard-provided versions must be used instead
         transitive = false
     }
-    provided 'io.dropwizard:dropwizard-core:2.0.29'
+    provided 'io.dropwizard:dropwizard-core:2.1.0'
 
     testImplementation 'com.github.stefanbirkner:system-lambda:1.2.1'
 }
