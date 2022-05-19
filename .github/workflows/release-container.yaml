@@ -42,10 +42,10 @@ jobs:
               archive_format: 'zip',
             });
             let fs = require('fs');
-            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/binary.zip`, Buffer.from(download.data));
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/artifact.zip`, Buffer.from(download.data));
 
       - name: Unzip binary
-        run: unzip binary.zip
+        run: mkdir upload && cd upload && unzip ../artifact.zip
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2

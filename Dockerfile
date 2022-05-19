@@ -1,7 +1,7 @@
 FROM frolvlad/alpine-glibc:alpine-3.15
 
 
-COPY yaml-updater-linux-amd64 /usr/local/bin/yaml-updater
+COPY upload/yaml-updater-linux-amd64 /usr/local/bin/yaml-updater
 
 # ARG VERSION=1.4.1
 # RUN set -x \
