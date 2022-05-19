@@ -6,7 +6,6 @@ on:
     types: [created, edited]
 
 jobs:
-
   buildOnWindows:
     runs-on: windows-latest
 
@@ -43,7 +42,7 @@ jobs:
         with:
           version: latest
           files: upload/yaml-updater.exe
-          args: '--lzma --best'
+          args: "--lzma --best"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -76,7 +75,7 @@ jobs:
         continue-on-error: true
         with:
           file: upload/yaml-updater-mac-amd64
-          args: '--lzma --best'
+          args: "--lzma --best"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -112,7 +111,7 @@ jobs:
         with:
           version: latest
           files: upload/yaml-updater-linux-amd64
-          args: '--lzma --best'
+          args: "--lzma --best"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -165,3 +164,35 @@ jobs:
           args: upload/yaml-updater-mac-amd64 application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dockerImage:
+    runs-on: ubuntu-latest
+    needs: buildOnLinux
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
