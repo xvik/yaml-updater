@@ -11,8 +11,6 @@ env:
 
 jobs:
   build-and-push-image:
-    needs:
-      - buildOnLinux
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,17 +20,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - uses: actions/download-artifact@v2
+        with:
+          workflow: binaries.yml
+          workflow_conclusion: success
+          name: yaml-updater-linux-amd64
+          path: upload
+
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: yaml-updater-linux-amd64
-          path: upload
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
