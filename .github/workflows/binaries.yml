@@ -37,16 +37,6 @@ jobs:
           distribution: 'zulu'
           java-version: 11
 
-      - name: Setup MS dev tools
-        if: contains(matrix.os, 'windows')
-        uses: ilammy/msvc-dev-cmd@v1.10.0
-
-      - name: Setup MS VS tools
-        if: contains(matrix.os, 'windows')
-        uses: microsoft/setup-msbuild@v1.1
-        with:
-          msbuild-architecture: x64
-
         # cache
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -72,21 +62,20 @@ jobs:
           fi
 
       - name: Run UPX
-        uses: crazy-max/ghaction-upx@v1.4.0
+        uses: svenstaro/upx-action@v2
         continue-on-error: true
         with:
-          version: latest
-          files: ${{ steps.build.outputs.binary }}
+          file: ${{ steps.build.outputs.binary }}
           args: "--lzma --best"
-
-      - name: Quick Test
-        run: ./${{ steps.build.outputs.binary }} --version
 
       - name: Publish ${{ matrix.artifact }}
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.artifact }}
           path: ${{ steps.build.outputs.binary }}
+
+      - name: Quick Test
+        run: ./${{ steps.build.outputs.binary }} --version
 
       - name: Publish JAR
         uses: actions/upload-artifact@v2
