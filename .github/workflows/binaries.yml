@@ -1,8 +1,6 @@
 name: Publish native binaries
 
 on:
-  pull_request:
-  push:
   workflow_dispatch:
   release:
     types: [published]
