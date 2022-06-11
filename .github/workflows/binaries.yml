@@ -37,6 +37,10 @@ jobs:
           distribution: 'zulu'
           java-version: 11
 
+      - name: Setup MS dev tools
+        if: contains(matrix.os, 'windows')
+        uses: ilammy/msvc-dev-cmd@v1.10.0
+
         # cache
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
