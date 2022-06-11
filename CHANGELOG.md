@@ -1,3 +1,6 @@
+### 1.4.2 (2022-06-11)
+* Add docker image (#48)
+
 ### 1.4.1 (2021-11-24)
 * [cli]
   - Fix show version in native binary (-V argument)
