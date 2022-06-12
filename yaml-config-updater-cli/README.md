@@ -8,37 +8,141 @@ For general workflow and update rules read [root readme](../../../).
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater-cli.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater-cli)
 
-There are native binaries [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2) for windows, mac and linux.
-Also, shadowed (all dependencies included) jar attached to release.
+Delivered as:
 
-Signed version of shadowed is also [published to maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.2/) (classifier `all`)
-(might be more preferable for security reasons).
+* Fat jar (all dependencies inside one runnable jar)
+* Native binary for linux, mac and windows
+* Docker image (alpine + native linux binary)
 
-#### Custom packaging
+First two are [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2).
+Docker image uploaded into [github repository](https://github.com/xvik/yaml-updater/pkgs/container/yaml-updater)
 
-If you want to package it differently, not shadowed version is also available:
+#### Fat jar
 
-```groovy
-implementation 'ru.vyarus:yaml-config-updater-cli:1.4.2'
+Requires installed java 8 or above.
+
+Jar could be downloaded from [github release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2)
+or from [maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.2/) (classifier `all`)
+(the latter is signed and so might be considered as more secure option, but jars are the same).
+
+Example usage:
+
 ```
-
-Use it for required packaging.
-
-### Usage
-
-For native binary (for example, on windows): 
-
+java -jar yaml-updater.jar --version
 ```
-yaml-updater.exe config.yml update.yml
-```
-
-If you don't want to use native version then you'll need java installed on target environment.
 
 ```
 java -jar yaml-updater.jar config.yml update.yml
 ```
 
-This will merge update.yml into config.yml file (creating backup of original file). 
+##### Custom packaging
+
+If you want to package it differently, not shadowed version is also available (with transitive dependencies):
+
+```groovy
+implementation 'ru.vyarus:yaml-config-updater-cli:1.4.2'
+```
+
+You can build your own fat jar with it.
+
+#### Native binaries
+
+Native binaries are attached to [github release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2).
+They are build with [graalvm native image](https://www.graalvm.org/22.1/reference-manual/native-image/).
+
+##### Windows
+
+On windows, requires Visual C++ redistributable ([download link](https://www.microsoft.com/en-gb/download/confirmation.aspx?id=48145)).
+You might already have it installed (many windows apps (especially games) require it).
+When not installed error message will be shown about missed dll.
+
+WARNING: Windows defender or other antivirus software could detect trojans. This is a [known
+problem for grallvm](https://github.com/oracle/graal/issues/1752). I can't do anything with it: native binary is build automatically with 
+[github action](https://github.com/xvik/yaml-updater/blob/master/.github/workflows/binaries.yml) on release and
+does not contain any treats.
+
+```
+yaml-updater.exe --version
+```
+
+```
+yaml-updater.exe config.yml update.yml
+```
+
+##### Linux, Mac
+
+On linux and mac glibc is required. On most distributions it is already installed. 
+
+You'll need to set executable flag (github drops it when attaches to release):
+
+```
+chmod +x yaml-updater-linux-amd64
+```
+
+or 
+
+```
+chmod +x yaml-updater-mac-amd64
+```
+
+Also, it would be simpler to rename file:
+
+```
+mv yaml-updater-linux-amd64 yaml-updater
+```
+
+Execution:
+
+```
+./yaml-updater --version
+```
+
+```
+./yaml-updater config.yml update.yml
+```
+
+#### Docker
+
+Assuming [docker installed](https://docs.docker.com/engine/install/)
+
+Docker image uploaded to [github repository](https://github.com/xvik/yaml-updater/pkgs/container/yaml-updater)
+
+Image build with [alpine(+glibc) and linux binary](https://github.com/xvik/yaml-updater/blob/master/Dockerfile) and weights only 22mb
+
+Test:
+
+```
+docker run -it --rm ghcr.io/xvik/yaml-updater:1.4.2 --version
+```
+
+(`--rm` flag used to remove container after execution)
+
+For actual migration, you'll need to mount local folder containing yaml files:
+for example, suppose we have both in the current directory
+
+```
+docker run -it --rm -v $(pwd):/tmp/data ghcr.io/xvik/yaml-updater:1.4.2 /tmp/data/config.yml /tmp/data/update.yml
+```
+
+Here both files (`current.yml` and `update.yml`) are in the current directory, mounted to docker.
+After execution `current.yml` would be updated.
+
+You can put a full path to local folder instead of `$(pwd)` (especially on windows):
+
+```
+docker run -it --rm -v "C:/data":/tmp/data ghcr.io/xvik/yaml-updater:1.4.2 /tmp/data/config.yml /tmp/data/update.yml
+```
+
+### Usage
+
+You can use whatever way you want, but, for simplicity, examples below are shown with windows binary
+(in all cases parameters are the same).
+
+```
+yaml-updater.exe config.yml update.yml
+```
+
+This will merge update.yml into config.yml file (including creation of backup for original file). 
 *Config.yml may not exist* (initial installation case).
 
 Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/docs/api/java/net/URL.html)
@@ -47,11 +151,8 @@ Update file may be a local file or any [URL](https://docs.oracle.com/javase/7/do
 NOTE: longer version with command name will also work (as shown in help):
 
 ```
-java -jar yaml-updater.jar update-config config.yml update.yml
+yaml-updater.exe update-config config.yml update.yml
 ```
-
-IMPORTANT: Below I'll show shorter command versions for native binaries. If you use jar instead of native
-version then prepend `java -jar`
 
 #### Options
 

@@ -146,8 +146,7 @@ Resulted in 351 bytes, 25 lines
 Could be used as:
 
 * [Library](yaml-config-updater) through API (embedding tool or perform testing migration)
-* [Command line util](yaml-config-updater-cli) (shadowed jar or native binaries)
-  - [Docker image](https://github.com/xvik/yaml-updater/pkgs/container/yaml-updater)
+* [Command line util](yaml-config-updater-cli) (fat jar, native binary or docker image)
 * [Dropwizard plugin](dropwizard-config-updater) (same arguments as in cli module)
 
 Read exact module's readme for setup instructions.
