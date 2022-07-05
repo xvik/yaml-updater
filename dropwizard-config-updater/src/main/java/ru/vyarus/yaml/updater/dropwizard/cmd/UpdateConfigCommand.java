@@ -136,7 +136,7 @@ public class UpdateConfigCommand extends Command {
         return in;
     }
 
-    @SuppressWarnings("PMD.SystemPrintln")
+    @SuppressWarnings({"PMD.SystemPrintln", "PMD.CognitiveComplexity"})
     private Map<String, String> prepareEnv(final List<String> envList, final boolean strict) {
         // always included environment vars
         final Map<String, String> res = new HashMap<>(System.getenv());

@@ -66,7 +66,7 @@ public final class ListMatcher {
      * @return matched item or null
      */
     @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity",
-            "PMD.CyclomaticComplexity"})
+            "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity"})
     public static <T extends YamlLine<T>> T match(final T node, final List<T> list) {
         LOGGER.trace("Searching for matching list item {}", node.getYamlPath());
         final List<T> cand = new ArrayList<>(list);
@@ -180,6 +180,7 @@ public final class ListMatcher {
         return res;
     }
 
+    @SuppressWarnings("PMD.CognitiveComplexity")
     private static <T extends YamlLine<T>> Integer matchSubtrees(final T a, final T b) {
         LOGGER.trace("\tmatching subtrees for {} and {}", a, b);
         int matches = 0;

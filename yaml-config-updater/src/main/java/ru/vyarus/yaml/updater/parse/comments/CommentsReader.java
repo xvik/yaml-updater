@@ -80,7 +80,7 @@ public final class CommentsReader {
     }
 
     @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement", "checkstyle:MultipleStringLiterals",
-            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces"})
+            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
     private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
@@ -106,7 +106,7 @@ public final class CommentsReader {
     }
 
     @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement",
-            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces"})
+            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
     private static void parseValue(final String line,
                                    final Context context,
                                    final CharacterIterator chars,
