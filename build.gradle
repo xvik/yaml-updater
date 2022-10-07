@@ -1,5 +1,5 @@
 plugins {
-    id 'ru.vyarus.github-info' version '1.3.0' apply false
+    id 'ru.vyarus.github-info' version '1.4.0' apply false
     id 'ru.vyarus.quality' version '4.8.0' apply false
 
     id 'base'
