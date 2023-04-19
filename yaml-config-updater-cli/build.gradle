@@ -9,10 +9,10 @@ description = "Command line executor for yaml config updater"
 
 dependencies {
     implementation project(':yaml-config-updater')
-    implementation 'info.picocli:picocli:4.7.2'
+    implementation 'info.picocli:picocli:4.7.3'
     implementation 'org.slf4j:slf4j-simple:1.7.36'
 
-    annotationProcessor 'info.picocli:picocli-codegen:4.7.2'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.3'
 }
 
 compileJava {
