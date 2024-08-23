@@ -2,9 +2,9 @@ package ru.vyarus.yaml.updater.dropwizard.cmd;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import io.dropwizard.cli.Command;
-import io.dropwizard.logging.LoggingUtil;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.core.cli.Command;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.logging.common.LoggingUtil;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
