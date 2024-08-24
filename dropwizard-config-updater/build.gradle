@@ -1,5 +1,9 @@
 description = "Yaml config updater integration for dropwizard"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
     implementation (project(':yaml-config-updater')) {
         // dropwizard-provided versions must be used instead
