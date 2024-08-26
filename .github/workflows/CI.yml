@@ -10,33 +10,32 @@ jobs:
     name: Java ${{ matrix.java }}
     strategy:
       matrix:
-        java: [8, 11, 16]
+        java: [8, 11, 17, 21]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assemble
+        run: |
+          chmod +x gradlew
+          ./gradlew assemble --no-daemon
 
       - name: Test
         env:
           GH_ACTIONS: true
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: check
+        run: ./gradlew check --no-daemon
 
       - name: Build coverage report
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: jacocoTestReport
+        run: ./gradlew jacocoTestReport --no-daemon
 
       - uses: codecov/codecov-action@v4
         with:
