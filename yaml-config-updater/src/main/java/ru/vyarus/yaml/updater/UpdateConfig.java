@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.yaml.updater.listen.UpdateListener;
 import ru.vyarus.yaml.updater.listen.UpdateListenerAdapter;
 import ru.vyarus.yaml.updater.report.UpdateReport;
@@ -132,6 +133,7 @@ public final class UpdateConfig {
          * @param current current configuration file
          * @param update  update file stream
          */
+        @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
         public Configurator(final File current, final InputStream update) {
             if (current == null) {
                 throw new IllegalArgumentException("Current config file not specified");

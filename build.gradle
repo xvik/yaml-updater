@@ -1,17 +1,17 @@
 plugins {
     id 'ru.vyarus.github-info' version '2.0.0' apply false
-    id 'ru.vyarus.quality' version '4.9.0' apply false
+    id 'ru.vyarus.quality' version '5.0.0' apply false
 
     id 'base'
     id 'jacoco'
-    id 'ru.vyarus.java-lib' version '2.4.0'
+    id 'ru.vyarus.java-lib' version '3.0.0'
     id 'net.researchgate.release' version '3.0.2'
     id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
     id 'com.github.ben-manes.versions' version '0.51.0'
 }
 
 wrapper {
-    gradleVersion = '7.2'
+    gradleVersion = '8.10'
 }
 
 javaLib {
@@ -35,11 +35,11 @@ subprojects {
     apply plugin: 'ru.vyarus.github-info'
     apply plugin: 'com.github.ben-manes.versions'
 
-    sourceCompatibility = 1.8
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+    }
 
     dependencies {
-        compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-
         testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     }
 
@@ -48,12 +48,12 @@ subprojects {
         license = 'MIT'
     }
 
-    pom {
+    maven.pom {
         developers {
             developer {
-                id 'xvik'
-                name 'Vyacheslav Rusakov'
-                email 'vyarus@gmail.com'
+                id = 'xvik'
+                name = 'Vyacheslav Rusakov'
+                email = 'vyarus@gmail.com'
             }
         }
     }

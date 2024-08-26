@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.parse.common.model;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.yaml.updater.parse.common.YamlModelUtils;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implem
     private boolean listItemWithProperty;
 
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public YamlLine(final T root, final int padding, final int lineNum) {
         super(root);
         this.padding = padding;

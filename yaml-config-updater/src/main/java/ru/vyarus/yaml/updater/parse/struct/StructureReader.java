@@ -170,7 +170,7 @@ public final class StructureReader {
     }
 
     @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
-    private static class Context {
+    private static final class Context {
         int lineNum;
         List<StructNode> rootNodes = new ArrayList<>();
         StructNode current;

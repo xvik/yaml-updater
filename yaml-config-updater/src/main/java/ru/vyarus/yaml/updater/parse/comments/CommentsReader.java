@@ -236,7 +236,7 @@ public final class CommentsReader {
     }
 
     @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
-    private static class Context {
+    private static final class Context {
         int lineNum;
         // storing only root nodes, sub nodes only required in context
         List<CmtNode> rootNodes = new ArrayList<>();

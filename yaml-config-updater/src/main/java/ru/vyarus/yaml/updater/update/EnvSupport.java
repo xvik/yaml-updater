@@ -1,5 +1,6 @@
 package ru.vyarus.yaml.updater.update;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * @author Vyacheslav Rusakov
  * @since 08.06.2021
  */
+@SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
 public class EnvSupport {
     private final Logger logger = LoggerFactory.getLogger(EnvSupport.class);
 
