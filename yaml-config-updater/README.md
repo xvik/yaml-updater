@@ -9,6 +9,8 @@ In most cases it might be more convenient to use cli wrappers:
 
 For general workflow and update rules read [root readme](../../../).
 
+Compatible with Java 8 and above.
+
 ### Setup
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/yaml-config-updater.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/yaml-config-updater)
@@ -19,14 +21,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>yaml-config-updater</artifactId>
-  <version>1.4.2</version>
+  <version>1.5.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater:1.4.2'
+implementation 'ru.vyarus:yaml-config-updater:1.5.0'
 ```
 
 ### Usage

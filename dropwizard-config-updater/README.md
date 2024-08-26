@@ -3,10 +3,11 @@
 Should be used for updating configuration just after new application version installation
 (before startup).
 
-Works with dropwizard 1.x and 2.x.
+Works with dropwizard 3.x and 4.x.
+(the latest version compatible with dropwizard 2 is [1.4.2](https://github.com/xvik/yaml-updater/tree/1.4.2/dropwizard-config-updater))
 
-Arguments and behaviour are almost equivalent to [cli module](../yaml-config-updater-cli)
-(full argument names works a bit differently). 
+Arguments and behavior are almost equivalent to [cli module](../yaml-config-updater-cli)
+(full argument names work a bit differently). 
 
 For general workflow and update rules read [root readme](../../../).
 
@@ -20,14 +21,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>dropwizard-config-updater</artifactId>
-  <version>1.4.2</version>
+  <version>1.5.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:dropwizard-config-updater:1.4.2'
+implementation 'ru.vyarus:dropwizard-config-updater:1.5.0'
 ```
 
 

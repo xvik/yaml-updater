@@ -14,15 +14,15 @@ Delivered as:
 * Native binary for linux, mac and windows
 * Docker image (alpine + native linux binary)
 
-First two are [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2).
+The first two are [attached to release](https://github.com/xvik/yaml-updater/releases/tag/1.5.0).
 Docker image uploaded into [github repository](https://github.com/xvik/yaml-updater/pkgs/container/yaml-updater)
 
 #### Fat jar
 
 Requires installed java 8 or above.
 
-Jar could be downloaded from [github release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2)
-or from [maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.4.2/) (classifier `all`)
+Jar could be downloaded from [github release](https://github.com/xvik/yaml-updater/releases/tag/1.5.0)
+or from [maven central](https://repo1.maven.org/maven2/ru/vyarus/yaml-config-updater-cli/1.5.0/) (classifier `all`)
 (the latter is signed and so might be considered as more secure option, but jars are the same).
 
 Example usage:
@@ -40,14 +40,14 @@ java -jar yaml-updater.jar config.yml update.yml
 If you want to package it differently, not shadowed version is also available (with transitive dependencies):
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater-cli:1.4.2'
+implementation 'ru.vyarus:yaml-config-updater-cli:1.5.0'
 ```
 
 You can build your own fat jar with it.
 
 #### Native binaries
 
-Native binaries are attached to [github release](https://github.com/xvik/yaml-updater/releases/tag/1.4.2).
+Native binaries are attached to [github release](https://github.com/xvik/yaml-updater/releases/tag/1.5.0).
 They are build with [graalvm native image](https://www.graalvm.org/22.1/reference-manual/native-image/).
 
 ##### Windows
@@ -112,7 +112,7 @@ Image build with [alpine(+glibc) and linux binary](https://github.com/xvik/yaml-
 Test:
 
 ```
-docker run -it --rm ghcr.io/xvik/yaml-updater:1.4.2 --version
+docker run -it --rm ghcr.io/xvik/yaml-updater:1.5.0 --version
 ```
 
 (`--rm` flag used to remove container after execution)
@@ -121,7 +121,7 @@ For actual migration, you'll need to mount local folder containing yaml files:
 for example, suppose we have both in the current directory
 
 ```
-docker run -it --rm -v $(pwd):/tmp/data ghcr.io/xvik/yaml-updater:1.4.2 /tmp/data/config.yml /tmp/data/update.yml
+docker run -it --rm -v $(pwd):/tmp/data ghcr.io/xvik/yaml-updater:1.5.0 /tmp/data/config.yml /tmp/data/update.yml
 ```
 
 Here both files (`current.yml` and `update.yml`) are in the current directory, mounted to docker.
@@ -130,7 +130,7 @@ After execution `current.yml` would be updated.
 You can put a full path to local folder instead of `$(pwd)` (especially on windows):
 
 ```
-docker run -it --rm -v "C:/data":/tmp/data ghcr.io/xvik/yaml-updater:1.4.2 /tmp/data/config.yml /tmp/data/update.yml
+docker run -it --rm -v "C:/data":/tmp/data ghcr.io/xvik/yaml-updater:1.5.0 /tmp/data/config.yml /tmp/data/update.yml
 ```
 
 ### Usage

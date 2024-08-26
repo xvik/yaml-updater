@@ -1,4 +1,4 @@
-### 1.5.0
+### 1.5.0 (2024-08-26)
 * [dropwizard]
   - Dropwizard 3,4 compatibility  
 
