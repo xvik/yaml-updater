@@ -1,3 +1,7 @@
+### 1.5.0
+* [dropwizard]
+  - Dropwizard 3,4 compatibility  
+
 ### 1.4.2 (2022-06-11)
 * Add docker image (#48)
 
