@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-glibc:alpine-3.15_glibc-2.34
+FROM frolvlad/alpine-glibc:alpine-3.20_glibc-2.34
 
 
 COPY tmp/yaml-updater-linux-amd64 /usr/local/bin/yaml-updater
