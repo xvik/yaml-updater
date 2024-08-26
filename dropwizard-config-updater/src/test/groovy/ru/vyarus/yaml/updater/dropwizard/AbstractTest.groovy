@@ -1,6 +1,5 @@
 package ru.vyarus.yaml.updater.dropwizard
 
-import com.github.stefanbirkner.systemlambda.SystemLambda
 import ru.vyarus.yaml.updater.dropwizard.support.SampleApp
 import spock.lang.Specification
 import spock.lang.TempDir
@@ -62,10 +61,11 @@ class AbstractTest extends Specification {
             System.setOut(new PrintStream(sw))
             System.setErr(new PrintStream(err))
 
-            SystemLambda.catchSystemExit({
-                new SampleApp().run(arg as String[])
-            })
-            return returnErrors ? err.toString(): sw.toString()
+            // IMPORTANT application onFatalError must be overridden!
+            new SampleApp().run(arg as String[])
+        } catch (IllegalStateException ex) {
+            ex.printStackTrace()
+            return returnErrors ? err.toString() : sw.toString()
         } finally {
             System.setOut(sysOut)
             System.setErr(sysErr)

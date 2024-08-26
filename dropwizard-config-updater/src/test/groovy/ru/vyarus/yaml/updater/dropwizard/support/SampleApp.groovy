@@ -20,4 +20,9 @@ class SampleApp extends Application<Configuration> {
     @Override
     void run(Configuration configuration, Environment environment) throws Exception {
     }
+
+    @Override
+    protected void onFatalError(Throwable t) {
+        throw new IllegalStateException("Startup failed", t)
+    }
 }
