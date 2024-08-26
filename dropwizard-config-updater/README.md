@@ -21,14 +21,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>dropwizard-config-updater</artifactId>
-  <version>1.5.0</version>
+  <version>1.4.3</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:dropwizard-config-updater:1.5.0'
+implementation 'ru.vyarus:dropwizard-config-updater:1.4.3'
 ```
 
 
