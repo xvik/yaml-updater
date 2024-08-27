@@ -1,6 +1,7 @@
 ### 1.4.3 (2024-08-27)
 * [dropwizard]
-  - Dropwizard 3,4 compatibility (drop dropwizard 2 support) 
+  - Dropwizard 3,4 compatibility 
+    (drop dropwizard 2 support) 
 
 ### 1.4.2 (2022-06-11)
 * Add docker image (#48)
