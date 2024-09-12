@@ -61,7 +61,9 @@ jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCl
 
 assemble.dependsOn = [shadowJar]
 
-if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+// Plugin requires java 11, but project targets java 8.
+// Without this condition tests would complain even on java 11 and above (failed dependency resolution)
+if (gradle.startParameter.taskNames.findAll { String it -> it.endsWith('nativeCompile')} .size() > 0) {
     apply plugin: 'org.graalvm.buildtools.native'
 
     // not used during release
