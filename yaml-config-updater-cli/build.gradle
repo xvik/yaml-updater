@@ -2,7 +2,7 @@ import java.text.SimpleDateFormat
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id "com.palantir.graal" version "0.10.0"
+    id 'org.graalvm.buildtools.native' version '0.10.2'
 }
 
 description = "Command line executor for yaml config updater"
@@ -53,14 +53,15 @@ jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCl
 
 assemble.dependsOn = [shadowJar]
 
-// not used during released
-graal {
-    graalVersion '21.3.0'
-    javaVersion '11'
-    mainClass  'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
-    outputName project.name
-
-    // help graal to properly detect VS on windows 10
-    windowsVsVersion '2022'
-    windowsVsEdition 'Enterprise'
+// not used during release
+graalvmNative {
+    binaries {
+        main {
+            imageName = project.name
+            mainClass = 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
+        }
+        all {
+            resources.autodetect()
+        }
+    }
 }
