@@ -16,12 +16,16 @@ jobs:
             os: windows-2022
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli.exe
             experimental: true
+            upx: true
           - artifact: yaml-updater-mac-amd64
-            os: macos-13
+            os: macos-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
+            # https://github.com/upx/upx/issues/612
+            upx: false
           - artifact: yaml-updater-linux-amd64
             os: ubuntu-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
+            upx: true
             publishJar: true # all builds producing this jar
 
     runs-on: ${{ matrix.os }}
@@ -67,6 +71,7 @@ jobs:
 
       - name: Run UPX
         uses: svenstaro/upx-action@v2
+        if: ${{ matrix.upx }}
         continue-on-error: true
         with:
           file: ${{ steps.build.outputs.binary }}
