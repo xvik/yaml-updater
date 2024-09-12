@@ -17,7 +17,7 @@ jobs:
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli.exe
             experimental: true
           - artifact: yaml-updater-mac-amd64
-            os: macos-latest
+            os: macos-13
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
           - artifact: yaml-updater-linux-amd64
             os: ubuntu-latest
@@ -59,10 +59,10 @@ jobs:
           ## Rename files
           mkdir upload
           cp ${{ matrix.build }} upload/${{ matrix.artifact }}
-          echo "::set-output name=binary::upload/${{ matrix.artifact }}"
+          echo "binary=upload/${{ matrix.artifact }}" >> "$GITHUB_OUTPUT"
           if [ -n "${{ matrix.publishJar }}" ]; then
             cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
-            echo "::set-output name=jarFile::upload/yaml-updater.jar"
+            echo "jarFile=upload/yaml-updater.jar" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run UPX
