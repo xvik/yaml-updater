@@ -1,8 +1,16 @@
 import java.text.SimpleDateFormat
 
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+            classpath 'org.graalvm.buildtools:native-gradle-plugin:0.10.3'
+        }
+    }
+}
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'org.graalvm.buildtools.native' version '0.10.2'
 }
 
 description = "Command line executor for yaml config updater"
@@ -53,15 +61,19 @@ jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCl
 
 assemble.dependsOn = [shadowJar]
 
-// not used during release
-graalvmNative {
-    binaries {
-        main {
-            imageName = project.name
-            mainClass = 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
-        }
-        all {
-            resources.autodetect()
+if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+    apply plugin: 'org.graalvm.buildtools.native'
+
+    // not used during release
+    graalvmNative {
+        binaries {
+            main {
+                imageName = project.name
+                mainClass = 'ru.vyarus.yaml.updater.cli.UpdateConfigCli'
+            }
+            all {
+                resources.autodetect()
+            }
         }
     }
 }
