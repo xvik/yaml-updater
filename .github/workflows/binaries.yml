@@ -12,10 +12,26 @@ on:
   release:
     types: [published]
 
-env:
-  TAG_NAME: ${{ github.event.inputs.tag || github.event.release.tag_name }}
-
 jobs:
+  selectTag:
+    name: Select target tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Select tag name
+        run: |
+          if [[ ${{ inputs.tag }} == true ]]; then
+            tagName=${{ inputs.tag }}
+          else
+            tagName=${{ github.event.release.tag_name }}
+          fi
+          echo "TAG_NAME=$tagName" >> $GITHUB_ENV
+
+      # different step to be sure variable is accessible
+      - name: Show selection
+        run: |
+          echo "Selected tag: $TAG_NAME"
+
+
   build:
     name: Build ${{ matrix.artifact }}
     strategy:
@@ -40,6 +56,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental || false }}
+    needs: [selectTag]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -76,10 +93,10 @@ jobs:
           ## Rename files
           mkdir upload
           cp ${{ matrix.build }} upload/${{ matrix.artifact }}
-          echo "binary=upload/${{ matrix.artifact }}" >> "$GITHUB_OUTPUT"
+          echo "binary=upload/${{ matrix.artifact }}" >> $GITHUB_OUTPUT
           if [ -n "${{ matrix.publishJar }}" ]; then
             cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
-            echo "jarFile=upload/yaml-updater.jar" >> "$GITHUB_OUTPUT"
+            echo "jarFile=upload/yaml-updater.jar" >> $GITHUB_OUTPUT
           fi
 
       - name: Run UPX
