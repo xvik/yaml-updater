@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Select tag name
         run: |
-          if [[ ${{ inputs.tag }} == true ]]; then
+          if [ -n "${{ inputs.tag }}" ]; then
             tagName=${{ inputs.tag }}
           else
             tagName=${{ github.event.release.tag_name }}
