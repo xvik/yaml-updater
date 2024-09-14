@@ -125,7 +125,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: ${{ env.TAG_NAME }}
+    if: ${{ TAG_NAME }}
     strategy:
       fail-fast: false
       matrix:
@@ -160,7 +160,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ env.TAG_NAME }}
+    if: ${{ TAG_NAME }}
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
