@@ -24,12 +24,8 @@ jobs:
           else
             tagName=${{ github.event.release.tag_name }}
           fi
-          echo "TAG_NAME=$tagName" >> $GITHUB_ENV
-
-      # different step to be sure variable is accessible
-      - name: Show selection
-        run: |
-          echo "Selected tag: $TAG_NAME"
+          echo "Selected tag: $tagName"
+          echo "TAG_NAME=$tagName" >> $GITHUB_OUTPUT          
 
 
   build:
@@ -60,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.TAG_NAME }}
+          ref: ${{ needs.selectTag.outputs.TAG_NAME }}
 
       - uses: graalvm/setup-graalvm@v1
         with:
@@ -125,7 +121,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: ${{ TAG_NAME }}
+    if: ${{ needs.selectTag.outputs.TAG_NAME }}
     strategy:
       fail-fast: false
       matrix:
@@ -134,7 +130,7 @@ jobs:
           - yaml-updater-mac-amd64
           - yaml-updater-linux-amd64
           - yaml-updater.jar
-    needs: [build]
+    needs: [build, selectTag]
     steps:
       - run: mkdir -p tmp
       - name: Download artifact ${{ matrix.artifact }}
@@ -144,12 +140,12 @@ jobs:
           path: tmp
 
       - name: Upload ${{ matrix.artifact }}
-        if: ${{ env.TAG_NAME }}
+        if: ${{ needs.selectTag.outputs.TAG_NAME }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: tmp/${{ matrix.artifact }}
-          tag: ${{ env.TAG_NAME }}
+          tag: ${{ needs.selectTag.outputs.TAG_NAME }}
           overwrite: true
 
   dockerImage:
@@ -159,8 +155,8 @@ jobs:
         artifact: [yaml-updater-linux-amd64]
 
     runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ TAG_NAME }}
+    needs: [build, selectTag]
+    if: ${{ needs.selectTag.outputs.TAG_NAME }}
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
