@@ -16,8 +16,11 @@ jobs:
   selectTag:
     name: Select target tag
     runs-on: ubuntu-latest
+    outputs:
+      TAG_NAME: ${{ steps.select.outputs.TAG_NAME }}
     steps:
-      - name: Select tag name
+      - id: select
+        name: Select tag name
         run: |
           if [ -n "${{ inputs.tag }}" ]; then
             tagName=${{ inputs.tag }}
@@ -54,6 +57,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental || false }}
     needs: [selectTag]
     steps:
+      - run: |
+          echo "Selected tag: ${{ needs.selectTag.outputs.TAG_NAME }}"
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.selectTag.outputs.TAG_NAME }}
