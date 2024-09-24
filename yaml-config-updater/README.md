@@ -21,14 +21,14 @@ Maven:
 <dependency>
   <groupId>ru.vyarus</groupId>
   <artifactId>yaml-config-updater</artifactId>
-  <version>1.4.3</version>
+  <version>1.4.4</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:yaml-config-updater:1.4.3'
+implementation 'ru.vyarus:yaml-config-updater:1.4.4'
 ```
 
 ### Usage

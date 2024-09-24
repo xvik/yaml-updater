@@ -1,3 +1,6 @@
+### 1.4.4 (2024-09-24)
+* Fix binaries release (mac and windows binaries don't shrink with upx due to incompatibility)
+
 ### 1.4.3 (2024-08-27)
 * [dropwizard]
   - Dropwizard 3,4 compatibility 
