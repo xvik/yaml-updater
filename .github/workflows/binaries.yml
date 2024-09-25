@@ -41,12 +41,12 @@ jobs:
             os: windows-2022
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli.exe
             experimental: true
-            upx: false
+            upx: true
           - artifact: yaml-updater-mac-amd64
             os: macos-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
             # https://github.com/upx/upx/issues/612
-            upx: false
+            upx: true
           - artifact: yaml-updater-linux-amd64
             os: ubuntu-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
@@ -65,7 +65,7 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
+          java-version: '22'
           distribution: 'liberica'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: gradle
@@ -106,7 +106,7 @@ jobs:
         continue-on-error: true
         with:
           file: ${{ steps.build.outputs.binary }}
-          args: "--lzma --best"
+          args: "-9"
 
       - name: Publish ${{ matrix.artifact }}
         uses: actions/upload-artifact@v4
