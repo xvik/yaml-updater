@@ -41,12 +41,12 @@ jobs:
             os: windows-2022
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli.exe
             experimental: true
-            upx: true
+            upx: false
           - artifact: yaml-updater-mac-amd64
             os: macos-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
             # https://github.com/upx/upx/issues/612
-            upx: true
+            upx: false
           - artifact: yaml-updater-linux-amd64
             os: ubuntu-latest
             build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
