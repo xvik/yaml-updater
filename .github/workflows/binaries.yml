@@ -1,9 +1,10 @@
 name: Publish native binaries
 
 on:
+  # for manual debug run (and optional re-release)
   workflow_dispatch:
     inputs:
-      # optionally, could be set to build tag branch and do complete release (useful when real release failed)
+      # when set, binaries would be uploaded to provided release tag (re-release)
       tag:
         description: 'Target tag (leave empty for test build)'
         required: false
@@ -39,22 +40,22 @@ jobs:
         include:
           - artifact: yaml-updater.exe
             os: windows-2022
-            build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli.exe
-            experimental: true
+            ext: .exe
+            # due to windows defender false detections
             upx: false
+
           - artifact: yaml-updater-mac-amd64
             os: macos-latest
-            build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
             # https://github.com/upx/upx/issues/612
             upx: false
+
           - artifact: yaml-updater-linux-amd64
             os: ubuntu-latest
-            build: yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli
             upx: true
-            publishJar: true # all builds producing this jar
+            shadowJar: true
 
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental || false }}
+    continue-on-error: ${{ false }}
     needs: [selectTag]
     steps:
       - run: |
@@ -84,7 +85,7 @@ jobs:
         id: build
         shell: bash
         run: |
-          if [ -n "${{ matrix.publishJar }}" ]; then
+          if [ -n "${{ matrix.shadowJar }}" ]; then
             BUILD_TARGET=":yaml-config-updater-cli:shadowJar :yaml-config-updater-cli:nativeCompile"
           else
             BUILD_TARGET=":yaml-config-updater-cli:nativeCompile"
@@ -93,9 +94,9 @@ jobs:
           ./gradlew ${BUILD_TARGET} --no-daemon
           ## Rename files
           mkdir upload
-          cp ${{ matrix.build }} upload/${{ matrix.artifact }}
+          cp yaml-config-updater-cli/build/native/nativeCompile/yaml-config-updater-cli${{ matrix.ext }} upload/${{ matrix.artifact }}
           echo "binary=upload/${{ matrix.artifact }}" >> $GITHUB_OUTPUT
-          if [ -n "${{ matrix.publishJar }}" ]; then
+          if [ -n "${{ matrix.shadowJar }}" ]; then
             cp yaml-config-updater-cli/build/libs/*-all.jar upload/yaml-updater.jar
             echo "jarFile=upload/yaml-updater.jar" >> $GITHUB_OUTPUT
           fi
@@ -114,15 +115,16 @@ jobs:
           name: ${{ matrix.artifact }}
           path: ${{ steps.build.outputs.binary }}
 
-      - name: Quick Test
-        run: ./${{ steps.build.outputs.binary }} --version
-
       - name: Publish JAR
         uses: actions/upload-artifact@v4
-        if: matrix.publishJar
+        if: matrix.shadowJar
         with:
           name: yaml-updater.jar
           path: ${{ steps.build.outputs.jarFile }}
+
+      - name: Quick Test
+        run: ./${{ steps.build.outputs.binary }} --version
+
 
   publish:
     runs-on: ubuntu-latest
