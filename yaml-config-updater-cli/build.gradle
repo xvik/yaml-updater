@@ -75,6 +75,7 @@ if (gradle.startParameter.taskNames.findAll { String it -> it.endsWith('nativeCo
             }
             all {
                 resources.autodetect()
+                buildArgs.add('-Os')
             }
         }
     }
