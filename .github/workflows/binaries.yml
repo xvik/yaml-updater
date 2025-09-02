@@ -70,6 +70,7 @@ jobs:
           distribution: 'liberica'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: gradle
+          native-image-job-reports: true
       - name: Verify GraalVM
         run: |
           echo "GRAALVM_HOME: $GRAALVM_HOME"
