@@ -2,7 +2,7 @@ description = "Merges current yaml config with a new version to add missed prope
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'org.yaml:snakeyaml:2.4'
+    implementation 'org.yaml:snakeyaml:2.5'
 
     testImplementation 'org.slf4j:slf4j-simple:1.7.36'
 }
