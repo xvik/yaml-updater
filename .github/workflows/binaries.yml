@@ -79,7 +79,7 @@ jobs:
 
         # cache
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build
         id: build
@@ -102,11 +102,12 @@ jobs:
           fi
 
       - name: Run UPX
-        uses: svenstaro/upx-action@v2
+        uses: crazy-max/ghaction-upx@v3
         if: ${{ matrix.upx }}
         continue-on-error: true
         with:
-          file: ${{ steps.build.outputs.binary }}
+          version: latest
+          files: ${{ steps.build.outputs.binary }}
           args: "-9"
 
       - name: Publish ${{ matrix.artifact }}
