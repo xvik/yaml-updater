@@ -3,8 +3,8 @@ import java.text.SimpleDateFormat
 buildscript {
     repositories { mavenCentral() }
     dependencies {
-        if (JavaVersion.current() >= JavaVersion.VERSION_11) {
-            classpath 'org.graalvm.buildtools:native-gradle-plugin:0.10.6'
+        if (JavaVersion.current() >= JavaVersion.VERSION_17) {
+            classpath 'org.graalvm.buildtools:native-gradle-plugin:0.11.0'
         }
     }
 }
@@ -61,7 +61,7 @@ jar.manifest.attributes 'Main-Class': 'ru.vyarus.yaml.updater.cli.UpdateConfigCl
 
 assemble.dependsOn = [shadowJar]
 
-// Plugin requires java 11, but project targets java 8.
+// Plugin requires java 17, but project targets java 8.
 // Without this condition tests would complain even on java 11 and above (failed dependency resolution)
 if (gradle.startParameter.taskNames.findAll { String it -> it.endsWith('nativeCompile')} .size() > 0) {
     apply plugin: 'org.graalvm.buildtools.native'
