@@ -141,7 +141,7 @@ jobs:
     steps:
       - run: mkdir -p tmp
       - name: Download artifact ${{ matrix.artifact }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ matrix.artifact }}
           path: tmp
@@ -178,7 +178,7 @@ jobs:
       - run: mkdir -p tmp
 
       - name: Download artifact ${{ matrix.artifact }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ matrix.artifact }}
           path: tmp
