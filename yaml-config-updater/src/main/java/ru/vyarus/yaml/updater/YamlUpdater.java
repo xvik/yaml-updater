@@ -26,10 +26,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Yaml configuration merger preserving comments. Use two yaml parsers: snakeyaml for self-validation and
@@ -75,7 +74,6 @@ import java.util.Locale;
  * @author Vyacheslav Rusakov
  * @since 14.04.2021
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 public class YamlUpdater {
     private final Logger logger = LoggerFactory.getLogger(YamlUpdater.class);
 
@@ -375,7 +373,7 @@ public class YamlUpdater {
                     Files.createDirectories(dir.toPath());
                 }
                 final File backup = new File(dir, current.getName()
-                        + "." + new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(new Date()));
+                        + "." + DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now()));
                 Files.copy(current.toPath(), backup.toPath());
                 logger.info("Backup created: {}", backup.getAbsolutePath());
                 config.getListener().backupCreated(backup);

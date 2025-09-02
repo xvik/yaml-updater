@@ -80,7 +80,7 @@ public final class CommentsReader {
     }
 
     @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement", "checkstyle:MultipleStringLiterals",
-            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
+            "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
     private static void processLine(final String line, final Context context) {
         final CharacterIterator chars = new StringCharacterIterator(line);
         try {
@@ -106,7 +106,7 @@ public final class CommentsReader {
     }
 
     @SuppressWarnings({"checkstyle:NeedBraces", "checkstyle:EmptyStatement",
-            "PMD.EmptyWhileStmt", "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
+            "PMD.ControlStatementBraces", "PMD.EmptyControlStatement"})
     private static void parseValue(final String line,
                                    final Context context,
                                    final CharacterIterator chars,
@@ -216,7 +216,7 @@ public final class CommentsReader {
         return demo;
     }
 
-    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class Prop {
         final int padding;
         final String key;
@@ -235,14 +235,14 @@ public final class CommentsReader {
         }
     }
 
-    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static final class Context {
         int lineNum;
         // storing only root nodes, sub nodes only required in context
-        List<CmtNode> rootNodes = new ArrayList<>();
+        final List<CmtNode> rootNodes = new ArrayList<>();
         CmtNode current;
         // comments aggregator
-        List<String> comments = new ArrayList<>();
+        final List<String> comments = new ArrayList<>();
         MultilineValue.Marker multiline;
 
         public void comment(final String line) {

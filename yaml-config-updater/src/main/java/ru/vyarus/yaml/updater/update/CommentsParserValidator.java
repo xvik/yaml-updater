@@ -161,9 +161,9 @@ public final class CommentsParserValidator {
         }
     }
 
-    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static final class ReportLines {
-        List<String> lines = new ArrayList<>();
+        final List<String> lines = new ArrayList<>();
         int length;
 
         public void add(final String line) {

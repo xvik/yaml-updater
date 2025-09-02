@@ -17,6 +17,7 @@ public abstract class TreeRoot<T extends YamlLine<T>> extends TreeNode<T> {
 
     private final int linesCnt;
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public TreeRoot(final List<T> nodes, final int linesCnt) {
         super(null);
         getChildren().addAll(nodes);

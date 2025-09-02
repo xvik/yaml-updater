@@ -169,10 +169,10 @@ public final class StructureReader {
         }
     }
 
-    @SuppressWarnings({"checkstyle:VisibilityModifier", "PMD.DefaultPackage"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static final class Context {
         int lineNum;
-        List<StructNode> rootNodes = new ArrayList<>();
+        final List<StructNode> rootNodes = new ArrayList<>();
         StructNode current;
 
         public void property(final int padding, final String name, final String value) {
