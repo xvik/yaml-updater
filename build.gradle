@@ -41,7 +41,7 @@ subprojects {
     }
 
     dependencies {
-        compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
+        compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.4'
 
         testImplementation 'org.spockframework:spock-core:2.4-M6-groovy-4.0'
     }
