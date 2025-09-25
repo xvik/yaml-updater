@@ -4,7 +4,7 @@ buildscript {
     repositories { mavenCentral() }
     dependencies {
         if (JavaVersion.current() >= JavaVersion.VERSION_17) {
-            classpath 'org.graalvm.buildtools:native-gradle-plugin:0.10.6'
+            classpath 'org.graalvm.buildtools:native-gradle-plugin:0.11.1'
         }
     }
 }
