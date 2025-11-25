@@ -60,7 +60,7 @@ jobs:
     steps:
       - run: |
           echo "Selected tag: ${{ needs.selectTag.outputs.TAG_NAME }}"
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.selectTag.outputs.TAG_NAME }}
 
@@ -175,7 +175,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - run: mkdir -p tmp
 
