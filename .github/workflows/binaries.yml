@@ -112,13 +112,13 @@ jobs:
           args: "-9"
 
       - name: Publish ${{ matrix.artifact }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact }}
           path: ${{ steps.build.outputs.binary }}
 
       - name: Publish JAR
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: matrix.shadowJar
         with:
           name: yaml-updater.jar
