@@ -16,7 +16,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 07.05.2021
  */
-public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> implements LineNumberAware {
+public abstract class YamlLine<T extends YamlLine<T>> extends TreeNode<T> {
 
     /**
      * Separator character for yaml paths. Not dot because yaml property could have dot in name.

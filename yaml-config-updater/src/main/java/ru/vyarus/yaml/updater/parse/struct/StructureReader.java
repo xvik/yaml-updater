@@ -87,7 +87,7 @@ public final class StructureReader {
 
     private static void processNode(final Node node, final Context context) {
         if (node instanceof CollectionNode
-                && DumperOptions.FlowStyle.FLOW.equals(((CollectionNode<?>) node).getFlowStyle())) {
+                && DumperOptions.FlowStyle.FLOW == ((CollectionNode<?>) node).getFlowStyle()) {
             // special case when object declared in FLOW style: {one: 1, two: 2} or [1, 2, 3]
             // in this case assuming entire object as single value - mapping it to string
             context.current.setValue(parseFlowObject((CollectionNode<?>) node));
